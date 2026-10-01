@@ -3,7 +3,6 @@
 // Formatted like a high-contrast newspaper article entry with date stamp & tags.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import Link from "next/link";
 import { Article } from "@/types";
 
 interface ArticleCardProps {
@@ -11,6 +10,10 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
+  const targetUrl =
+    article.canonicalUrl ||
+    `https://kernel-thoughts.hashnode.dev/${article.slug}`;
+
   return (
     <article className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-lg bg-stone-100/60 dark:bg-stone-900/60 border border-stone-300/60 dark:border-stone-800 transition-all duration-300 hover:border-stone-900 dark:hover:border-stone-100 hover:shadow-md">
       {/* Top Metadata Row: Issue Date, Category, Reading Time */}
@@ -27,10 +30,14 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
         {/* Article Title */}
         <h3 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 group-hover:underline underline-offset-4 decoration-stone-400 dark:decoration-stone-600 transition-colors">
-          <Link href={`/writing/${article.slug}`}>
+          <a
+            href={targetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span className="absolute inset-0" aria-hidden="true" />
             {article.title}
-          </Link>
+          </a>
         </h3>
 
         {/* Article Excerpt */}
@@ -40,7 +47,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
       </div>
 
       {/* Bottom Footer: Tags & Read Link Arrow */}
-      <div className="mt-6 pt-4 border-t border-stone-300/40 dark:border-stone-800/80 flex items-center justify-between">
+      <div className="mt-6 pt-4 border-t border-stone-300/40 dark:border-stone-800/80 flex items-center justify-between relative z-10 pointer-events-none">
         <div className="flex flex-wrap gap-1.5">
           {article.tags.map((tag) => (
             <span
@@ -53,7 +60,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         </div>
 
         <span className="inline-flex items-center gap-1 text-xs font-mono font-bold text-stone-900 dark:text-stone-100 group-hover:translate-x-1 transition-transform duration-200">
-          READ ARTICLE &rarr;
+          READ ON HASHNODE &rarr;
         </span>
       </div>
     </article>

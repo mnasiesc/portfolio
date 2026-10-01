@@ -12,6 +12,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { NavLinks } from "@/components/layout/NavLinks";
+import { HeaderSocials } from "@/components/layout/HeaderSocials";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export function Header() {
@@ -24,8 +25,14 @@ export function Header() {
       {/* ── Top rule: thin editorial double-line accent ── */}
       <div className="h-0.5 bg-foreground w-full" />
 
+      {/* ── Mobile dateline ticker: edition stamp + quick social icons ── */}
+      <div className="sm:hidden border-b border-border/50 px-4 py-1.5 flex items-center justify-between bg-muted/20">
+        <span className="stamp text-[9px] text-muted-foreground">{siteConfig.issueLabel}</span>
+        <HeaderSocials socials={siteConfig.socials} />
+      </div>
+
       {/* ── Main masthead row ── */}
-      <div className="container-editorial flex items-center justify-between py-4">
+      <div className="container-editorial flex items-center justify-between py-2.5 sm:py-3.5">
 
         {/* ── Site name / Logo ── */}
         <Link
@@ -36,13 +43,23 @@ export function Header() {
           <span className="font-serif text-xl font-light leading-none tracking-tight group-hover:opacity-70 transition-opacity">
             {siteConfig.name}
           </span>
-          {/* Issue stamp below the name — pure editorial typography detail */}
-          <span className="stamp text-[10px]">{siteConfig.issueLabel}</span>
+          {/* Issue stamp below the name — on desktop */}
+          <span className="stamp text-[10px] hidden sm:block">{siteConfig.issueLabel}</span>
         </Link>
 
-        {/* ── Navigation links & Theme Toggle ── */}
-        <div className="flex items-center gap-4">
+        {/* ── Navigation links, Quick Social Icons & Theme Toggle ── */}
+        <div className="flex items-center gap-3 sm:gap-4">
           <NavLinks items={siteConfig.nav} />
+
+          {/* Desktop editorial divider & quick social icons */}
+          <div className="h-4 w-px bg-stone-300 dark:bg-stone-700 hidden sm:block" />
+          <div className="hidden sm:block">
+            <HeaderSocials socials={siteConfig.socials} />
+          </div>
+
+          {/* Editorial divider */}
+          <div className="h-4 w-px bg-stone-300 dark:bg-stone-700" />
+
           <ThemeToggle />
         </div>
       </div>

@@ -22,33 +22,46 @@ export default async function HomePage() {
     <div className="flex flex-col flex-1">
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="border-b border-border">
-        <div className="container-editorial py-16 md:py-24">
+      <section className="border-b border-border py-12 md:py-16">
+        <div className="container-editorial">
+          <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-500 animate-pulse" />
+            <span>Open to Opportunities</span>
+          </div>
 
-          <p className="stamp mb-6">Software Engineer · Open to Work</p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8 md:gap-10">
+            {/* ── Signature Image: Ernst Haeckel Plate 92 Filicinae (Left side, bigger, sharp edges, no border) ── */}
+            <div className="shrink-0">
+              <img
+                src="/signature-avatar.png"
+                alt="Signature Avatar — Ernst Haeckel Plate 92 Filicinae"
+                className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 object-cover object-top shadow-lg"
+              />
+            </div>
 
-          <h1 className="font-serif text-5xl md:text-7xl font-light leading-[1.05] tracking-tight max-w-3xl">
-            Building things<br />
-            on the <em>web.</em>
-          </h1>
+            <div>
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.12]">
+                Systems Programmer
+              </h1>
 
-          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-            Software engineer focused on interfaces, tooling, and learning in public.
-            This is the portfolio and technical blog.
-          </p>
+              <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-sans">
+                Interested in the kernel, backend systems, distributed infrastructure, developer tooling, and low-level languages. Building tools in C++ and Rust.
+              </p>
+            </div>
+          </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider">
             <a
               href="#projects"
-              className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 text-sm font-medium no-underline hover:opacity-80 transition-opacity"
+              className="px-5 py-2.5 rounded bg-foreground text-background hover:opacity-90 transition-opacity"
             >
-              View Work
+              VIEW WORK &rarr;
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 border border-border px-5 py-2.5 text-sm font-medium no-underline hover:bg-muted transition-colors"
+              className="px-5 py-2.5 rounded border border-border text-foreground hover:bg-muted transition-colors"
             >
-              Get in Touch
+              CONTACT &rarr;
             </a>
           </div>
         </div>

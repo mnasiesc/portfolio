@@ -22,10 +22,10 @@ import type { Project } from "@/types";
 // Maps a project status to a human-readable label and Tailwind color classes.
 // Centralised here so changing a badge style is one line, not a grep.
 const STATUS_CONFIG: Record<Project["status"], { label: string; classes: string }> = {
-  featured:     { label: "Featured",     classes: "bg-foreground text-background" },
-  active:       { label: "Active",       classes: "bg-muted text-foreground" },
-  experimental: { label: "Experimental", classes: "bg-muted text-muted-foreground" },
-  archived:     { label: "Archived",     classes: "bg-muted text-muted-foreground opacity-60" },
+  featured:     { label: "Featured",     classes: "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 font-bold px-2 py-0.5" },
+  active:       { label: "Active",       classes: "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-medium px-2 py-0.5" },
+  experimental: { label: "Experimental", classes: "bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 px-2 py-0.5" },
+  archived:     { label: "Archived",     classes: "bg-stone-200/50 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 px-2 py-0.5" },
 };
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -46,13 +46,13 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
     <button
       onClick={onSelect}
       className="group w-full text-left bg-background border-0 p-0 cursor-pointer"
-      aria-label={`View case study: ${project.title}`}
+      aria-label={`View details: ${project.title}`}
     >
-      <article className="flex flex-col gap-4 p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
+      <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
 
-        {/* ── Card header: stamp + status badge ── */}
+        {/* ── Card header: tags + status badge ── */}
         <div className="flex items-center justify-between">
-          <span className="stamp">{project.tags[0]} · {project.year}</span>
+          <span className="stamp">{project.tags.slice(0, 2).join(" · ")}</span>
           <span
             className={[
               "stamp text-[10px] px-2 py-0.5",
@@ -87,7 +87,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
 
         {/* ── CTA footer ── */}
         <div className="pt-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-          <span className="stamp">Case Study</span>
+          <span className="stamp">More</span>
           <span className="group-hover:translate-x-1 transition-transform duration-200">
             →
           </span>

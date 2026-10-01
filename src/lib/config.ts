@@ -21,75 +21,85 @@ export const siteConfig: SiteConfig = {
   // ── Social / contact links ────────────────────────────────────────────────
   socials: [
     {
+      label: "X",
+      href: "https://x.com/mnasies",
+      handle: "@mnasies",
+    },
+    {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/manasseh-samuel-848682324",
+      handle: "manasseh-samuel",
+    },
+    {
+      label: "Email",
+      href: "mailto:manassehsamuel642@gmail.com",
+      handle: "manassehsamuel642@gmail.com",
+    },
+    {
+      label: "Telegram",
+      href: "https://t.me/mnasies",
+      handle: "@mnasies",
+    },
+    {
       label: "GitHub",
       href: "https://github.com/mnasies",
       handle: "@mnasies",
     },
     {
-      label: "Blog (Kernel Thoughts)",
+      label: "Blog",
       href: "https://kernel-thoughts.hashnode.dev",
       handle: "kernel-thoughts.hashnode.dev",
-    },
-    {
-      label: "Email",
-      href: "mailto:hello@mnasie.dev",
-      handle: "hello@mnasie.dev",
     },
   ],
 
   // ── Projects ──────────────────────────────────────────────────────────────
-  // Data sourced directly from repository READMEs:
-  // - FlowHook: Featured C++ file-watcher CLI with build-output awareness & branching
-  // - BlockStorageEngine: C++ UNIX block storage engine for single-file ForgeDB (.fdb)
-  // - virtualDisk: C++ in-memory filesystem tree layer with Result<T> error handling
-  // - alyson: Rust + Ratatui terminal TCP inspection & messaging TUI system
   projects: [
     {
       id: "flowhook",
       title: "FlowHook",
       description:
-        "A lightweight C++ file-watcher CLI using Linux inotify with build-output awareness, contextual branching (on_success / on_failure), session logging, and true reboot persistence.",
+        "A lightweight C++17/20 file watcher CLI built on Linux inotify. Features automated build execution, exit-code branching (on_success and on_failure), session logging, and reboot persistence.",
       longDescription:
-        "FlowHook is a lightweight C++17/20 file-watcher CLI built on Linux inotify. It solves the developer feedback loop by monitoring directory modifications and running build pipelines automatically. Unlike traditional watchers, FlowHook features true config persistence, contextual branching (attaching distinct commands for on_success vs. on_failure exit codes to run specialized test suites or desktop notifications), language-agnostic CLI execution, and dedicated session logging (<PROJECT>-flowhook.log).",
+        "FlowHook is a lightweight file watcher CLI written in C++17/20 that automates the developer build cycle using native Linux `inotify`.\n\nInstead of polling or relying on heavy runtime interpreters, it hooks directly into kernel filesystem events (`IN_MODIFY`, `IN_CREATE`, `IN_DELETE`) with an in-memory debounce window to eliminate duplicate event spikes.\n\nKey architectural features:\n- Contextual Branching: Triggers distinct command pipelines based on build exit status, using `on_success` for tests and `on_failure` for desktop alerts.\n- Config Persistence: Configurations are written to a durable project file, allowing `flowhook run` to restore execution state across system reboots.\n- Session Logging: Automatically appends build timestamps and terminal output to `<PROJECT>-flowhook.log` in the project root.\n- Language Agnostic: Works seamlessly across C++, Rust, Go, Python, and TypeScript projects.",
       tags: ["C++17/20", "Linux", "inotify", "CLI", "Build Tooling"],
       status: "featured",
-      year: "2025",
+      year: "2026",
       repoUrl: "https://github.com/mnasies/FlowHook",
     },
     {
       id: "block-storage-engine",
       title: "BlockStorageEngine (BSE)",
       description:
-        "A UNIX-like file system implemented from scratch in C++. Simulates a block-based disk with superblock, free-block bitmap, 128-byte inode table, and data region in a single binary .fdb file.",
+        "A UNIX-like block filesystem implemented from scratch in C++. Manages custom binary disks with a superblock, free-block bitmap, 128-byte inode tables, and data blocks.",
       longDescription:
-        "BSE is the storage foundation for ForgeDB — an embeddable single-file key-value store addressed via filesystem paths (e.g. /assets/hero.png) designed to package game assets, save data, and binary files into one portable file without database servers. BSE implements the full low-level disk layout: SuperBlock (0x406EDB magic number, 4096-byte blocks, 5% reserved inode capacity), free-block Bitmap, Inode Table (128-byte inodes with 24 direct + 1 indirect block pointers), and Data Region. Disks are persisted as single .fdb binary files.",
+        "BlockStorageEngine (BSE) is a custom low-level storage engine written in C++ that simulates a UNIX block-based filesystem inside a single portable `.fdb` binary file.\n\nIt serves as the underlying persistence layer for ForgeDB, packaging game assets, application state, and binary blobs into structured disk blocks without third-party databases.\n\nDisk layout implementation:\n- `SuperBlock`: Stored at offset zero with magic number `0x406EDB`, 4096-byte block sizing, and 5% reserved inode capacity.\n- Free-Block `Bitmap`: Tracks allocated and free blocks at bit-level granularity.\n- `Inode Table`: Fixed 128-byte inodes containing file metadata, 24 direct block pointers, and 1 indirect block pointer.\n- `Data Region`: Raw 4096-byte disk blocks allocated on demand for file content.",
       tags: ["C++", "Systems", "File Systems", "ForgeDB", "Low-Level"],
       status: "active",
-      year: "2025",
+      year: "2026",
       repoUrl: "https://github.com/mnasies/block_storage_engine",
     },
     {
       id: "virtual-disk",
       title: "virtualDisk",
       description:
-        "An in-memory filesystem in C++ simulating a Unix-like directory structure with terminal interface, smart pointer tree nodes, and zero-exception Result<T> error handling.",
+        "An in-memory filesystem in C++ featuring hierarchical directory traversal, smart pointer tree nodes, and zero-exception Result<T> error handling.",
       longDescription:
-        "VirtualDisk serves as the in-memory tree management layer for ForgeDB. Before data hits disk in BSE, VirtualDisk handles path traversal, working directories, and directory tree manipulation (mkdir, touch, cd, ls, rm) in RAM. Built around an abstract FileSystemEntity base class using std::shared_ptr and std::weak_ptr to prevent cycle references, custom Result<T> template for compiler-enforced error handling without exceptions, and an interactive shell interface for path operations.",
-      tags: ["C++", "Systems", "Smart Pointers", "ForgeDB", "Data Structures"],
+        "virtualDisk is an in-memory filesystem tree layer written in C++ that manages directories and files in RAM before persisting them to disk.\n\nIt acts as the working tree manager for ForgeDB, providing fast path traversal, directory navigation, and file manipulation.\n\nCore design details:\n- Cycle-Free Node Hierarchy: Implements `std::shared_ptr` for downward ownership and `std::weak_ptr` for parent references to eliminate circular memory leaks.\n- Zero-Exception Architecture: Uses a custom `Result<T>` template inspired by Rust to enforce compile-time error handling without runtime exception overhead.\n- Interactive Terminal Shell: Provides shell operations including `mkdir`, `touch`, `cd`, `ls`, and `rm` with realistic error codes.",
+      tags: ["C++", "In-Memory FS", "Smart Pointers", "ForgeDB", "Data Structures"],
       status: "experimental",
-      year: "2024",
+      year: "2026",
       repoUrl: "https://github.com/mnasies/virtualDisk",
     },
     {
       id: "alyson",
       title: "Alyson",
       description:
-        "A terminal-based multi-client TCP inspection and messaging system written in Rust with Ratatui TUI, mpsc channels, and custom length-prefixed binary framing (Bincode).",
+        "A terminal TCP packet inspection and messaging tool written in Rust. Features length-prefixed binary framing, asynchronous channels, and a Ratatui TUI.",
       longDescription:
-        "Alyson is a terminal-based TCP messaging & packet inspection tool written in Rust. It decouples UI rendering from asynchronous network operations using mpsc channels and features three layers: Ratatui / Crossterm TUI Application Layer, Network Engine for client/server task orchestration, and a Transport Framing Layer that encodes Bincode payloads into length-prefixed TCP binary frames (4-byte big-endian u32 header + payload). Supports room management, multi-client routing, and real-time socket inspection.",
-      tags: ["Rust", "Ratatui", "TCP", "Async", "TUI", "Networking"],
+        "Alyson is a terminal-based TCP messaging and packet inspection tool written in Rust, designed for real-time socket inspection and multi-client communication.\n\nThe system decouples asynchronous network I/O from UI rendering using Rust `mpsc` channels and crossbeam primitives to maintain steady 60 FPS terminal performance.\n\nSystem architecture:\n- Transport Framing: Packages payloads into length-prefixed TCP binary frames with a 4-byte big-endian `u32` length header followed by serialized Bincode buffers.\n- Terminal User Interface: Built with `Ratatui` and `crossterm` to display interactive client lists, live connection status, and formatted message inspection feeds.\n- Concurrency Model: Worker threads handle socket reading and writing independently, preventing network bottlenecks from blocking UI event loops.",
+      tags: ["Rust", "Networking", "TCP", "Ratatui", "Async"],
       status: "experimental",
-      year: "2024",
+      year: "2026",
       repoUrl: "https://github.com/mnasies/alyson",
     },
   ],
