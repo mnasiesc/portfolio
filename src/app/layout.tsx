@@ -47,6 +47,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "Mnasie",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 // ─── Root Layout ─────────────────────────────────────────────────────────────

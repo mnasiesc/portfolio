@@ -153,7 +153,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         <div className="shrink-0 bg-background border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
             <p className="stamp mb-1 text-[11px] text-muted-foreground">
-              {project.tags[0]} · {project.year}
+              {project.tags.slice(0, 2).join(" · ")}
             </p>
             <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {project.title}
@@ -170,8 +170,8 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           </button>
         </div>
 
-        {/* ── Scrollable Modal Body ── */}
-        <div className="overflow-y-auto flex-1 px-5 sm:px-8 py-6 space-y-6">
+        {/* ── Scrollable Modal Body (scrollbar visually hidden, scrolling preserved) ── */}
+        <div className="overflow-y-auto flex-1 px-5 sm:px-8 py-6 space-y-6 no-scrollbar">
           {/* Formatted description with list items & inline code badges */}
           <ProjectDescription content={project.longDescription} />
 

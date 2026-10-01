@@ -29,13 +29,26 @@ export default async function HomePage() {
             <span>Open to Opportunities</span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-[1.15]">
-            Systems Programmer
-          </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8 md:gap-10">
+            {/* ── Signature Image: Ernst Haeckel Plate 92 Filicinae (Left side, bigger, sharp edges, no border) ── */}
+            <div className="shrink-0">
+              <img
+                src="/signature-avatar.png"
+                alt="Signature Avatar — Ernst Haeckel Plate 92 Filicinae"
+                className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 object-cover object-top shadow-lg"
+              />
+            </div>
 
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-sans">
-            Interested in the kernel, backend systems, distributed infrastructure, developer tooling, and low-level languages. Building tools in C++ and Rust.
-          </p>
+            <div>
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.12]">
+                Systems Programmer
+              </h1>
+
+              <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-sans">
+                Interested in the kernel, backend systems, distributed infrastructure, developer tooling, and low-level languages. Building tools in C++ and Rust.
+              </p>
+            </div>
+          </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider">
             <a

@@ -50,9 +50,9 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
     >
       <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
 
-        {/* ── Card header: stamp + status badge ── */}
+        {/* ── Card header: tags + status badge ── */}
         <div className="flex items-center justify-between">
-          <span className="stamp">{project.tags[0]} · {project.year}</span>
+          <span className="stamp">{project.tags.slice(0, 2).join(" · ")}</span>
           <span
             className={[
               "stamp text-[10px] px-2 py-0.5",

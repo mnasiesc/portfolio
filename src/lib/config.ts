@@ -85,7 +85,7 @@ export const siteConfig: SiteConfig = {
         "An in-memory filesystem in C++ featuring hierarchical directory traversal, smart pointer tree nodes, and zero-exception Result<T> error handling.",
       longDescription:
         "virtualDisk is an in-memory filesystem tree layer written in C++ that manages directories and files in RAM before persisting them to disk.\n\nIt acts as the working tree manager for ForgeDB, providing fast path traversal, directory navigation, and file manipulation.\n\nCore design details:\n- Cycle-Free Node Hierarchy: Implements `std::shared_ptr` for downward ownership and `std::weak_ptr` for parent references to eliminate circular memory leaks.\n- Zero-Exception Architecture: Uses a custom `Result<T>` template inspired by Rust to enforce compile-time error handling without runtime exception overhead.\n- Interactive Terminal Shell: Provides shell operations including `mkdir`, `touch`, `cd`, `ls`, and `rm` with realistic error codes.",
-      tags: ["C++", "Systems", "Smart Pointers", "ForgeDB", "Data Structures"],
+      tags: ["C++", "In-Memory FS", "Smart Pointers", "ForgeDB", "Data Structures"],
       status: "experimental",
       year: "2026",
       repoUrl: "https://github.com/mnasies/virtualDisk",
@@ -97,7 +97,7 @@ export const siteConfig: SiteConfig = {
         "A terminal TCP packet inspection and messaging tool written in Rust. Features length-prefixed binary framing, asynchronous channels, and a Ratatui TUI.",
       longDescription:
         "Alyson is a terminal-based TCP messaging and packet inspection tool written in Rust, designed for real-time socket inspection and multi-client communication.\n\nThe system decouples asynchronous network I/O from UI rendering using Rust `mpsc` channels and crossbeam primitives to maintain steady 60 FPS terminal performance.\n\nSystem architecture:\n- Transport Framing: Packages payloads into length-prefixed TCP binary frames with a 4-byte big-endian `u32` length header followed by serialized Bincode buffers.\n- Terminal User Interface: Built with `Ratatui` and `crossterm` to display interactive client lists, live connection status, and formatted message inspection feeds.\n- Concurrency Model: Worker threads handle socket reading and writing independently, preventing network bottlenecks from blocking UI event loops.",
-      tags: ["Rust", "Ratatui", "TCP", "Async", "TUI", "Networking"],
+      tags: ["Rust", "Networking", "TCP", "Ratatui", "Async"],
       status: "experimental",
       year: "2026",
       repoUrl: "https://github.com/mnasies/alyson",

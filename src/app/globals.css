@@ -350,4 +350,13 @@
   .pull-quote {
     @apply border-l-4 border-foreground pl-6 italic font-serif text-xl leading-relaxed;
   }
+
+  /* Hide scrollbar while preserving scroll functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
