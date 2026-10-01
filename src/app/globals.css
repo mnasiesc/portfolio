@@ -174,6 +174,54 @@
     /* font-sans resolves to Geist Sans via the @theme token above */
     @apply font-sans;
     scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.68 0.035 65 / 70%) oklch(0.93 0.015 80 / 40%);
+  }
+
+  .dark html {
+    scrollbar-color: oklch(0.42 0.02 55 / 80%) oklch(0.18 0.015 55 / 40%);
+  }
+
+  /* ── Custom Editorial Scrollbar (WebKit: Chrome, Edge, Safari) ── */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: oklch(0.93 0.015 80 / 30%);
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: oklch(0.18 0.015 55 / 30%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.68 0.035 65 / 70%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.50 0.045 55 / 90%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: oklch(0.42 0.02 55 / 80%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.55 0.025 60 / 95%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
 
   body {
