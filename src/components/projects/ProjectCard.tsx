@@ -48,7 +48,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
       className="group w-full text-left bg-background border-0 p-0 cursor-pointer"
       aria-label={`View case study: ${project.title}`}
     >
-      <article className="flex flex-col gap-4 p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
+      <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
 
         {/* ── Card header: stamp + status badge ── */}
         <div className="flex items-center justify-between">

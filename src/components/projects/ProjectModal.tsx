@@ -83,17 +83,17 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       <div className="relative z-10 w-full md:max-w-2xl max-h-[90dvh] overflow-y-auto bg-background border border-border shadow-xl animate-in slide-in-from-bottom-4 md:slide-in-from-bottom-0 md:zoom-in-95 duration-200">
 
         {/* ── Modal header ── */}
-        <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border px-8 py-5 flex items-start justify-between gap-4">
+        <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
             <p className="stamp mb-1">{project.tags[0]} · {project.year}</p>
-            <h2 className="font-serif text-2xl font-light leading-tight">
+            <h2 className="font-serif text-xl sm:text-2xl font-light leading-tight">
               {project.title}
             </h2>
           </div>
           {/* Close button */}
           <button
             onClick={onClose}
-            className="stamp text-lg leading-none mt-1 hover:opacity-50 transition-opacity"
+            className="stamp text-lg leading-none mt-1 hover:opacity-50 transition-opacity p-2 -mr-2"
             aria-label="Close case study"
           >
             ×
@@ -101,7 +101,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         </div>
 
         {/* ── Modal body ── */}
-        <div className="px-8 py-8 space-y-8">
+        <div className="px-5 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
           {/* Long description */}
           <p className="leading-relaxed text-foreground/90">

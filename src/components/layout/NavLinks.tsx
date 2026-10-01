@@ -35,7 +35,7 @@ export function NavLinks({ items }: NavLinksProps) {
 
   return (
     <nav aria-label="Primary navigation">
-      <ul className="flex items-center gap-6 md:gap-8">
+      <ul className="flex items-center gap-3.5 sm:gap-6 md:gap-8">
         {items.map((item) => {
           // Determine if this link is "active" (current page).
           // For hash links like "/#projects" we check just the "/" part.

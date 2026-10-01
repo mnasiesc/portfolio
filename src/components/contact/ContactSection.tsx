@@ -52,7 +52,7 @@ export function ContactSection({ socials }: ContactSectionProps) {
                 <div className="font-mono text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-wider">
                   Email
                 </div>
-                <div className="font-mono text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 select-all">
+                <div className="font-mono text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 select-all break-all sm:break-normal">
                   {emailAddress}
                 </div>
               </div>
