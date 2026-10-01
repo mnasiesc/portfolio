@@ -1,14 +1,22 @@
-// ─── What is this file? ───────────────────────────────────────────────────────
-// Home page ("/") — a React Server Component (no "use client").
-// The Header is already rendered by layout.tsx above this.
-// This file only contains the page-specific content.
+// ─── Home Page — React Server Component ──────────────────────────────────────
+// No "use client" — this runs on the server and outputs static HTML.
+// Interactive pieces (ProjectsSection modal) are Client Components imported
+// inside it. Next.js handles the boundary automatically.
+//
+// Data flow:
+//   siteConfig (config.ts) → this page → ProjectsSection (as props)
+// The page acts like a thin "data fetcher + assembler". It reads from config
+// and passes the right data down to each section component.
 // ─────────────────────────────────────────────────────────────────────────────
+
+import { siteConfig } from "@/lib/config";
+import { ProjectsSection } from "@/components/projects/ProjectsSection";
 
 export default function HomePage() {
   return (
     <div className="flex flex-col flex-1">
 
-      {/* ── HERO ────────────────────────────────────────────────────────── */}
+      {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section className="border-b border-border">
         <div className="container-editorial py-16 md:py-24">
 
@@ -41,61 +49,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── EDITORIAL RULE ──────────────────────────────────────────────── */}
+      {/* ── EDITORIAL RULE ────────────────────────────────────────────────── */}
       <div className="container-editorial">
         <hr className="rule-editorial" />
       </div>
 
-      {/* ── FEATURED PROJECTS (placeholder section) ─────────────────────── */}
-      <section id="projects" className="container-editorial pb-20">
-        <div className="flex items-baseline justify-between mb-8">
-          <h2 className="font-serif text-2xl font-normal">Selected Work</h2>
-          <span className="stamp">03 Projects</span>
-        </div>
+      {/* ── PROJECTS ──────────────────────────────────────────────────────── */}
+      {/*
+        We pass siteConfig.projects DOWN as props.
+        This is the "data in, UI out" React pattern.
+        ProjectsSection handles rendering + modal state internally.
+        If you want to later load projects from an API or CMS instead,
+        you only change THIS line — not any component.
+      */}
+      <ProjectsSection projects={siteConfig.projects} />
 
-        {/* Project grid — we'll replace these cards with real ProjectCard components in Phase 4 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
-          {[
-            { label: "Project A", tag: "Web App", year: "2026" },
-            { label: "Project B", tag: "Design System", year: "2025" },
-            { label: "Project C", tag: "Open Source", year: "2025" },
-          ].map((project) => (
-            <div
-              key={project.label}
-              className="bg-background p-8 flex flex-col gap-4 group cursor-pointer"
-            >
-              {/* Card header */}
-              <div className="flex items-center justify-between">
-                <span className="stamp">{project.tag} · {project.year}</span>
-              </div>
-              {/* Card title in serif */}
-              <h3 className="font-serif text-xl font-normal group-hover:opacity-60 transition-opacity">
-                {project.label}
-              </h3>
-              {/* Arrow indicator */}
-              <div className="mt-auto pt-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-                <span>Case Study</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── EDITORIAL RULE ──────────────────────────────────────────────── */}
+      {/* ── EDITORIAL RULE ────────────────────────────────────────────────── */}
       <div className="container-editorial">
         <hr className="rule-editorial" />
       </div>
 
-      {/* ── CONTACT PLACEHOLDER ──────────────────────────────────────────── */}
+      {/* ── CONTACT PLACEHOLDER ───────────────────────────────────────────── */}
       <section id="contact" className="container-editorial pb-24">
         <span className="stamp block mb-6">Direct Connect</span>
         <p className="pull-quote max-w-xl">
           &ldquo;The best work starts with a conversation.&rdquo;
         </p>
-        <p className="mt-8 text-muted-foreground">
-          Reach out — contact section coming in Phase 6.
-        </p>
+        <div className="mt-8 flex flex-wrap gap-4">
+          {siteConfig.socials.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target={social.href.startsWith("http") ? "_blank" : undefined}
+              rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="stamp no-underline hover:opacity-60 transition-opacity"
+            >
+              {social.label} {social.handle ? `· ${social.handle}` : ""}
+            </a>
+          ))}
+        </div>
       </section>
 
     </div>

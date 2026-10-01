@@ -5,6 +5,9 @@
 // and hoping the right keys exist at runtime.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Status of a project — controls how it's visually badged
+export type ProjectStatus = "featured" | "active" | "experimental" | "archived";
+
 // A single navigation link item
 export interface NavItem {
   label: string;  // Display text, e.g. "Work"
@@ -20,11 +23,25 @@ export interface SocialLink {
   handle?: string; // e.g. "@mnasie" — short display text
 }
 
+// A single project entry
+export interface Project {
+  id: string;              // Unique slug used as React key
+  title: string;           // Display name
+  description: string;     // Short 1–2 sentence summary shown on the card
+  longDescription: string; // Detailed write-up shown inside the modal
+  tags: string[];          // Tech stack / language badges
+  status: ProjectStatus;   // Featured, active, experimental, or archived
+  year: string;            // Year built / last updated
+  repoUrl: string;         // GitHub link
+  demoUrl?: string;        // Live demo link (optional)
+}
+
 // The top-level site configuration shape
 export interface SiteConfig {
-  name: string;          // Site owner name
-  role: string;          // Short tagline under the name
-  issueLabel: string;    // Editorial stamp, e.g. "Vol. 01 · Est. 2026"
-  nav: NavItem[];        // Primary navigation links
-  socials: SocialLink[]; // Social / contact links
+  name: string;
+  role: string;
+  issueLabel: string;
+  nav: NavItem[];
+  socials: SocialLink[];
+  projects: Project[];     // All project data lives in config, not in components
 }
