@@ -21,19 +21,34 @@ export const siteConfig: SiteConfig = {
   // ── Social / contact links ────────────────────────────────────────────────
   socials: [
     {
+      label: "X",
+      href: "https://x.com/mnasies",
+      handle: "@mnasies",
+    },
+    {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/manasseh-samuel-848682324",
+      handle: "manasseh-samuel",
+    },
+    {
+      label: "Email",
+      href: "mailto:manassehsamuel642@gmail.com",
+      handle: "manassehsamuel642@gmail.com",
+    },
+    {
+      label: "Telegram",
+      href: "https://t.me/mnasies",
+      handle: "@mnasies",
+    },
+    {
       label: "GitHub",
       href: "https://github.com/mnasies",
       handle: "@mnasies",
     },
     {
-      label: "Blog (Kernel Thoughts)",
+      label: "Blog",
       href: "https://kernel-thoughts.hashnode.dev",
       handle: "kernel-thoughts.hashnode.dev",
-    },
-    {
-      label: "Email",
-      href: "mailto:hello@mnasie.dev",
-      handle: "hello@mnasie.dev",
     },
   ],
 
