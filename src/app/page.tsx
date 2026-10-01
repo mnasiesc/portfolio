@@ -13,6 +13,7 @@ import { siteConfig } from "@/lib/config";
 import { getAllArticles } from "@/lib/articles";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { WritingsSection } from "@/components/writing/WritingsSection";
+import { ContactSection } from "@/components/contact/ContactSection";
 
 export default async function HomePage() {
   const articles = await getAllArticles();
@@ -78,26 +79,10 @@ export default async function HomePage() {
         <hr className="rule-editorial" />
       </div>
 
-      {/* ── CONTACT PLACEHOLDER ───────────────────────────────────────────── */}
-      <section id="contact" className="container-editorial pb-24">
-        <span className="stamp block mb-6">Direct Connect</span>
-        <p className="pull-quote max-w-xl">
-          &ldquo;The best work starts with a conversation.&rdquo;
-        </p>
-        <div className="mt-8 flex flex-wrap gap-4">
-          {siteConfig.socials.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              target={social.href.startsWith("http") ? "_blank" : undefined}
-              rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="stamp no-underline hover:opacity-60 transition-opacity"
-            >
-              {social.label} {social.handle ? `· ${social.handle}` : ""}
-            </a>
-          ))}
-        </div>
-      </section>
+      {/* ── CONTACT SECTION ────────────────────────────────────────────────── */}
+      <div className="container-editorial">
+        <ContactSection socials={siteConfig.socials} />
+      </div>
 
     </div>
   );

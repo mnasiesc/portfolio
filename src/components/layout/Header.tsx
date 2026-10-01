@@ -12,6 +12,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 import { NavLinks } from "@/components/layout/NavLinks";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export function Header() {
   return (
@@ -27,9 +28,6 @@ export function Header() {
       <div className="container-editorial flex items-center justify-between py-4">
 
         {/* ── Site name / Logo ── */}
-        {/* Link wraps the name so clicking it always goes home.         */}
-        {/* `font-serif` triggers Newsreader. `no-underline` removes the */}
-        {/* default anchor underline since this is a logo, not inline text. */}
         <Link
           href="/"
           className="no-underline group flex flex-col gap-0.5"
@@ -42,11 +40,11 @@ export function Header() {
           <span className="stamp text-[10px]">{siteConfig.issueLabel}</span>
         </Link>
 
-        {/* ── Navigation links ── */}
-        {/* We pass the nav items from config down as props.              */}
-        {/* NavLinks is a Client Component — it renders the active state. */}
-        {/* Header (this file) stays a Server Component.                  */}
-        <NavLinks items={siteConfig.nav} />
+        {/* ── Navigation links & Theme Toggle ── */}
+        <div className="flex items-center gap-4">
+          <NavLinks items={siteConfig.nav} />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
