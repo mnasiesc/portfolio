@@ -65,6 +65,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <time dateTime={article.date}>{article.date}</time>
           <span>•</span>
           <span>{article.readingTime}</span>
+          {article.canonicalUrl && (
+            <>
+              <span>•</span>
+              <a
+                href={article.canonicalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-stone-900 dark:hover:text-stone-100"
+              >
+                Hashnode ↗
+              </a>
+            </>
+          )}
         </div>
 
         <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mb-6 leading-[1.15]">

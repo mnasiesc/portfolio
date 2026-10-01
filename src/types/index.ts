@@ -44,6 +44,7 @@ export interface ArticleMetadata {
   readingTime: string;
   category: string;
   tags: string[];
+  canonicalUrl?: string;
   featured?: boolean;
 }
 

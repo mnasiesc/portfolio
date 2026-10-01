@@ -50,6 +50,7 @@ export async function getAllArticles(): Promise<Article[]> {
         readingTime: metadata.readingTime || calculateReadingTime(content),
         category: metadata.category || "Notes",
         tags: metadata.tags || [],
+        canonicalUrl: metadata.canonicalUrl,
         featured: metadata.featured || false,
         content,
       };
