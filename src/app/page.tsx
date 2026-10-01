@@ -1,43 +1,29 @@
 // ─── What is this file? ───────────────────────────────────────────────────────
-// This is the Home page of the site — the content shown at the "/" route.
-//
-// Notice there's NO "use client" at the top. That means this is a
-// React Server Component (RSC) by default.
-//
-// RSC vs Client Component — the key mental model:
-//   Vanilla JS: ALL your code runs in the browser.
-//   Next.js:    Server Components run on the server, produce HTML, and send
-//               ZERO JavaScript to the browser. Fast. No interactivity needed.
-//               Client Components run in the browser and handle clicks, state, etc.
-//
-// This page just displays static content, so it's a perfect Server Component.
+// Home page ("/") — a React Server Component (no "use client").
+// The Header is already rendered by layout.tsx above this.
+// This file only contains the page-specific content.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
   return (
-    // The outer wrapper fills the full available height from the body flex column
     <div className="flex flex-col flex-1">
 
-      {/* ── MASTHEAD / HERO ─────────────────────────────────────────────── */}
-      <header className="border-b border-border">
+      {/* ── HERO ────────────────────────────────────────────────────────── */}
+      <section className="border-b border-border">
         <div className="container-editorial py-16 md:py-24">
 
-          {/* Issue stamp — Vox-style editorial top line */}
-          <p className="stamp mb-6">Vol. 01 · Est. 2026 · Developer & Designer</p>
+          <p className="stamp mb-6">Software Engineer · Open to Work</p>
 
-          {/* Main editorial headline — Newsreader serif, light weight */}
           <h1 className="font-serif text-5xl md:text-7xl font-light leading-[1.05] tracking-tight max-w-3xl">
             Building things<br />
             on the <em>web.</em>
           </h1>
 
-          {/* Sub-headline — Geist Sans body font */}
           <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
             Software engineer focused on interfaces, tooling, and learning in public.
             This is the portfolio and technical blog.
           </p>
 
-          {/* CTA row */}
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <a
               href="#projects"
@@ -53,7 +39,7 @@ export default function HomePage() {
             </a>
           </div>
         </div>
-      </header>
+      </section>
 
       {/* ── EDITORIAL RULE ──────────────────────────────────────────────── */}
       <div className="container-editorial">

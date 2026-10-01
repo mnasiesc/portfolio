@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { Header } from "@/components/layout/Header";
 import "./globals.css";
 
 // ─── Body font: clean geometric sans-serif ──────────────────────────────────
@@ -65,7 +66,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${newsreader.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+        {/* Header lives here in the layout so it appears on EVERY page */}
+        {/* without needing to import it in each individual page file.  */}
+        <Header />
+        <main className="flex flex-col flex-1">
+          {children}
+        </main>
       </body>
     </html>
   );
