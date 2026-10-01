@@ -5,7 +5,8 @@
 // text rendering including styled inline code badges and list items.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { Project } from "@/types";
 
 interface ProjectModalProps {
@@ -92,6 +93,13 @@ function ProjectDescription({ content }: { content: string }) {
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  // Set mounted true on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // ── Escape key handler ───────────────────────────────────────────────────
   useEffect(() => {
     if (!project) return;
@@ -116,25 +124,31 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, [project]);
 
-  if (!project) return null;
+  if (!project || !mounted) return null;
 
-  return (
-    // ── Backdrop container: z-[100] guarantees it renders ABOVE the sticky header ──
+  // Render directly onto document.body using createPortal so it escapes all parent
+  // stacking contexts, sections, and containers, guaranteeing it sits above the sticky header.
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+      className="fixed inset-0 flex items-center justify-center p-3 sm:p-6"
+      style={{ zIndex: 99999 }}
       role="dialog"
       aria-modal="true"
       aria-label={`Case study: ${project.title}`}
     >
-      {/* Dim overlay covering entire viewport */}
+      {/* Dim overlay covering entire viewport and sticky header */}
       <div
-        className="fixed inset-0 bg-stone-950/60 dark:bg-black/75 backdrop-blur-sm"
+        className="fixed inset-0 bg-stone-950/70 dark:bg-black/85 backdrop-blur-sm"
+        style={{ zIndex: 99999 }}
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* ── Modal Window Panel ── */}
-      <div className="relative z-10 w-full max-w-2xl max-h-[85vh] sm:max-h-[88vh] flex flex-col rounded-lg bg-background border-2 border-stone-800/80 dark:border-stone-200/80 shadow-2xl overflow-hidden my-auto animate-in zoom-in-95 duration-200">
+      <div
+        className="relative w-full max-w-2xl max-h-[82vh] sm:max-h-[85vh] flex flex-col rounded-lg bg-background border-2 border-stone-800 dark:border-stone-200 shadow-2xl overflow-hidden my-auto"
+        style={{ zIndex: 100000 }}
+      >
         {/* ── Fixed Modal Header ── */}
         <div className="shrink-0 bg-background border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
@@ -199,6 +213,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
