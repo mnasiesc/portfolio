@@ -1,121 +1,174 @@
 "use client";
+
 // ─── ProjectModal — Client Component ─────────────────────────────────────────
-// Why "use client" here?
-//   This component needs:
-//     1. useEffect — to lock body scroll and handle Escape key closes
-//     2. Browser APIs — document.body.style, addEventListener
-//   Both require the browser runtime, so this must be a Client Component.
-//
-// The modal receives `project` and `onClose` as props.
-// It knows nothing about HOW it gets opened — that's the parent's concern.
-// If you want to swap this modal for a slide-in drawer or a full-page
-// transition, you replace ONLY this file. Config and card stay untouched.
-//
-// Vanilla JS analogy:
-//   This is the equivalent of a `<div class="modal">` with:
-//     modal.classList.add('open')    → state change from parent triggers render
-//     document.addEventListener('keydown', e => if e.key === 'Escape' close())
-//     modal.addEventListener('click', e => if e.target === overlay close())
+// Case study modal with high z-index (above sticky header) and formatted markdown
+// text rendering including styled inline code badges and list items.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import type { Project } from "@/types";
 
 interface ProjectModalProps {
-  project: Project | null; // null = modal is closed
-  onClose: () => void;     // called when user dismisses the modal
+  project: Project | null;
+  onClose: () => void;
+}
+
+/**
+ * Formats text with inline code badges: parses `code` tokens and wraps them
+ * in a themed vintage code badge.
+ */
+function FormattedInline({ text }: { text: string }) {
+  // Split on inline code blocks: `code`
+  const parts = text.split(/(`[^`]+`)/g);
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith("`") && part.endsWith("`")) {
+          const code = part.slice(1, -1);
+          return (
+            <code
+              key={i}
+              className="inline-block font-mono text-[12px] px-1.5 py-0.5 mx-0.5 rounded bg-stone-200/90 dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 font-bold shadow-2xs"
+            >
+              {code}
+            </code>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
+/**
+ * Renders multi-paragraph description with list item and inline code support.
+ */
+function ProjectDescription({ content }: { content: string }) {
+  const blocks = content.split("\n\n");
+
+  return (
+    <div className="space-y-4 text-foreground/90 leading-relaxed font-sans text-sm sm:text-base">
+      {blocks.map((block, idx) => {
+        const trimmed = block.trim();
+
+        // Check if block contains bullet points
+        if (trimmed.includes("\n- ") || trimmed.startsWith("- ")) {
+          const lines = trimmed.split("\n");
+          return (
+            <div key={idx} className="space-y-2">
+              {lines.map((line, lIdx) => {
+                const lineTrimmed = line.trim();
+                if (lineTrimmed.startsWith("- ")) {
+                  const bulletText = lineTrimmed.slice(2);
+                  return (
+                    <div key={lIdx} className="flex items-start gap-2.5 pl-1">
+                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-stone-900 dark:bg-stone-100 shrink-0" />
+                      <div className="leading-relaxed">
+                        <FormattedInline text={bulletText} />
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <p key={lIdx} className="font-semibold text-stone-900 dark:text-stone-100">
+                    <FormattedInline text={lineTrimmed} />
+                  </p>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // Regular paragraph
+        return (
+          <p key={idx} className="leading-relaxed">
+            <FormattedInline text={trimmed} />
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
   // ── Escape key handler ───────────────────────────────────────────────────
-  // useEffect runs AFTER the component renders in the browser.
-  // We register the keydown listener, and return a cleanup function that
-  // removes it when the component unmounts or the dependency changes.
-  //
-  // React's useEffect replaces: window.addEventListener + manual cleanup.
   useEffect(() => {
-    if (!project) return; // no project = modal closed, no listener needed
+    if (!project) return;
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
 
     document.addEventListener("keydown", handleKey);
-    // Cleanup: this runs when the modal closes or the component unmounts
     return () => document.removeEventListener("keydown", handleKey);
   }, [project, onClose]);
 
   // ── Body scroll lock ─────────────────────────────────────────────────────
-  // When the modal is open, prevent the page from scrolling behind it.
   useEffect(() => {
     if (project) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [project]);
 
-  // ── Early return: modal closed ───────────────────────────────────────────
-  // In React, returning null renders nothing.
-  // This replaces: modal.style.display = 'none' / classList.remove('open')
   if (!project) return null;
 
   return (
-    // ── Backdrop overlay ──────────────────────────────────────────────────
-    // Clicking the dark background closes the modal.
-    // `animate-in fade-in` comes from tw-animate-css (installed by shadcn).
+    // ── Backdrop container: z-[100] guarantees it renders ABOVE the sticky header ──
     <div
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-label={`Case study: ${project.title}`}
     >
-      {/* Dim overlay — click to close */}
+      {/* Dim overlay covering entire viewport */}
       <div
-        className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
+        className="fixed inset-0 bg-stone-950/60 dark:bg-black/75 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* ── Modal panel ── */}
-      {/* slide-in-from-bottom on mobile, zoom-in on desktop */}
-      <div className="relative z-10 w-full md:max-w-2xl max-h-[90dvh] overflow-y-auto bg-background border border-border shadow-xl animate-in slide-in-from-bottom-4 md:slide-in-from-bottom-0 md:zoom-in-95 duration-200">
-
-        {/* ── Modal header ── */}
-        <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
+      {/* ── Modal Window Panel ── */}
+      <div className="relative z-10 w-full max-w-2xl max-h-[85vh] sm:max-h-[88vh] flex flex-col rounded-lg bg-background border-2 border-stone-800/80 dark:border-stone-200/80 shadow-2xl overflow-hidden my-auto animate-in zoom-in-95 duration-200">
+        {/* ── Fixed Modal Header ── */}
+        <div className="shrink-0 bg-background border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
           <div>
-            <p className="stamp mb-1">{project.tags[0]} · {project.year}</p>
-            <h2 className="font-serif text-xl sm:text-2xl font-light leading-tight">
+            <p className="stamp mb-1 text-[11px] text-muted-foreground">
+              {project.tags[0]} · {project.year}
+            </p>
+            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {project.title}
             </h2>
           </div>
-          {/* Close button */}
+
+          {/* Close button with large tap target */}
           <button
             onClick={onClose}
-            className="stamp text-lg leading-none mt-1 hover:opacity-50 transition-opacity p-2 -mr-2"
+            className="stamp text-xl leading-none p-2 -mr-2 rounded hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors cursor-pointer"
             aria-label="Close case study"
           >
             ×
           </button>
         </div>
 
-        {/* ── Modal body ── */}
-        <div className="px-5 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+        {/* ── Scrollable Modal Body ── */}
+        <div className="overflow-y-auto flex-1 px-5 sm:px-8 py-6 space-y-6">
+          {/* Formatted description with list items & inline code badges */}
+          <ProjectDescription content={project.longDescription} />
 
-          {/* Long description */}
-          <p className="leading-relaxed text-foreground/90">
-            {project.longDescription}
-          </p>
-
-          {/* Tech stack */}
+          {/* Tech stack badges */}
           <div>
-            <p className="stamp mb-3">Built With</p>
+            <p className="stamp mb-2.5 text-xs text-muted-foreground">Built With</p>
             <div className="flex flex-wrap gap-2">
               {project.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="stamp text-xs px-3 py-1 bg-muted"
+                  className="stamp text-xs px-2.5 py-1 rounded bg-stone-200/70 dark:bg-stone-800 border border-stone-300/80 dark:border-stone-700/80 text-foreground font-semibold"
                 >
                   {tag}
                 </span>
@@ -144,7 +197,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               </a>
             )}
           </div>
-
         </div>
       </div>
     </div>
