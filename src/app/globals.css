@@ -218,8 +218,9 @@
     background-repeat: no-repeat;
   }
 
-  /* ── Magazine Grid Overlay ──
-     Low-opacity editorial grid sits on top of everything. */
+  /* ── Dotted Magazine Grid Overlay ──
+     Tactile dotted grid (editorial dot-matrix notebook feel)
+     with slightly increased opacity for subtle depth without hurting readability. */
   body::after {
     content: "";
     position: fixed;
@@ -227,32 +228,22 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(
-        to right,
-        oklch(0.3 0.01 55 / 3.5%) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        oklch(0.3 0.01 55 / 3.5%) 1px,
-        transparent 1px
+      radial-gradient(
+        circle,
+        oklch(0.25 0.02 50 / 8%) 1.2px,
+        transparent 1.2px
       );
-    background-size: 80px 80px;
+    background-size: 28px 28px;
   }
 
   .dark body::after {
     background-image:
-      linear-gradient(
-        to right,
-        oklch(0.8 0.01 70 / 2.5%) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        oklch(0.8 0.01 70 / 2.5%) 1px,
-        transparent 1px
+      radial-gradient(
+        circle,
+        oklch(0.85 0.02 75 / 6.5%) 1.2px,
+        transparent 1.2px
       );
-    background-size: 80px 80px;
+    background-size: 28px 28px;
   }
 
   /* All content sits above the paper texture + grid */

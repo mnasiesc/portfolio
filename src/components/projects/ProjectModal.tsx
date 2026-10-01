@@ -134,7 +134,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       style={{ zIndex: 99999 }}
       role="dialog"
       aria-modal="true"
-      aria-label={`Case study: ${project.title}`}
+      aria-label={`Project details: ${project.title}`}
     >
       {/* Dim overlay covering entire viewport and sticky header */}
       <div
@@ -164,7 +164,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           <button
             onClick={onClose}
             className="stamp text-xl leading-none p-2 -mr-2 rounded hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-            aria-label="Close case study"
+            aria-label="Close modal"
           >
             ×
           </button>

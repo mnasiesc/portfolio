@@ -46,7 +46,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
     <button
       onClick={onSelect}
       className="group w-full text-left bg-background border-0 p-0 cursor-pointer"
-      aria-label={`View case study: ${project.title}`}
+      aria-label={`View details: ${project.title}`}
     >
       <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
 
@@ -87,7 +87,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
 
         {/* ── CTA footer ── */}
         <div className="pt-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-          <span className="stamp">Case Study</span>
+          <span className="stamp">More</span>
           <span className="group-hover:translate-x-1 transition-transform duration-200">
             →
           </span>
