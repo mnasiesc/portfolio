@@ -181,153 +181,81 @@
     position: relative;
   }
 
-  /* ── Wrinkled Paper Texture Overlay ──
-     Multiple layered CSS gradients simulate creased, folded paper.
-     The grain noise adds physical paper fiber feel.
-     A grid sits on top at very low opacity for a magazine layout feel. */
+  /* ── Wrinkled Paper Texture — Real Image ──
+     The user's crumpled paper photo covers the entire viewport.
+     Fixed so it doesn't scroll. Stretched to cover all screen sizes.
+     A slight color overlay blends it with the warm palette. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-
-    background-image:
-      /* ── Magazine grid overlay ── */
-      linear-gradient(
-        to right,
-        oklch(0.3 0.01 55 / 4%) 1px,
-        transparent 1px
-      ),
+    background:
+      /* Warm tint overlay to blend the texture with our palette */
       linear-gradient(
         to bottom,
-        oklch(0.3 0.01 55 / 4%) 1px,
-        transparent 1px
+        oklch(0.945 0.018 82 / 55%),
+        oklch(0.930 0.020 80 / 60%)
       ),
-      /* ── Diagonal crease: top-left fold ── */
-      linear-gradient(
-        135deg,
-        oklch(0.7 0.02 70 / 6%) 0%,
-        transparent 25%,
-        transparent 100%
-      ),
-      /* ── Diagonal crease: bottom-right fold ── */
-      linear-gradient(
-        315deg,
-        oklch(0.5 0.02 60 / 5%) 0%,
-        transparent 20%,
-        transparent 100%
-      ),
-      /* ── Horizontal paper fold lines ── */
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 280px,
-        oklch(0.5 0.015 65 / 6%) 280px,
-        oklch(0.5 0.015 65 / 3%) 282px,
-        transparent 283px
-      ),
-      /* ── Vertical paper fold line (center crease) ── */
-      linear-gradient(
-        to right,
-        transparent 0%,
-        transparent 49.5%,
-        oklch(0.5 0.015 65 / 5%) 49.5%,
-        oklch(0.5 0.015 65 / 3%) 50.5%,
-        transparent 50.5%,
-        transparent 100%
-      ),
-      /* ── Subtle paper fiber noise (SVG inline) ── */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-
-    background-size:
-      80px 80px,       /* grid columns */
-      80px 80px,       /* grid rows */
-      100% 100%,       /* top-left crease */
-      100% 100%,       /* bottom-right crease */
-      100% 100%,       /* horizontal folds */
-      100% 100%,       /* vertical center crease */
-      300px 300px;     /* noise tile */
-
-    background-repeat:
-      repeat,          /* grid */
-      repeat,          /* grid */
-      no-repeat,       /* crease */
-      no-repeat,       /* crease */
-      repeat-y,        /* horizontal folds */
-      no-repeat,       /* vertical crease */
-      repeat;          /* noise */
+      url("/paper-texture.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
-  /* Dark mode: same paper structure but inverted crease highlights */
+  /* Dark mode: darken the paper texture significantly */
   .dark body::before {
-    background-image:
-      /* grid — lighter lines on dark */
-      linear-gradient(
-        to right,
-        oklch(0.8 0.01 70 / 3%) 1px,
-        transparent 1px
-      ),
+    background:
       linear-gradient(
         to bottom,
-        oklch(0.8 0.01 70 / 3%) 1px,
-        transparent 1px
+        oklch(0.180 0.015 55 / 80%),
+        oklch(0.160 0.018 50 / 85%)
       ),
-      /* creases — lighter sheen on folds */
-      linear-gradient(
-        135deg,
-        oklch(0.5 0.01 60 / 5%) 0%,
-        transparent 25%,
-        transparent 100%
-      ),
-      linear-gradient(
-        315deg,
-        oklch(0.4 0.01 55 / 4%) 0%,
-        transparent 20%,
-        transparent 100%
-      ),
-      /* horizontal fold lines */
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 280px,
-        oklch(0.6 0.01 60 / 5%) 280px,
-        oklch(0.6 0.01 60 / 2%) 282px,
-        transparent 283px
-      ),
-      /* center crease */
-      linear-gradient(
-        to right,
-        transparent 0%,
-        transparent 49.5%,
-        oklch(0.6 0.01 60 / 4%) 49.5%,
-        oklch(0.6 0.01 60 / 2%) 50.5%,
-        transparent 50.5%,
-        transparent 100%
-      ),
-      /* noise */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-
-    background-size:
-      80px 80px,
-      80px 80px,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      300px 300px;
-
-    background-repeat:
-      repeat,
-      repeat,
-      no-repeat,
-      no-repeat,
-      repeat-y,
-      no-repeat,
-      repeat;
+      url("/paper-texture.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
-  /* All content sits above the paper texture */
+  /* ── Magazine Grid Overlay ──
+     Low-opacity editorial grid sits on top of everything. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        to right,
+        oklch(0.3 0.01 55 / 3.5%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        oklch(0.3 0.01 55 / 3.5%) 1px,
+        transparent 1px
+      );
+    background-size: 80px 80px;
+  }
+
+  .dark body::after {
+    background-image:
+      linear-gradient(
+        to right,
+        oklch(0.8 0.01 70 / 2.5%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        oklch(0.8 0.01 70 / 2.5%) 1px,
+        transparent 1px
+      );
+    background-size: 80px 80px;
+  }
+
+  /* All content sits above the paper texture + grid */
   body > * {
     position: relative;
     z-index: 1;
