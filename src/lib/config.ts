@@ -14,7 +14,7 @@ export const siteConfig: SiteConfig = {
   // ── Primary navigation ────────────────────────────────────────────────────
   nav: [
     { label: "Work",    href: "/#projects" },
-    { label: "Blog",    href: "/blog" },
+    { label: "Writing", href: "/writing" },
     { label: "Contact", href: "/#contact" },
   ],
 

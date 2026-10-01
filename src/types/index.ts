@@ -36,6 +36,23 @@ export interface Project {
   demoUrl?: string;        // Live demo link (optional)
 }
 
+// Metadata header stored in markdown frontmatter
+export interface ArticleMetadata {
+  title: string;
+  excerpt: string;
+  date: string;
+  readingTime: string;
+  category: string;
+  tags: string[];
+  featured?: boolean;
+}
+
+// Full Article object parsed from local markdown files
+export interface Article extends ArticleMetadata {
+  slug: string;
+  content: string; // Raw or converted body text
+}
+
 // The top-level site configuration shape
 export interface SiteConfig {
   name: string;

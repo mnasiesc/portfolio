@@ -10,9 +10,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { siteConfig } from "@/lib/config";
+import { getAllArticles } from "@/lib/articles";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
+import { WritingsSection } from "@/components/writing/WritingsSection";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const articles = await getAllArticles();
+
   return (
     <div className="flex flex-col flex-1">
 
@@ -63,6 +67,11 @@ export default function HomePage() {
         you only change THIS line — not any component.
       */}
       <ProjectsSection projects={siteConfig.projects} />
+
+      {/* ── WRITINGS / ARTICLES ───────────────────────────────────────────── */}
+      <div className="container-editorial">
+        <WritingsSection articles={articles} />
+      </div>
 
       {/* ── EDITORIAL RULE ────────────────────────────────────────────────── */}
       <div className="container-editorial">
