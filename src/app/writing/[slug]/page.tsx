@@ -4,7 +4,7 @@
 
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getAllArticles, getArticleBySlug } from "@/lib/articles";
 
 interface ArticlePageProps {
@@ -38,6 +38,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   if (!article) {
     notFound();
+  }
+
+  if (article.canonicalUrl) {
+    redirect(article.canonicalUrl);
   }
 
   return (
