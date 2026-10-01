@@ -64,104 +64,100 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* LIGHT MODE — Warm Parchment & Newsprint Ink                                */
+/* LIGHT MODE — Warm Aged Parchment Paper                                      */
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* oklch() is a modern CSS color space. It's perceptually uniform, meaning   */
-/* oklch(0.5 ...) looks equally "medium" in brightness no matter the hue.    */
-/* Format: oklch(lightness chroma hue)                                        */
-/* chroma=0 means no color saturation (pure gray/warm gray).                  */
+/* Warm yellowish-brown tones like aged paper / old magazine stock.            */
+/* Never pure white. The lightest surface is a warm cream.                     */
 :root {
   /* ── Page & Surface Colors ── */
-  /* Warm parchment base — not cold white, not yellow/brown, just           */
-  /* the warmth of quality newsprint paper (#FBF9F5)                        */
-  --background:         oklch(0.979 0.004 80);
-  --foreground:         oklch(0.175 0.006 75);   /* Rich ink black (#1A1917) */
+  --background:         oklch(0.945 0.018 82);  /* Warm aged cream ~#EDE5D4 */
+  --foreground:         oklch(0.240 0.015 55);  /* Deep warm sepia ink ~#3D3227 */
 
-  /* Paper surface slightly more layered than background                     */
-  --card:               oklch(0.962 0.006 78);
-  --card-foreground:    oklch(0.175 0.006 75);
+  /* Card: slightly warmer / more layered than background */
+  --card:               oklch(0.925 0.020 80);  /* Stacked paper layer ~#E3D9C5 */
+  --card-foreground:    oklch(0.240 0.015 55);
 
-  --popover:            oklch(0.962 0.006 78);
-  --popover-foreground: oklch(0.175 0.006 75);
+  --popover:            oklch(0.925 0.020 80);
+  --popover-foreground: oklch(0.240 0.015 55);
 
-  /* ── Primary — Ink Black (used for buttons, active states) ── */
-  --primary:            oklch(0.175 0.006 75);
-  --primary-foreground: oklch(0.979 0.004 80);
+  /* ── Primary — Sepia Ink (buttons, active states) ── */
+  --primary:            oklch(0.240 0.015 55);
+  --primary-foreground: oklch(0.945 0.018 82);
 
-  /* ── Secondary — Paper Grey (muted surfaces) ── */
-  --secondary:          oklch(0.940 0.006 76);
-  --secondary-foreground: oklch(0.350 0.006 75);
+  /* ── Secondary — Dusty Paper Grey ── */
+  --secondary:          oklch(0.900 0.015 78);
+  --secondary-foreground: oklch(0.380 0.012 60);
 
-  /* ── Muted — Faded ink (disabled, placeholder text) ── */
-  --muted:              oklch(0.940 0.006 76);
-  --muted-foreground:   oklch(0.480 0.006 75);  /* ~stone-500 */
+  /* ── Muted — Faded pencil ink ── */
+  --muted:              oklch(0.900 0.015 78);
+  --muted-foreground:   oklch(0.480 0.012 60);
 
-  /* ── Accent — Paper crease highlight ── */
-  --accent:             oklch(0.940 0.006 76);
-  --accent-foreground:  oklch(0.175 0.006 75);
+  /* ── Accent — Paper fold highlight ── */
+  --accent:             oklch(0.900 0.015 78);
+  --accent-foreground:  oklch(0.240 0.015 55);
 
-  /* ── Borders — Hairline paper rules ── */
-  --border:             oklch(0.870 0.008 76);  /* ~stone-300/70 */
-  --input:              oklch(0.870 0.008 76);
-  --ring:               oklch(0.480 0.006 75);
+  /* ── Borders — Visible paper creases ── */
+  --border:             oklch(0.820 0.018 76);
+  --input:              oklch(0.820 0.018 76);
+  --ring:               oklch(0.480 0.012 60);
 
   /* ── Destructive ── */
   --destructive:        oklch(0.577 0.245 27.325);
 
   /* ── Border Radius ── */
-  /* Slightly reduced radius for a sharp, editorial feel                     */
   --radius: 0.375rem;
 
   /* ── Sidebar ── */
-  --sidebar:                    oklch(0.962 0.006 78);
-  --sidebar-foreground:         oklch(0.175 0.006 75);
-  --sidebar-primary:            oklch(0.175 0.006 75);
-  --sidebar-primary-foreground: oklch(0.979 0.004 80);
-  --sidebar-accent:             oklch(0.940 0.006 76);
-  --sidebar-accent-foreground:  oklch(0.175 0.006 75);
-  --sidebar-border:             oklch(0.870 0.008 76);
-  --sidebar-ring:               oklch(0.480 0.006 75);
+  --sidebar:                    oklch(0.925 0.020 80);
+  --sidebar-foreground:         oklch(0.240 0.015 55);
+  --sidebar-primary:            oklch(0.240 0.015 55);
+  --sidebar-primary-foreground: oklch(0.945 0.018 82);
+  --sidebar-accent:             oklch(0.900 0.015 78);
+  --sidebar-accent-foreground:  oklch(0.240 0.015 55);
+  --sidebar-border:             oklch(0.820 0.018 76);
+  --sidebar-ring:               oklch(0.480 0.012 60);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/* DARK MODE — Deep Charcoal Ink on Warm Dark Paper                           */
+/* DARK MODE — Deep Warm Brown / Tobacco Paper                                 */
 /* ═══════════════════════════════════════════════════════════════════════════ */
+/* Not pure black. A deep tobacco / roasted coffee brown with warm undertones. */
 .dark {
-  --background:         oklch(0.135 0.006 72);  /* Deep warm charcoal (#141312) */
-  --foreground:         oklch(0.930 0.004 80);  /* Warm off-white text */
+  --background:         oklch(0.180 0.015 55);  /* Deep tobacco brown ~#2A231B */
+  --foreground:         oklch(0.890 0.015 78);  /* Warm cream text ~#DDD2BF */
 
-  --card:               oklch(0.165 0.006 72);
-  --card-foreground:    oklch(0.930 0.004 80);
+  --card:               oklch(0.210 0.015 55);  /* Slightly lighter brown surface */
+  --card-foreground:    oklch(0.890 0.015 78);
 
-  --popover:            oklch(0.165 0.006 72);
-  --popover-foreground: oklch(0.930 0.004 80);
+  --popover:            oklch(0.210 0.015 55);
+  --popover-foreground: oklch(0.890 0.015 78);
 
-  --primary:            oklch(0.930 0.004 80);
-  --primary-foreground: oklch(0.165 0.006 72);
+  --primary:            oklch(0.890 0.015 78);
+  --primary-foreground: oklch(0.210 0.015 55);
 
-  --secondary:          oklch(0.210 0.006 72);
-  --secondary-foreground: oklch(0.930 0.004 80);
+  --secondary:          oklch(0.260 0.012 55);
+  --secondary-foreground: oklch(0.890 0.015 78);
 
-  --muted:              oklch(0.210 0.006 72);
-  --muted-foreground:   oklch(0.560 0.006 72);
+  --muted:              oklch(0.260 0.012 55);
+  --muted-foreground:   oklch(0.560 0.012 60);
 
-  --accent:             oklch(0.210 0.006 72);
-  --accent-foreground:  oklch(0.930 0.004 80);
+  --accent:             oklch(0.260 0.012 55);
+  --accent-foreground:  oklch(0.890 0.015 78);
 
-  --border:             oklch(1 0 0 / 8%);
-  --input:              oklch(1 0 0 / 12%);
-  --ring:               oklch(0.560 0.006 72);
+  --border:             oklch(0.320 0.012 55);
+  --input:              oklch(0.320 0.012 55);
+  --ring:               oklch(0.560 0.012 60);
 
   --destructive:        oklch(0.704 0.191 22.216);
 
-  --sidebar:                    oklch(0.165 0.006 72);
-  --sidebar-foreground:         oklch(0.930 0.004 80);
-  --sidebar-primary:            oklch(0.930 0.004 80);
-  --sidebar-primary-foreground: oklch(0.165 0.006 72);
-  --sidebar-accent:             oklch(0.210 0.006 72);
-  --sidebar-accent-foreground:  oklch(0.930 0.004 80);
-  --sidebar-border:             oklch(1 0 0 / 8%);
-  --sidebar-ring:               oklch(0.560 0.006 72);
+  --sidebar:                    oklch(0.210 0.015 55);
+  --sidebar-foreground:         oklch(0.890 0.015 78);
+  --sidebar-primary:            oklch(0.890 0.015 78);
+  --sidebar-primary-foreground: oklch(0.210 0.015 55);
+  --sidebar-accent:             oklch(0.260 0.012 55);
+  --sidebar-accent-foreground:  oklch(0.890 0.015 78);
+  --sidebar-border:             oklch(0.320 0.012 55);
+  --sidebar-ring:               oklch(0.560 0.012 60);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -182,11 +178,159 @@
 
   body {
     @apply bg-background text-foreground;
-    /* Subtle paper grain texture using CSS — no image required.            */
-    /* Creates a very fine noise pattern that feels like real newsprint.    */
+    position: relative;
+  }
+
+  /* ── Wrinkled Paper Texture Overlay ──
+     Multiple layered CSS gradients simulate creased, folded paper.
+     The grain noise adds physical paper fiber feel.
+     A grid sits on top at very low opacity for a magazine layout feel. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
     background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+      /* ── Magazine grid overlay ── */
+      linear-gradient(
+        to right,
+        oklch(0.3 0.01 55 / 4%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        oklch(0.3 0.01 55 / 4%) 1px,
+        transparent 1px
+      ),
+      /* ── Diagonal crease: top-left fold ── */
+      linear-gradient(
+        135deg,
+        oklch(0.7 0.02 70 / 6%) 0%,
+        transparent 25%,
+        transparent 100%
+      ),
+      /* ── Diagonal crease: bottom-right fold ── */
+      linear-gradient(
+        315deg,
+        oklch(0.5 0.02 60 / 5%) 0%,
+        transparent 20%,
+        transparent 100%
+      ),
+      /* ── Horizontal paper fold lines ── */
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 280px,
+        oklch(0.5 0.015 65 / 6%) 280px,
+        oklch(0.5 0.015 65 / 3%) 282px,
+        transparent 283px
+      ),
+      /* ── Vertical paper fold line (center crease) ── */
+      linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 49.5%,
+        oklch(0.5 0.015 65 / 5%) 49.5%,
+        oklch(0.5 0.015 65 / 3%) 50.5%,
+        transparent 50.5%,
+        transparent 100%
+      ),
+      /* ── Subtle paper fiber noise (SVG inline) ── */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+
+    background-size:
+      80px 80px,       /* grid columns */
+      80px 80px,       /* grid rows */
+      100% 100%,       /* top-left crease */
+      100% 100%,       /* bottom-right crease */
+      100% 100%,       /* horizontal folds */
+      100% 100%,       /* vertical center crease */
+      300px 300px;     /* noise tile */
+
+    background-repeat:
+      repeat,          /* grid */
+      repeat,          /* grid */
+      no-repeat,       /* crease */
+      no-repeat,       /* crease */
+      repeat-y,        /* horizontal folds */
+      no-repeat,       /* vertical crease */
+      repeat;          /* noise */
+  }
+
+  /* Dark mode: same paper structure but inverted crease highlights */
+  .dark body::before {
+    background-image:
+      /* grid — lighter lines on dark */
+      linear-gradient(
+        to right,
+        oklch(0.8 0.01 70 / 3%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        oklch(0.8 0.01 70 / 3%) 1px,
+        transparent 1px
+      ),
+      /* creases — lighter sheen on folds */
+      linear-gradient(
+        135deg,
+        oklch(0.5 0.01 60 / 5%) 0%,
+        transparent 25%,
+        transparent 100%
+      ),
+      linear-gradient(
+        315deg,
+        oklch(0.4 0.01 55 / 4%) 0%,
+        transparent 20%,
+        transparent 100%
+      ),
+      /* horizontal fold lines */
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 280px,
+        oklch(0.6 0.01 60 / 5%) 280px,
+        oklch(0.6 0.01 60 / 2%) 282px,
+        transparent 283px
+      ),
+      /* center crease */
+      linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 49.5%,
+        oklch(0.6 0.01 60 / 4%) 49.5%,
+        oklch(0.6 0.01 60 / 2%) 50.5%,
+        transparent 50.5%,
+        transparent 100%
+      ),
+      /* noise */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+
+    background-size:
+      80px 80px,
+      80px 80px,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      300px 300px;
+
+    background-repeat:
+      repeat,
+      repeat,
+      no-repeat,
+      no-repeat,
+      repeat-y,
+      no-repeat,
+      repeat;
+  }
+
+  /* All content sits above the paper texture */
+  body > * {
+    position: relative;
+    z-index: 1;
   }
 
   /* ── Editorial Typography Defaults ── */

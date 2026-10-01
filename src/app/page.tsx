@@ -24,30 +24,29 @@ export default async function HomePage() {
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section className="border-b border-border py-12 md:py-16">
         <div className="container-editorial">
-          <div className="flex items-center gap-2 font-mono text-xs text-stone-600 dark:text-stone-400 uppercase tracking-widest mb-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Systems &amp; Software Engineer</span>
+          <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-500 animate-pulse" />
+            <span>Open to Opportunities</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-[1.15]">
-            Systems Programming, C++, <br />
-            &amp; Storage Architecture.
+            Systems Programmer
           </h1>
 
-          <p className="mt-4 text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed font-sans">
-            Building Linux C++ file watchers (FlowHook), UNIX block storage engines (BSE/ForgeDB), and Rust network tools.
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-sans">
+            Interested in the kernel, backend systems, distributed infrastructure, developer tooling, and low-level languages. Building tools in C++ and Rust.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider">
             <a
               href="#projects"
-              className="px-5 py-2.5 rounded bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 hover:opacity-90 transition-opacity"
+              className="px-5 py-2.5 rounded bg-foreground text-background hover:opacity-90 transition-opacity"
             >
               VIEW WORK &rarr;
             </a>
             <a
               href="#contact"
-              className="px-5 py-2.5 rounded border border-stone-300 dark:border-stone-800 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
+              className="px-5 py-2.5 rounded border border-border text-foreground hover:bg-muted transition-colors"
             >
               CONTACT &rarr;
             </a>
