@@ -22,33 +22,34 @@ export default async function HomePage() {
     <div className="flex flex-col flex-1">
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="border-b border-border">
-        <div className="container-editorial py-16 md:py-24">
+      <section className="border-b border-border py-12 md:py-16">
+        <div className="container-editorial">
+          <div className="flex items-center gap-2 font-mono text-xs text-stone-600 dark:text-stone-400 uppercase tracking-widest mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Systems &amp; Software Engineer</span>
+          </div>
 
-          <p className="stamp mb-6">Software Engineer · Open to Work</p>
-
-          <h1 className="font-serif text-5xl md:text-7xl font-light leading-[1.05] tracking-tight max-w-3xl">
-            Building things<br />
-            on the <em>web.</em>
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-[1.15]">
+            Systems Programming, C++, <br />
+            &amp; Storage Architecture.
           </h1>
 
-          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-            Software engineer focused on interfaces, tooling, and learning in public.
-            This is the portfolio and technical blog.
+          <p className="mt-4 text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed font-sans">
+            Building Linux C++ file watchers (FlowHook), UNIX block storage engines (BSE/ForgeDB), and Rust network tools.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider">
             <a
               href="#projects"
-              className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 text-sm font-medium no-underline hover:opacity-80 transition-opacity"
+              className="px-5 py-2.5 rounded bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 hover:opacity-90 transition-opacity"
             >
-              View Work
+              VIEW WORK &rarr;
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 border border-border px-5 py-2.5 text-sm font-medium no-underline hover:bg-muted transition-colors"
+              className="px-5 py-2.5 rounded border border-stone-300 dark:border-stone-800 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
             >
-              Get in Touch
+              CONTACT &rarr;
             </a>
           </div>
         </div>

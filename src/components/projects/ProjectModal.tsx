@@ -129,7 +129,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 text-sm font-medium no-underline hover:opacity-80 transition-opacity stamp"
+              className="inline-flex items-center gap-2 bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:opacity-90 transition-opacity"
             >
               View on GitHub →
             </a>
@@ -138,7 +138,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 border border-border px-5 py-2.5 text-sm font-medium no-underline hover:bg-muted transition-colors stamp"
+                className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-700 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
               >
                 Live Demo →
               </a>

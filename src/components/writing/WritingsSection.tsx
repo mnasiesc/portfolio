@@ -15,22 +15,17 @@ export function WritingsSection({ articles }: WritingsSectionProps) {
 
   return (
     <section id="writing" className="py-16 sm:py-24 border-t border-stone-300/70 dark:border-stone-800">
-      {/* Editorial Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 pb-4 border-b-2 border-stone-900 dark:border-stone-100 gap-4">
-        <div>
-          <div className="font-mono text-xs tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-1">
-            SECTION 02 // ESSAYS & TECHNICAL WRITING
-          </div>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Writings & <span className="italic font-normal">Notes</span>
-          </h2>
-        </div>
+      {/* Section Header */}
+      <div className="flex items-baseline justify-between mb-8 pb-3 border-b-2 border-stone-900 dark:border-stone-100">
+        <h2 className="font-serif text-2xl font-normal text-stone-900 dark:text-stone-100">
+          Writings &amp; Technical Notes
+        </h2>
 
         <Link
           href="/writing"
-          className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-stone-900 dark:text-stone-100 hover:opacity-75 transition-opacity"
+          className="stamp text-xs text-stone-900 dark:text-stone-100 hover:opacity-75 transition-opacity"
         >
-          VIEW ALL ARTICLES ({articles.length}) &rarr;
+          VIEW ALL ({articles.length}) &rarr;
         </Link>
       </div>
 

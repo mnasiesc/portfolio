@@ -232,7 +232,7 @@
 
   /* Monospaced issue stamp — for dates, issue numbers, tags */
   .stamp {
-    @apply font-mono text-xs tracking-widest uppercase text-muted-foreground;
+    @apply font-mono text-xs tracking-widest uppercase;
   }
 
   /* Pull-quote style */

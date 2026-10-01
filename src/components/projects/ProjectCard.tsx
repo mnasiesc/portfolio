@@ -22,10 +22,10 @@ import type { Project } from "@/types";
 // Maps a project status to a human-readable label and Tailwind color classes.
 // Centralised here so changing a badge style is one line, not a grep.
 const STATUS_CONFIG: Record<Project["status"], { label: string; classes: string }> = {
-  featured:     { label: "Featured",     classes: "bg-foreground text-background" },
-  active:       { label: "Active",       classes: "bg-muted text-foreground" },
-  experimental: { label: "Experimental", classes: "bg-muted text-muted-foreground" },
-  archived:     { label: "Archived",     classes: "bg-muted text-muted-foreground opacity-60" },
+  featured:     { label: "Featured",     classes: "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 font-bold px-2 py-0.5" },
+  active:       { label: "Active",       classes: "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-medium px-2 py-0.5" },
+  experimental: { label: "Experimental", classes: "bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 px-2 py-0.5" },
+  archived:     { label: "Archived",     classes: "bg-stone-200/50 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 px-2 py-0.5" },
 };
 
 // ─── Props ────────────────────────────────────────────────────────────────────
