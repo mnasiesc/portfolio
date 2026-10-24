@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 
   return {
-    title: `${article.title} | ${portfolio.site.name} Technical Notes`,
+    title: `${article.title} | ${portfolio.site.name} ${portfolio.writing.articleTitleSuffix}`,
     description: article.excerpt,
   };
 }

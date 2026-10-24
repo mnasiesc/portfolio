@@ -168,6 +168,7 @@
   "writing": {
     "pageTitle": "Writings & Technical Essays | Portfolio",
     "pageDescription": "Technical writings, engineering notes, and low-level systems breakdowns.",
+    "articleTitleSuffix": "Technical Notes",
     "backToHome": "← BACK TO MAIN ISSUE",
     "archiveEyebrow": "ARCHIVE // ALL ESSAYS & TECHNICAL NOTES",
     "pageHeading": "Writings & Essays",

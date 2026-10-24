@@ -76,10 +76,11 @@
     "writing": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["pageTitle", "pageDescription", "backToHome", "archiveEyebrow", "pageHeading", "pageIntro", "backToWriting", "featureLabel", "hashnodeLink", "readOnHashnode", "allArticles", "articleNotFound", "projectModalClose", "projectModalTitle", "builtWith", "viewOnGitHub", "liveDemo", "themeToggleLabel", "lightThemeTitle", "darkThemeTitle", "homeAriaLabel", "primaryNavigationLabel", "socialLinkAriaSuffix"],
+      "required": ["pageTitle", "pageDescription", "articleTitleSuffix", "backToHome", "archiveEyebrow", "pageHeading", "pageIntro", "backToWriting", "featureLabel", "hashnodeLink", "readOnHashnode", "allArticles", "articleNotFound", "projectModalClose", "projectModalTitle", "builtWith", "viewOnGitHub", "liveDemo", "themeToggleLabel", "lightThemeTitle", "darkThemeTitle", "homeAriaLabel", "primaryNavigationLabel", "socialLinkAriaSuffix"],
       "properties": {
         "pageTitle": { "type": "string" },
         "pageDescription": { "type": "string" },
+        "articleTitleSuffix": { "type": "string" },
         "backToHome": { "type": "string" },
         "archiveEyebrow": { "type": "string" },
         "pageHeading": { "type": "string" },
