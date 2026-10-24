@@ -26,15 +26,16 @@ import type { NavItem } from "@/types";
 // That's the decoupling: the UI and the data are completely independent.
 interface NavLinksProps {
   items: NavItem[];
+  ariaLabel: string;
 }
 
-export function NavLinks({ items }: NavLinksProps) {
+export function NavLinks({ items, ariaLabel }: NavLinksProps) {
   // usePathname() returns the current URL path, e.g. "/blog" or "/"
   // When the user navigates, it updates and React re-renders this component.
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary navigation">
+    <nav aria-label={ariaLabel}>
       <ul className="flex items-center gap-3.5 sm:gap-6 md:gap-8">
         {items.map((item) => {
           // Determine if this link is "active" (current page).

@@ -4,15 +4,17 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Article } from "@/types";
+import { portfolio } from "@/lib/portfolio";
 
 interface ArticleCardProps {
   article: Article;
+  readLabel: string;
 }
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, readLabel }: ArticleCardProps) {
   const targetUrl =
     article.canonicalUrl ||
-    `https://kernel-thoughts.hashnode.dev/${article.slug}`;
+    `${portfolio.site.blogBaseUrl}/${article.slug}`;
 
   return (
     <article className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-lg bg-stone-100/60 dark:bg-stone-900/60 border border-stone-300/60 dark:border-stone-800 transition-all duration-300 hover:border-stone-900 dark:hover:border-stone-100 hover:shadow-md">
@@ -60,7 +62,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         </div>
 
         <span className="inline-flex items-center gap-1 text-xs font-mono font-bold text-stone-900 dark:text-stone-100 group-hover:translate-x-1 transition-transform duration-200">
-          READ ON HASHNODE &rarr;
+          {readLabel}
         </span>
       </div>
     </article>

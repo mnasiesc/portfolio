@@ -4,12 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run content:validate && npm run content:assets && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "content:validate": "node scripts/validate-content.mjs",
+    "content:assets": "node scripts/generate-content-assets.mjs",
+    "predev": "npm run content:validate && npm run content:assets",
+    "editor": "node scripts/content-editor.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
     "gray-matter": "^4.0.3",

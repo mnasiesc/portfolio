@@ -27,9 +27,21 @@ import { ProjectModal } from "@/components/projects/ProjectModal";
 
 interface ProjectsSectionProps {
   projects: Project[]; // Passed in from page.tsx (which reads from config)
+  labels: {
+    projectHeading: string;
+    projectCountLabel: string;
+    projectMore: string;
+    projectCardAriaPrefix: string;
+    projectStatuses: Record<Project["status"], string>;
+    projectModalClose: string;
+    projectModalTitle: string;
+    builtWith: string;
+    viewOnGitHub: string;
+    liveDemo: string;
+  };
 }
 
-export function ProjectsSection({ projects }: ProjectsSectionProps) {
+export function ProjectsSection({ projects, labels }: ProjectsSectionProps) {
   // ── State ────────────────────────────────────────────────────────────────
   // `selectedProject` is either a Project object (modal open) or null (closed).
   // useState<Project | null>(null) means: "start with no project selected".
@@ -52,8 +64,8 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
 
       {/* ── Section header ── */}
       <div className="flex items-baseline justify-between mb-8">
-        <h2 className="font-serif text-2xl font-normal">Selected Work</h2>
-        <span className="stamp">{projects.length.toString().padStart(2, "0")} Projects</span>
+        <h2 className="font-serif text-2xl font-normal">{labels.projectHeading}</h2>
+        <span className="stamp">{projects.length.toString().padStart(2, "0")} {labels.projectCountLabel}</span>
       </div>
 
       {/* ── Featured project(s) — full width ── */}
@@ -63,6 +75,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             <ProjectCard
               key={project.id}
               project={project}
+              labels={labels}
               // Arrow function captures this specific project in scope.
               // When the card calls onSelect(), it runs setSelectedProject(project)
               // here in the parent, causing the modal to open with that project's data.
@@ -79,6 +92,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             <ProjectCard
               key={project.id}
               project={project}
+              labels={labels}
               onSelect={() => setSelectedProject(project)}
             />
           ))}
@@ -91,6 +105,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
       <ProjectModal
         project={selectedProject}
         onClose={handleClose}
+        labels={labels}
       />
 
     </section>

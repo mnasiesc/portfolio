@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
-import { siteConfig } from "@/lib/config";
+import { portfolio } from "@/lib/portfolio";
 import { NavLinks } from "@/components/layout/NavLinks";
 import { HeaderSocials } from "@/components/layout/HeaderSocials";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -27,8 +27,8 @@ export function Header() {
 
       {/* ── Mobile dateline ticker: edition stamp + quick social icons ── */}
       <div className="sm:hidden border-b border-border/50 px-4 py-1.5 flex items-center justify-between bg-muted/20">
-        <span className="stamp text-[9px] text-muted-foreground">{siteConfig.issueLabel}</span>
-        <HeaderSocials socials={siteConfig.socials} />
+        <span className="stamp text-[9px] text-muted-foreground">{portfolio.site.issueLabel}</span>
+        <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
       </div>
 
       {/* ── Main masthead row ── */}
@@ -38,29 +38,29 @@ export function Header() {
         <Link
           href="/"
           className="no-underline group flex flex-col gap-0.5"
-          aria-label={`${siteConfig.name} — home`}
+          aria-label={`${portfolio.site.name} — ${portfolio.writing.homeAriaLabel}`}
         >
           <span className="font-serif text-xl font-light leading-none tracking-tight group-hover:opacity-70 transition-opacity">
-            {siteConfig.name}
+            {portfolio.site.name}
           </span>
           {/* Issue stamp below the name — on desktop */}
-          <span className="stamp text-[10px] hidden sm:block">{siteConfig.issueLabel}</span>
+          <span className="stamp text-[10px] hidden sm:block">{portfolio.site.issueLabel}</span>
         </Link>
 
         {/* ── Navigation links, Quick Social Icons & Theme Toggle ── */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <NavLinks items={siteConfig.nav} />
+          <NavLinks items={portfolio.navigation} ariaLabel={portfolio.writing.primaryNavigationLabel} />
 
           {/* Desktop editorial divider & quick social icons */}
           <div className="h-4 w-px bg-stone-300 dark:bg-stone-700 hidden sm:block" />
           <div className="hidden sm:block">
-            <HeaderSocials socials={siteConfig.socials} />
+            <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
           </div>
 
           {/* Editorial divider */}
           <div className="h-4 w-px bg-stone-300 dark:bg-stone-700" />
 
-          <ThemeToggle />
+          <ThemeToggle labels={portfolio.writing} />
         </div>
       </div>
     </header>

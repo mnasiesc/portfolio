@@ -8,9 +8,10 @@ import { ArticleCard } from "./ArticleCard";
 
 interface WritingsSectionProps {
   articles: Article[];
+  labels: { writingHeading: string; viewAllArticles: string; readOnHashnode: string };
 }
 
-export function WritingsSection({ articles }: WritingsSectionProps) {
+export function WritingsSection({ articles, labels }: WritingsSectionProps) {
   if (!articles || articles.length === 0) return null;
 
   return (
@@ -18,21 +19,21 @@ export function WritingsSection({ articles }: WritingsSectionProps) {
       {/* Section Header */}
       <div className="flex items-baseline justify-between mb-8 pb-3 border-b-2 border-stone-900 dark:border-stone-100">
         <h2 className="font-serif text-2xl font-normal text-stone-900 dark:text-stone-100">
-          Writings &amp; Technical Notes
+          {labels.writingHeading}
         </h2>
 
         <Link
           href="/writing"
           className="stamp text-xs text-stone-900 dark:text-stone-100 hover:opacity-75 transition-opacity"
         >
-          VIEW ALL ({articles.length}) &rarr;
+          {labels.viewAllArticles} ({articles.length}) →
         </Link>
       </div>
 
       {/* Grid of Articles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.map((article) => (
-          <ArticleCard key={article.slug} article={article} />
+          <ArticleCard key={article.slug} article={article} readLabel={labels.readOnHashnode} />
         ))}
       </div>
     </section>

@@ -1,4 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
+
+The public portfolio is rendered by Next.js. Editable portfolio data lives in [`content/portfolio.json`](content/portfolio.json), including page copy, titles, navigation, projects, articles, SEO metadata, and embedded image bytes. The JSON Schema is [`content/portfolio.schema.json`](content/portfolio.schema.json).
+
+## Run the Site
+
+```bash
+npm ci
+npm run dev
+```
+
+Open <http://localhost:3000>. Development and production builds validate the content and regenerate image files under `public/generated-content/` from embedded JSON. Those files are disposable build output, not the editable image source.
+
+## Edit Portfolio Content
+
+Start the local visual editor:
+
+```bash
+npm run editor
+```
+
+Open <http://127.0.0.1:4173>. The editor is local-only, validates the document before saving, and writes changes directly to `content/portfolio.json`. Image uploads are encoded into the JSON document, with generated image derivatives rebuilt on save. Restart or rebuild the Next.js site after saving for updates to be rendered.
+
+Content can also be edited directly in JSON. Check it with:
+
+```bash
+npm run content:validate
+npm run typecheck
+npm run lint
+npm run build
+```
+
+The implementation phases and completion gates are tracked in [` .agents/PHASED_ROADMAP.md`](.agents/PHASED_ROADMAP.md).
 
 ## Getting Started
 

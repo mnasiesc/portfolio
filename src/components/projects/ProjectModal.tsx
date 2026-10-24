@@ -5,13 +5,20 @@
 // text rendering including styled inline code badges and list items.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Project } from "@/types";
 
 interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
+  labels: {
+    projectModalClose: string;
+    projectModalTitle: string;
+    builtWith: string;
+    viewOnGitHub: string;
+    liveDemo: string;
+  };
 }
 
 /**
@@ -92,14 +99,7 @@ function ProjectDescription({ content }: { content: string }) {
   );
 }
 
-export function ProjectModal({ project, onClose }: ProjectModalProps) {
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  // Set mounted true on client
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
   // ── Escape key handler ───────────────────────────────────────────────────
   useEffect(() => {
     if (!project) return;
@@ -124,7 +124,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, [project]);
 
-  if (!project || !mounted) return null;
+  if (!project || typeof document === "undefined") return null;
 
   // Render directly onto document.body using createPortal so it escapes all parent
   // stacking contexts, sections, and containers, guaranteeing it sits above the sticky header.
@@ -134,7 +134,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       style={{ zIndex: 99999 }}
       role="dialog"
       aria-modal="true"
-      aria-label={`Project details: ${project.title}`}
+      aria-label={`${labels.projectModalTitle}: ${project.title}`}
     >
       {/* Dim overlay covering entire viewport and sticky header */}
       <div
@@ -164,7 +164,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           <button
             onClick={onClose}
             className="stamp text-xl leading-none p-2 -mr-2 rounded hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-            aria-label="Close modal"
+            aria-label={labels.projectModalClose}
           >
             ×
           </button>
@@ -177,7 +177,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
           {/* Tech stack badges */}
           <div>
-            <p className="stamp mb-2.5 text-xs text-muted-foreground">Built With</p>
+            <p className="stamp mb-2.5 text-xs text-muted-foreground">{labels.builtWith}</p>
             <div className="flex flex-wrap gap-2">
               {project.tags.map((tag) => (
                 <span
@@ -198,7 +198,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:opacity-90 transition-opacity"
             >
-              View on GitHub →
+              {labels.viewOnGitHub}
             </a>
             {project.demoUrl && (
               <a
@@ -207,7 +207,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-700 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
               >
-                Live Demo →
+                {labels.liveDemo}
               </a>
             )}
           </div>

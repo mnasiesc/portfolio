@@ -10,13 +10,22 @@ import { SocialLink } from "@/types";
 
 interface ContactSectionProps {
   socials: SocialLink[];
+  labels: {
+    contactHeading: string;
+    contactDescription: string;
+    contactFallbackEmail: string;
+    contactEmailLabel: string;
+    copyEmail: string;
+    copiedEmail: string;
+    linksLabel: string;
+  };
 }
 
-export function ContactSection({ socials }: ContactSectionProps) {
+export function ContactSection({ socials, labels }: ContactSectionProps) {
   const [copied, setCopied] = useState<boolean>(false);
 
   const emailSocial = socials.find((s) => s.label.toLowerCase().includes("email"));
-  const emailAddress = emailSocial?.handle || "hello@mnasie.dev";
+  const emailAddress = emailSocial?.handle || labels.contactFallbackEmail;
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(emailAddress);
@@ -31,7 +40,7 @@ export function ContactSection({ socials }: ContactSectionProps) {
       {/* Section Header */}
       <div className="mb-8 pb-3 border-b-2 border-stone-900 dark:border-stone-100">
         <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Contact
+          {labels.contactHeading}
         </h2>
       </div>
 
@@ -39,7 +48,7 @@ export function ContactSection({ socials }: ContactSectionProps) {
         {/* Left Column: Direct Email Box */}
         <div className="lg:col-span-7 space-y-4">
           <p className="text-stone-700 dark:text-stone-300 text-base leading-relaxed font-sans">
-            Open to engineering roles, low-level systems projects, and technical collaboration.
+            {labels.contactDescription}
           </p>
 
           {/* Email Copy Box */}
@@ -50,7 +59,7 @@ export function ContactSection({ socials }: ContactSectionProps) {
               </div>
               <div>
                 <div className="font-mono text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-wider">
-                  Email
+                  {labels.contactEmailLabel}
                 </div>
                 <div className="font-mono text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 select-all break-all sm:break-normal">
                   {emailAddress}
@@ -66,12 +75,12 @@ export function ContactSection({ socials }: ContactSectionProps) {
               {copied ? (
                 <>
                   <Check className="w-4 h-4 text-emerald-400 dark:text-emerald-600" />
-                  COPIED!
+                  {labels.copiedEmail}
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
-                  COPY EMAIL
+                  {labels.copyEmail}
                 </>
               )}
             </button>
@@ -81,7 +90,7 @@ export function ContactSection({ socials }: ContactSectionProps) {
         {/* Right Column: Social Links */}
         <div className="lg:col-span-5 space-y-3">
           <div className="font-mono text-xs text-stone-600 dark:text-stone-400 tracking-widest uppercase mb-1">
-            Links
+            {labels.linksLabel}
           </div>
 
           <div className="space-y-2">

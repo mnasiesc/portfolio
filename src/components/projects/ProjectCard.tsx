@@ -21,24 +21,29 @@ import type { Project } from "@/types";
 // ─── Status badge config ──────────────────────────────────────────────────────
 // Maps a project status to a human-readable label and Tailwind color classes.
 // Centralised here so changing a badge style is one line, not a grep.
-const STATUS_CONFIG: Record<Project["status"], { label: string; classes: string }> = {
-  featured:     { label: "Featured",     classes: "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 font-bold px-2 py-0.5" },
-  active:       { label: "Active",       classes: "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-medium px-2 py-0.5" },
-  experimental: { label: "Experimental", classes: "bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 px-2 py-0.5" },
-  archived:     { label: "Archived",     classes: "bg-stone-200/50 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 px-2 py-0.5" },
+const STATUS_CONFIG: Record<Project["status"], string> = {
+  featured: "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 font-bold px-2 py-0.5",
+  active: "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-medium px-2 py-0.5",
+  experimental: "bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 px-2 py-0.5",
+  archived: "bg-stone-200/50 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 px-2 py-0.5",
 };
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface ProjectCardProps {
   project: Project;
+  labels: {
+    projectMore: string;
+    projectCardAriaPrefix: string;
+    projectStatuses: Record<Project["status"], string>;
+  };
   // onSelect: a callback passed DOWN from the parent (ProjectsSection).
   // When the user clicks, we call onSelect() and the parent handles
   // which modal to open. The card itself has no idea modals exist.
   onSelect: () => void;
 }
 
-export function ProjectCard({ project, onSelect }: ProjectCardProps) {
-  const status = STATUS_CONFIG[project.status];
+export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
+  const statusClasses = STATUS_CONFIG[project.status];
 
   return (
     // Each card is a button so keyboard navigation works out of the box.
@@ -46,7 +51,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
     <button
       onClick={onSelect}
       className="group w-full text-left bg-background border-0 p-0 cursor-pointer"
-      aria-label={`View details: ${project.title}`}
+      aria-label={`${labels.projectCardAriaPrefix} ${project.title}`}
     >
       <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
 
@@ -56,10 +61,10 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
           <span
             className={[
               "stamp text-[10px] px-2 py-0.5",
-              status.classes,
+              statusClasses,
             ].join(" ")}
           >
-            {status.label}
+            {labels.projectStatuses[project.status]}
           </span>
         </div>
 
@@ -87,7 +92,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
 
         {/* ── CTA footer ── */}
         <div className="pt-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-          <span className="stamp">More</span>
+          <span className="stamp">{labels.projectMore}</span>
           <span className="group-hover:translate-x-1 transition-transform duration-200">
             →
           </span>

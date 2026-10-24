@@ -246,7 +246,7 @@
         oklch(0.945 0.018 82 / 55%),
         oklch(0.930 0.020 80 / 60%)
       ),
-      url("/paper-texture.png");
+      var(--paper-texture);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -260,7 +260,7 @@
         oklch(0.180 0.015 55 / 80%),
         oklch(0.160 0.018 50 / 85%)
       ),
-      url("/paper-texture.png");
+      var(--paper-texture);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

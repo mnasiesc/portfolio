@@ -8,52 +8,49 @@
 //   Needs to access `window.localStorage` and manipulate `document.documentElement.classList`.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 
-export function ThemeToggle() {
-  const [isDark, setIsDark] = useState<boolean>(false);
-  const [mounted, setMounted] = useState<boolean>(false);
+interface ThemeToggleProps {
+  labels: {
+    themeToggleLabel: string;
+    lightThemeTitle: string;
+    darkThemeTitle: string;
+  };
+}
 
-  useEffect(() => {
-    setMounted(true);
-    // Check local storage or document class
-    const hasDarkClass = document.documentElement.classList.contains("dark");
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark" || (!storedTheme && hasDarkClass)) {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
+export function ThemeToggle({ labels }: ThemeToggleProps) {
+  const isDark = useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener("storage", onChange);
+      window.addEventListener("portfolio-theme-change", onChange);
+      return () => {
+        window.removeEventListener("storage", onChange);
+        window.removeEventListener("portfolio-theme-change", onChange);
+      };
+    },
+    () => document.documentElement.classList.contains("dark"),
+    () => false,
+  );
 
   const toggleTheme = () => {
     if (isDark) {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
-      setIsDark(false);
     } else {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
-      setIsDark(true);
     }
+    window.dispatchEvent(new Event("portfolio-theme-change"));
   };
-
-  if (!mounted) {
-    return (
-      <div className="w-8 h-8 rounded border border-stone-300 dark:border-stone-800 opacity-0" />
-    );
-  }
 
   return (
     <button
       onClick={toggleTheme}
       type="button"
       className="inline-flex items-center justify-center p-2 rounded-md border border-stone-300/80 dark:border-stone-800 bg-stone-100/50 dark:bg-stone-900/50 text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors focus:outline-none focus:ring-1 focus:ring-stone-500 font-mono text-xs"
-      aria-label="Toggle tactile paper dark mode"
-      title={isDark ? "Switch to Light Parchment" : "Switch to Dark Ink"}
+      aria-label={labels.themeToggleLabel}
+      title={isDark ? labels.lightThemeTitle : labels.darkThemeTitle}
     >
       {isDark ? (
         <Sun className="w-4 h-4 text-amber-400" />

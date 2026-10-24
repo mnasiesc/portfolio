@@ -5,7 +5,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getAllArticles, getArticleBySlug } from "@/lib/articles";
+import { getAllArticles, getArticleBySlug, portfolio } from "@/lib/portfolio";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -23,11 +23,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const article = await getArticleBySlug(slug);
 
   if (!article) {
-    return { title: "Article Not Found" };
+    return { title: portfolio.writing.articleNotFound };
   }
 
   return {
-    title: `${article.title} | Technical Notes`,
+    title: `${article.title} | ${portfolio.site.name} Technical Notes`,
     description: article.excerpt,
   };
 }
@@ -52,10 +52,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           href="/writing"
           className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
         >
-          &larr; BACK TO WRITINGS
+          {portfolio.writing.backToWriting}
         </Link>
         <span className="font-mono text-xs text-stone-500 uppercase tracking-wider">
-          FEATURE ARTICLE // VOL. 01
+          {portfolio.writing.featureLabel}
         </span>
       </div>
 
@@ -78,7 +78,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 rel="noopener noreferrer"
                 className="underline hover:text-stone-900 dark:hover:text-stone-100"
               >
-                Hashnode ↗
+                {portfolio.writing.hashnodeLink}
               </a>
             </>
           )}
@@ -177,7 +177,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           href="/writing"
           className="font-mono text-xs font-bold tracking-widest uppercase text-stone-900 dark:text-stone-100 hover:underline"
         >
-          &larr; ALL ARTICLES
+          {portfolio.writing.allArticles}
         </Link>
       </footer>
     </article>
