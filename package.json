@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test src/lib/terminal/__tests__/*.test.mjs",
     "content:validate": "node scripts/validate-content.mjs",
     "content:assets": "node scripts/generate-content-assets.mjs",
     "predev": "npm run content:validate && npm run content:assets",
