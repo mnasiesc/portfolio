@@ -70,6 +70,18 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   );
 
 
+  // Listen for Escape key anywhere to return to visual mode
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        router.push(context.terminal.switchToVisualHref || "/");
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [context.terminal.switchToVisualHref, router]);
+
   // Scroll to bottom when entries update
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -143,6 +155,13 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Escape to exit to visual mode
+    if (e.key === "Escape") {
+      e.preventDefault();
+      router.push(context.terminal.switchToVisualHref || "/");
+      return;
+    }
+
     // Enter to run command
     if (e.key === "Enter") {
       e.preventDefault();
@@ -243,18 +262,18 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
           focusInput();
         }
       }}
-      className="terminal-station-window w-full rounded-md border border-stone-800 bg-stone-950/95 text-stone-100 shadow-2xl overflow-hidden font-mono flex flex-col min-h-[580px] max-h-[85vh]"
+      className="terminal-station-window w-full h-full flex-1 border-0 rounded-none bg-stone-950 text-stone-100 font-mono flex flex-col overflow-hidden"
     >
       {/* Terminal Title Bar / Station Rail */}
-      <div className="terminal-header-rail flex items-center justify-between px-3 py-2 bg-stone-900 border-b border-stone-800 text-xs text-stone-400 select-none">
+      <div className="terminal-header-rail flex items-center justify-between px-3 sm:px-4 py-2 bg-stone-900 border-b border-stone-800 text-xs text-stone-400 select-none shrink-0">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80 dark:bg-[#8dff55]/90 inline-block animate-pulse" />
-          <span className="font-bold text-stone-300">
+          <span className="font-bold text-stone-200">
             {context.terminal.promptUser}@{context.terminal.promptHost}
           </span>
           <span className="text-stone-600 hidden sm:inline">|</span>
-          <span className="text-stone-500 text-[11px] hidden sm:inline">
-            SYSTEM CONSOLE // {context.site.issueLabel}
+          <span className="text-emerald-400 dark:text-[#8dff55] font-semibold text-[11px] hidden sm:inline">
+            PRESS [ESC] TO EXIT TO VISUAL MODE
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -267,9 +286,11 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
           </button>
           <Link
             href={context.terminal.switchToVisualHref}
-            className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-emerald-400 dark:text-[#8dff55] border border-stone-700 text-[11px] font-bold no-underline transition-colors"
+            className="px-2.5 py-1 rounded bg-stone-800 hover:bg-stone-700 text-emerald-400 dark:text-[#8dff55] border border-stone-700 text-[11px] font-bold no-underline transition-colors inline-flex items-center gap-1.5"
+            title="Press Escape or click to return to visual mode"
           >
-            {context.terminal.switchToVisualLabel} ↗
+            <span className="px-1 py-0.2 rounded bg-stone-900 text-[10px] text-stone-400 font-mono border border-stone-700">ESC</span>
+            <span>{context.terminal.switchToVisualLabel}</span>
           </Link>
         </div>
       </div>

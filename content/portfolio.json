@@ -27,10 +27,6 @@
       "href": "/writing"
     },
     {
-      "label": "Terminal",
-      "href": "/terminal"
-    },
-    {
       "label": "Contact",
       "href": "/#contact"
     }
@@ -310,7 +306,7 @@
     "promptHost": "mnasie-station",
     "welcomeBanner": [
       "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR v1.0",
-      "Type 'help' to inspect available commands, or 'home' to switch to visual mode."
+      "Type \"help\" to inspect commands, or press [ESC] / type \"home\" to exit to visual mode."
     ],
     "helpIntro": "Available commands in this portfolio simulator:",
     "switchToVisualLabel": "RETURN TO VISUAL PORTFOLIO",

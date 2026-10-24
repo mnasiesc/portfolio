@@ -3,7 +3,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getAllArticles, portfolio, projects, socials } from "@/lib/portfolio";
 import type { TerminalContext } from "@/lib/terminal/types";
 import { TerminalEmulator } from "@/components/terminal/TerminalEmulator";
@@ -33,25 +32,8 @@ export default function TerminalPage() {
   };
 
   return (
-    <div className="station-page terminal-page pb-12">
-      <div className="station-shell space-y-3">
-        {/* Quick Route Status Bar */}
-        <div className="flex items-center justify-between text-xs font-mono text-stone-500 px-1 select-none">
-          <Link
-            href={portfolio.terminal.switchToVisualHref}
-            className="text-stone-400 hover:text-stone-200 uppercase tracking-widest text-[11px] hover:underline font-bold inline-flex items-center gap-1.5"
-          >
-            <span>←</span>
-            <span>{portfolio.terminal.switchToVisualLabel}</span>
-          </Link>
-          <span className="uppercase tracking-wider text-[11px] text-stone-600 hidden sm:inline">
-            INTERACTIVE SHELL SIMULATOR // READ-ONLY
-          </span>
-        </div>
-
-        {/* Main Command Simulator */}
-        <TerminalEmulator context={context} />
-      </div>
+    <div className="fixed inset-0 z-[60] w-screen h-screen bg-[#0a110c] text-stone-100 flex flex-col overflow-hidden">
+      <TerminalEmulator context={context} />
     </div>
   );
 }

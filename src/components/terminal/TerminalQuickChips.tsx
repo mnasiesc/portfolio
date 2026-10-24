@@ -10,7 +10,7 @@ const CHIPS = [
   { label: "contact", command: "contact" },
   { label: "socials", command: "socials" },
   { label: "clear", command: "clear" },
-  { label: "home (exit)", command: "home" },
+  { label: "home (esc)", command: "home" },
 ];
 
 export function TerminalQuickChips({ onSelectCommand }: TerminalQuickChipsProps) {
