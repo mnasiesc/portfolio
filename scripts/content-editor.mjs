@@ -107,7 +107,7 @@ const page = `<!doctype html>
     function newEntry(path,items){
       const area=path.join(".");
       if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"experimental",year:String(new Date().getFullYear()),repoUrl:"https://github.com/"};
-      if(area==="articles")return{slug:"new-article",title:"New article",excerpt:"",date:new Date().toISOString().slice(0,10),readingTime:"1 min read",category:"Notes",tags:[],featured:false,body:""};
+      if(area==="articles")return{slug:"new-article",title:"New article",excerpt:"",date:new Date().toISOString().slice(0,10),readingTime:"1 min read",category:"Notes",tags:[],featured:false,externalRedirect:true,body:""};
       if(area==="images")return{id:"new-image",mimeType:"image/png",data:"",alt:"",width:1,height:1,generatedFile:"/generated-content/new-image.png"};
       if(area==="navigation")return{label:"New link",href:"/"};
       if(area==="socials")return{label:"New social",href:"https://example.com",handle:""};

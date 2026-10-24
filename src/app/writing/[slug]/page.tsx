@@ -5,7 +5,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getAllArticles, getArticleBySlug, portfolio } from "@/lib/portfolio";
+import { getAllArticles, getArticleBySlug, getArticleExternalUrl, portfolio } from "@/lib/portfolio";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
@@ -38,11 +38,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   if (!article) {
     notFound();
+    return null;
   }
 
-  if (article.canonicalUrl) {
-    redirect(article.canonicalUrl);
-  }
+  const foundArticle = article!;
+  const articleUrl = getArticleExternalUrl(foundArticle, portfolio.writing.hashnodeLinkHref);
+  if (foundArticle.externalRedirect) redirect(articleUrl);
 
   return (
     <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
@@ -63,39 +64,37 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <header className="mb-12">
         <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-stone-600 dark:text-stone-400 mb-4 tracking-wider uppercase">
           <span className="px-2.5 py-1 rounded bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-bold">
-            {article.category}
+            {foundArticle.category}
           </span>
           <span>•</span>
-          <time dateTime={article.date}>{article.date}</time>
+          <time dateTime={foundArticle.date}>{foundArticle.date}</time>
           <span>•</span>
-          <span>{article.readingTime}</span>
-          {article.canonicalUrl && (
-            <>
-              <span>•</span>
-              <a
-                href={article.canonicalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-stone-900 dark:hover:text-stone-100"
-              >
-                {portfolio.writing.hashnodeLink}
-              </a>
-            </>
-          )}
+          <span>{foundArticle.readingTime}</span>
+          <>
+            <span>•</span>
+            <a
+              href={articleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-stone-900 dark:hover:text-stone-100"
+            >
+              {portfolio.writing.hashnodeLink}
+            </a>
+          </>
         </div>
 
         <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mb-6 leading-[1.15]">
-          {article.title}
+          {foundArticle.title}
         </h1>
 
         <p className="text-xl sm:text-2xl text-stone-700 dark:text-stone-300 font-serif italic border-l-4 border-stone-900 dark:border-stone-100 pl-6 py-1 leading-relaxed">
-          {article.excerpt}
+          {foundArticle.excerpt}
         </p>
       </header>
 
       {/* Article Content Rendered with Editorial Prose Layout */}
       <div className="prose dark:prose-invert max-w-none text-stone-800 dark:text-stone-200 font-sans text-base sm:text-lg leading-relaxed space-y-6">
-        {article.content.split("\n\n").map((paragraph, idx) => {
+        {foundArticle.content.split("\n\n").map((paragraph, idx) => {
           const trimmed = paragraph.trim();
 
           if (trimmed.startsWith("### ")) {
@@ -163,7 +162,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {/* Article Footer & Tags */}
       <footer className="mt-16 pt-8 border-t-2 border-stone-900 dark:border-stone-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex flex-wrap gap-2">
-          {article.tags.map((tag) => (
+          {foundArticle.tags.map((tag) => (
             <span
               key={tag}
               className="px-2.5 py-1 text-xs font-mono rounded bg-stone-200/80 dark:bg-stone-800 text-stone-800 dark:text-stone-200"

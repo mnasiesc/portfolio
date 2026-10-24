@@ -57,3 +57,10 @@ export function getAllArticles(): PortfolioArticle[] {
 export function getArticleBySlug(slug: string): PortfolioArticle | null {
   return getAllArticles().find((article) => article.slug === slug) ?? null;
 }
+
+export function getArticleExternalUrl(
+  article: { slug: string; canonicalUrl?: string },
+  template: string,
+): string {
+  return article.canonicalUrl ?? template.replaceAll("{slug}", encodeURIComponent(article.slug));
+}

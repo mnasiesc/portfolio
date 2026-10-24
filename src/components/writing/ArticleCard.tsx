@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Article } from "@/types";
-import { portfolio } from "@/lib/portfolio";
+import { getArticleExternalUrl, portfolio } from "@/lib/portfolio";
 
 interface ArticleCardProps {
   article: Article;
@@ -12,9 +12,7 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article, readLabel }: ArticleCardProps) {
-  const targetUrl =
-    article.canonicalUrl ||
-    `${portfolio.site.blogBaseUrl}/${article.slug}`;
+  const targetUrl = getArticleExternalUrl(article, portfolio.writing.readOnHashnodeHref);
 
   return (
     <article className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-lg bg-stone-100/60 dark:bg-stone-900/60 border border-stone-300/60 dark:border-stone-800 transition-all duration-300 hover:border-stone-900 dark:hover:border-stone-100 hover:shadow-md">
