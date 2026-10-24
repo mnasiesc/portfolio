@@ -49,7 +49,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {/* Navigation & Issue Header */}
       <div className="mb-10 flex items-center justify-between border-b border-stone-300/60 dark:border-stone-800 pb-4">
         <Link
-          href="/writing"
+          href={portfolio.writing.backToWritingHref}
           className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
         >
           {portfolio.writing.backToWriting}
@@ -174,7 +174,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         <Link
-          href="/writing"
+          href={portfolio.writing.allArticlesHref}
           className="font-mono text-xs font-bold tracking-widest uppercase text-stone-900 dark:text-stone-100 hover:underline"
         >
           {portfolio.writing.allArticles}

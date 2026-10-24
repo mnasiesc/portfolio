@@ -20,7 +20,7 @@ export default async function WritingPage() {
       {/* Back Link */}
       <div className="mb-8">
         <Link
-          href="/"
+          href={portfolio.writing.backToHomeHref}
           className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
         >
           {portfolio.writing.backToHome}

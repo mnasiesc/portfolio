@@ -8,7 +8,12 @@ import { ArticleCard } from "./ArticleCard";
 
 interface WritingsSectionProps {
   articles: Article[];
-  labels: { writingHeading: string; viewAllArticles: string; readOnHashnode: string };
+  labels: {
+    writingHeading: string;
+    viewAllArticles: string;
+    viewAllArticlesHref: string;
+    readOnHashnode: string;
+  };
 }
 
 export function WritingsSection({ articles, labels }: WritingsSectionProps) {
@@ -23,7 +28,7 @@ export function WritingsSection({ articles, labels }: WritingsSectionProps) {
         </h2>
 
         <Link
-          href="/writing"
+          href={labels.viewAllArticlesHref}
           className="stamp text-xs text-stone-900 dark:text-stone-100 hover:opacity-75 transition-opacity"
         >
           {labels.viewAllArticles} ({articles.length}) →
