@@ -1,12 +1,14 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 const host = "127.0.0.1";
 const port = Number(process.env.PORT || 4173);
 const contentPath = path.join(process.cwd(), "content/portfolio.json");
+const contentEtag = () => `"${createHash("sha256").update(fs.readFileSync(contentPath)).digest("hex")}"`;
 const schema = JSON.parse(fs.readFileSync("content/portfolio.schema.json", "utf8"));
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -94,6 +96,7 @@ const page = `<!doctype html>
   </main></div><div id="toast" hidden class="toast"></div>
   <script>
     let documentData;
+    let contentVersion;
     let currentSection="site";
     const form=document.querySelector("#form"),nav=document.querySelector("#sections"),status=document.querySelector("#status"),raw=document.querySelector("#raw"),toast=document.querySelector("#toast");
     const labelize=(key)=>String(key).replace(/([a-z0-9])([A-Z])/g,"$1 $2").replace(/[-_]/g," ").replace(/^./,c=>c.toUpperCase());
@@ -168,8 +171,8 @@ const page = `<!doctype html>
       const section=documentData[currentSection];if(Array.isArray(section))fieldset.append(makeField(currentSection,section,[currentSection]));else for(const[key,value]of Object.entries(section))fieldset.append(makeField(key,value,[currentSection,key]));
       form.append(fieldset);syncRaw();
     }
-    async function load(){const response=await fetch("/api/content");if(!response.ok)throw new Error(await response.text());documentData=await response.json();render();status.textContent="Connected to local content file"}
-    document.querySelector("#save").addEventListener("click",async()=>{status.textContent="Validating and saving…";try{const response=await fetch("/api/content",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(documentData)});const result=await response.json();if(!response.ok)throw new Error(result.error);status.textContent="Saved locally";notify("Saved and rebuilt image assets.")}catch(error){status.textContent="Save failed";notify(error.message,true)}});
+    async function load(){const response=await fetch("/api/content");if(!response.ok)throw new Error(await response.text());documentData=await response.json();contentVersion=response.headers.get("etag");render();status.textContent="Connected to local content file"}
+    document.querySelector("#save").addEventListener("click",async()=>{status.textContent="Validating and saving…";try{const response=await fetch("/api/content",{method:"PUT",headers:{"content-type":"application/json","if-match":contentVersion||""},body:JSON.stringify(documentData)});const result=await response.json();if(response.status===409){status.textContent="Content changed elsewhere";notify("The JSON file changed after this editor loaded it. Reload the page before saving to avoid overwriting newer content.",true);return}if(!response.ok)throw new Error(result.error);contentVersion=response.headers.get("etag");status.textContent="Saved locally";notify("Saved and rebuilt image assets.")}catch(error){status.textContent="Save failed";notify(error.message,true)}});
     document.querySelector("#apply-raw").addEventListener("click",()=>{try{documentData=JSON.parse(raw.value);currentSection=Object.keys(documentData).find(key=>key!=="schemaVersion");render();notify("Raw JSON loaded into the form.")}catch(error){notify("Invalid JSON: "+error.message,true)}});
     load().catch(error=>{status.textContent="Could not load content";notify(error.message,true)});
   </script>
@@ -185,7 +188,7 @@ const server = http.createServer(async (request, response) => {
   }
 
   if (url.pathname === "/api/content" && request.method === "GET") {
-    response.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+    response.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", etag: contentEtag() });
     response.end(fs.readFileSync(contentPath));
     return;
   }
@@ -199,13 +202,19 @@ const server = http.createServer(async (request, response) => {
     }
 
     try {
+      const ifMatch = request.headers["if-match"];
+      if (!ifMatch || ifMatch !== contentEtag()) {
+        response.writeHead(409, { "content-type": "application/json", etag: contentEtag() });
+        response.end(JSON.stringify({ error: "Content changed after this editor loaded. Reload before saving." }));
+        return;
+      }
       const document = JSON.parse(await readRequestBody(request));
       validateDocument(document);
       const temporaryPath = `${contentPath}.tmp`;
       fs.writeFileSync(temporaryPath, `${JSON.stringify(document, null, 2)}\n`);
       fs.renameSync(temporaryPath, contentPath);
       rebuildAssets(document);
-      response.writeHead(200, { "content-type": "application/json" });
+      response.writeHead(200, { "content-type": "application/json", etag: contentEtag() });
       response.end(JSON.stringify({ ok: true }));
     } catch (error) {
       response.writeHead(400, { "content-type": "application/json" });
