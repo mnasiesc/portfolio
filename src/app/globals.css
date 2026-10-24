@@ -1482,4 +1482,30 @@
   :root:not(.dark) .article-reader-page > header p {
     color: var(--station-text-secondary);
   }
+
+  /* ── Terminal Workstation Styles ─────────────────────────────────────────── */
+  .terminal-station-window {
+    background: radial-gradient(circle at 50% 0%, rgb(18 32 23 / 98%), rgb(12 20 15 / 99%));
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%), 0 0 0 1px rgb(64 90 67 / 60%);
+  }
+
+  :root:not(.dark) .terminal-station-window {
+    background: #18251b;
+    color: #e0ead9;
+    box-shadow: 0 16px 40px rgb(37 59 42 / 20%), 0 0 0 1px #405a43;
+  }
+
+  .terminal-screen {
+    font-variant-ligatures: none;
+    letter-spacing: -0.01em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-station-window,
+    .terminal-station-window * {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
