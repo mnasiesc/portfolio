@@ -36,7 +36,7 @@ export function NavLinks({ items, ariaLabel }: NavLinksProps) {
 
   return (
     <nav aria-label={ariaLabel}>
-      <ul className="flex items-center gap-3.5 sm:gap-6 md:gap-8">
+      <ul className="station-nav-list">
         {items.map((item) => {
           // Determine if this link is "active" (current page).
           // For hash links like "/#projects" we check just the "/" part.
@@ -53,10 +53,10 @@ export function NavLinks({ items, ariaLabel }: NavLinksProps) {
                 // without messy template literal ternaries everywhere.
                 // Active links get a full ink underline; inactive get a hover reveal.
                 className={[
-                  "stamp no-underline transition-opacity duration-200",
+                  "station-nav-link",
                   isActive
-                    ? "text-foreground opacity-100 underline underline-offset-4"
-                    : "text-muted-foreground hover:text-foreground hover:opacity-100",
+                    ? "is-active"
+                    : "",
                 ].join(" ")}
               >
                 {item.label}

@@ -1,36 +1,22 @@
 import type { Metadata } from "next";
-import type { CSSProperties, ReactNode } from "react";
-import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import type { ReactNode } from "react";
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { getImage, portfolio } from "@/lib/portfolio";
 import "./globals.css";
 
-// ─── Body font: clean geometric sans-serif ──────────────────────────────────
-// Geist Sans is the primary reading/UI font.
-// variable: "--font-sans" exposes it as a CSS variable that globals.css and
-// Tailwind's @theme block can consume with `font-sans`.
-const geistSans = Geist({
+const plexSans = IBM_Plex_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-});
-
-// ─── Display/heading font: expressive editorial serif ────────────────────────
-// Newsreader gives us that high-contrast Vox/magazine editorial quality.
-// We load both roman and italic, with optical sizing enabled via font-size.
-// variable: "--font-serif" — used for all h1–h3 headings and pull-quotes.
-const newsreader = Newsreader({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// ─── Monospace font: issue stamps, dates, code, badges ───────────────────────
-// Used for metadata elements like "VOL. 01 // 2026", date tags, and code blocks.
-const geistMono = Geist_Mono({
+const plexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 // ─── Site-wide SEO metadata ──────────────────────────────────────────────────
@@ -71,11 +57,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       // We inject the three CSS variable names as classes on <html>.
       // This is how next/font works: it creates scoped CSS variable definitions
       // that are only active when these class names are present on an ancestor.
-      className={`${geistSans.variable} ${newsreader.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plexSans.variable} ${plexMono.variable} h-full antialiased dark`}
     >
       <body
         className="min-h-full flex flex-col bg-background text-foreground"
-        style={{ "--paper-texture": `url("${getImage("paper-texture").generatedFile}")` } as CSSProperties}
       >
         {/* Header lives here in the layout so it appears on EVERY page */}
         {/* without needing to import it in each individual page file.  */}

@@ -16,9 +16,9 @@ export default async function WritingPage() {
   const articles = getAllArticles();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div className="station-shell writing-archive-page">
       {/* Back Link */}
-      <div className="mb-8">
+      <div className="archive-back-link">
         <Link
           href={portfolio.writing.backToHomeHref}
           className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors"
@@ -28,20 +28,20 @@ export default async function WritingPage() {
       </div>
 
       {/* Editorial Header */}
-      <header className="mb-16 pb-6 border-b-2 border-stone-900 dark:border-stone-100">
-        <div className="font-mono text-xs tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">
+      <header className="archive-heading">
+        <div className="archive-eyebrow">
           {portfolio.writing.archiveEyebrow}
         </div>
-        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mb-4">
+        <h1 className="archive-title">
           {portfolio.writing.pageHeading}
         </h1>
-        <p className="text-stone-700 dark:text-stone-300 text-lg sm:text-xl max-w-3xl leading-relaxed font-sans">
+        <p className="archive-intro">
           {portfolio.writing.pageIntro}
         </p>
       </header>
 
       {/* Article List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="archive-article-grid">
         {articles.map((article) => (
           <ArticleCard key={article.slug} article={article} readLabel={portfolio.writing.readOnHashnode} />
         ))}

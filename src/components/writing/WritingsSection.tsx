@@ -20,23 +20,23 @@ export function WritingsSection({ articles, labels }: WritingsSectionProps) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section id="writing" className="py-16 sm:py-24 border-t border-stone-300/70 dark:border-stone-800">
+    <section id="writing" className="work-panel-content">
       {/* Section Header */}
-      <div className="flex items-baseline justify-between mb-8 pb-3 border-b-2 border-stone-900 dark:border-stone-100">
-        <h2 className="font-serif text-2xl font-normal text-stone-900 dark:text-stone-100">
+      <div className="work-section-heading">
+        <h2>
           {labels.writingHeading}
         </h2>
 
         <Link
           href={labels.viewAllArticlesHref}
-          className="stamp text-xs text-stone-900 dark:text-stone-100 hover:opacity-75 transition-opacity"
+          className="panel-action"
         >
           {labels.viewAllArticles} ({articles.length}) →
         </Link>
       </div>
 
       {/* Grid of Articles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="writing-list">
         {articles.map((article) => (
           <ArticleCard key={article.slug} article={article} readLabel={labels.readOnHashnode} />
         ))}

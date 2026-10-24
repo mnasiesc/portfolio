@@ -80,7 +80,7 @@ export function HeaderSocials({ socials, ariaSuffix }: { socials: SocialLink[]; 
             rel={isExternal ? "noopener noreferrer" : undefined}
             title={`${social.label} (${social.handle || social.href})`}
             aria-label={`${social.label} ${ariaSuffix}`}
-            className="w-7 h-7 sm:w-7.5 sm:h-7.5 inline-flex items-center justify-center rounded border border-stone-300/80 dark:border-stone-800 bg-stone-100/60 dark:bg-stone-900/60 text-stone-700 dark:text-stone-300 hover:text-stone-950 dark:hover:text-stone-50 hover:border-stone-900 dark:hover:border-stone-100 hover:bg-stone-200/90 dark:hover:bg-stone-800 transition-all cursor-pointer shadow-2xs group"
+            className="station-social-link group"
           >
             <span className="transition-transform group-hover:scale-110">
               {icon}

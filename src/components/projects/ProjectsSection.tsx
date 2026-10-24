@@ -60,17 +60,17 @@ export function ProjectsSection({ projects, labels }: ProjectsSectionProps) {
   const otherProjects = projects.filter((p) => p.status !== "featured");
 
   return (
-    <section id="projects" className="container-editorial pb-20">
+    <section id="projects" className="work-panel-content">
 
       {/* ── Section header ── */}
-      <div className="flex items-baseline justify-between mb-8">
-        <h2 className="font-serif text-2xl font-normal">{labels.projectHeading}</h2>
-        <span className="stamp">{projects.length.toString().padStart(2, "0")} {labels.projectCountLabel}</span>
+      <div className="work-section-heading">
+        <h2>{labels.projectHeading}</h2>
+        <span className="panel-count">{projects.length.toString().padStart(2, "0")} {labels.projectCountLabel}</span>
       </div>
 
       {/* ── Featured project(s) — full width ── */}
       {featuredProjects.length > 0 && (
-        <div className="grid grid-cols-1 gap-px bg-border mb-px">
+        <div className="project-grid project-grid-featured">
           {featuredProjects.map((project) => (
             <ProjectCard
               key={project.id}
@@ -87,7 +87,7 @@ export function ProjectsSection({ projects, labels }: ProjectsSectionProps) {
 
       {/* ── Other projects — 2-column grid ── */}
       {otherProjects.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
+        <div className="project-grid project-grid-secondary">
           {otherProjects.map((project) => (
             <ProjectCard
               key={project.id}

@@ -48,7 +48,7 @@ export function ThemeToggle({ labels }: ThemeToggleProps) {
     <button
       onClick={toggleTheme}
       type="button"
-      className="inline-flex items-center justify-center p-2 rounded-md border border-stone-300/80 dark:border-stone-800 bg-stone-100/50 dark:bg-stone-900/50 text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors focus:outline-none focus:ring-1 focus:ring-stone-500 font-mono text-xs"
+      className="station-theme-toggle"
       aria-label={labels.themeToggleLabel}
       title={isDark ? labels.lightThemeTitle : labels.darkThemeTitle}
     >

@@ -17,51 +17,32 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export function Header() {
   return (
-    // Sticky header: stays at the top as you scroll.
-    // backdrop-blur + semi-transparent bg creates a frosted paper effect
-    // as content scrolls underneath — a subtle but premium touch.
-    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm">
-
-      {/* ── Top rule: thin editorial double-line accent ── */}
-      <div className="h-0.5 bg-foreground w-full" />
-
-      {/* ── Mobile dateline ticker: edition stamp + quick social icons ── */}
-      <div className="sm:hidden border-b border-border/50 px-4 py-1.5 flex items-center justify-between bg-muted/20">
-        <span className="stamp text-[9px] text-muted-foreground">{portfolio.site.issueLabel}</span>
-        <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
+    <header className="station-header sticky top-0 z-50">
+      <div className="station-header-status">
+        <span className="station-status-light" aria-hidden="true" />
+        <span>{portfolio.home.availability}</span>
+        <span className="station-status-divider" aria-hidden="true" />
+        <span>{portfolio.site.issueLabel}</span>
       </div>
-
-      {/* ── Main masthead row ── */}
-      <div className="container-editorial flex items-center justify-between py-2.5 sm:py-3.5">
-
-        {/* ── Site name / Logo ── */}
+      <div className="station-header-inner">
         <Link
           href="/"
-          className="no-underline group flex flex-col gap-0.5"
+          className="station-brand no-underline"
           aria-label={`${portfolio.site.name} — ${portfolio.writing.homeAriaLabel}`}
         >
-          <span className="font-serif text-xl font-light leading-none tracking-tight group-hover:opacity-70 transition-opacity">
-            {portfolio.site.name}
-          </span>
-          {/* Issue stamp below the name — on desktop */}
-          <span className="stamp text-[10px] hidden sm:block">{portfolio.site.issueLabel}</span>
+          <span className="station-brand-name">{portfolio.site.name}</span>
+          <span className="station-brand-role">{portfolio.site.role}</span>
         </Link>
-
-        {/* ── Navigation links, Quick Social Icons & Theme Toggle ── */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="station-header-controls">
           <NavLinks items={portfolio.navigation} ariaLabel={portfolio.writing.primaryNavigationLabel} />
-
-          {/* Desktop editorial divider & quick social icons */}
-          <div className="h-4 w-px bg-stone-300 dark:bg-stone-700 hidden sm:block" />
-          <div className="hidden sm:block">
+          <div className="station-socials">
             <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
           </div>
-
-          {/* Editorial divider */}
-          <div className="h-4 w-px bg-stone-300 dark:bg-stone-700" />
-
           <ThemeToggle labels={portfolio.writing} />
         </div>
+      </div>
+      <div className="station-header-mobile-socials">
+        <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
       </div>
     </header>
   );

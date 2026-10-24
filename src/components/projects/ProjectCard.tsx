@@ -22,10 +22,10 @@ import type { Project } from "@/types";
 // Maps a project status to a human-readable label and Tailwind color classes.
 // Centralised here so changing a badge style is one line, not a grep.
 const STATUS_CONFIG: Record<Project["status"], string> = {
-  featured: "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 font-bold px-2 py-0.5",
-  active: "bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-medium px-2 py-0.5",
-  experimental: "bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 px-2 py-0.5",
-  archived: "bg-stone-200/50 dark:bg-stone-800/50 text-stone-500 dark:text-stone-400 px-2 py-0.5",
+  featured: "status-featured",
+  active: "status-active",
+  experimental: "status-experimental",
+  archived: "status-archived",
 };
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -50,17 +50,17 @@ export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
     // Pressing Tab to focus and Enter/Space to "click" works automatically.
     <button
       onClick={onSelect}
-      className="group w-full text-left bg-background border-0 p-0 cursor-pointer"
+      className="project-instrument group w-full text-left cursor-pointer"
       aria-label={`${labels.projectCardAriaPrefix} ${project.title}`}
     >
-      <article className="flex flex-col gap-4 p-5 sm:p-8 h-full transition-colors duration-200 group-hover:bg-muted/40">
+      <article className="project-instrument-body">
 
         {/* ── Card header: tags + status badge ── */}
         <div className="flex items-center justify-between">
-          <span className="stamp">{project.tags.slice(0, 2).join(" · ")}</span>
+          <span className="project-code">{project.tags.slice(0, 2).join(" / ")}</span>
           <span
             className={[
-              "stamp text-[10px] px-2 py-0.5",
+              "project-status",
               statusClasses,
             ].join(" ")}
           >
@@ -69,21 +69,21 @@ export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
         </div>
 
         {/* ── Project title: Newsreader serif ── */}
-        <h3 className="font-serif text-xl font-normal leading-snug group-hover:opacity-70 transition-opacity duration-200">
+        <h3 className="project-title">
           {project.title}
         </h3>
 
         {/* ── Short description ── */}
-        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+        <p className="project-description">
           {project.description}
         </p>
 
         {/* ── Tech tags ── */}
-        <div className="flex flex-wrap gap-1.5 mt-auto">
+        <div className="project-tags">
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="stamp text-[10px] px-2 py-0.5 bg-muted/60"
+              className="project-tag"
             >
               {tag}
             </span>
@@ -91,11 +91,9 @@ export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
         </div>
 
         {/* ── CTA footer ── */}
-        <div className="pt-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground">
-          <span className="stamp">{labels.projectMore}</span>
-          <span className="group-hover:translate-x-1 transition-transform duration-200">
-            →
-          </span>
+        <div className="project-card-footer">
+          <span>{labels.projectMore}</span>
+          <span aria-hidden="true">↗</span>
         </div>
 
       </article>

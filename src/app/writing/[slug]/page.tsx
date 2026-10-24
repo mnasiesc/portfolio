@@ -46,7 +46,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (foundArticle.externalRedirect) redirect(articleUrl);
 
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <article className="station-shell article-reader-page">
       {/* Navigation & Issue Header */}
       <div className="mb-10 flex items-center justify-between border-b border-stone-300/60 dark:border-stone-800 pb-4">
         <Link

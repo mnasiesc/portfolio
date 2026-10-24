@@ -37,7 +37,7 @@ function FormattedInline({ text }: { text: string }) {
           return (
             <code
               key={i}
-              className="inline-block font-mono text-[12px] px-1.5 py-0.5 mx-0.5 rounded bg-stone-200/90 dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 font-bold shadow-2xs"
+              className="project-code-token"
             >
               {code}
             </code>
@@ -130,7 +130,7 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
   // stacking contexts, sections, and containers, guaranteeing it sits above the sticky header.
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-3 sm:p-6"
+      className="project-modal-backdrop fixed inset-0 flex items-center justify-center p-3 sm:p-6"
       style={{ zIndex: 99999 }}
       role="dialog"
       aria-modal="true"
@@ -138,7 +138,7 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
     >
       {/* Dim overlay covering entire viewport and sticky header */}
       <div
-        className="fixed inset-0 bg-stone-950/70 dark:bg-black/85 backdrop-blur-sm"
+        className="project-modal-scrim fixed inset-0"
         style={{ zIndex: 99999 }}
         onClick={onClose}
         aria-hidden="true"
@@ -146,16 +146,16 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
 
       {/* ── Modal Window Panel ── */}
       <div
-        className="relative w-full max-w-2xl max-h-[82vh] sm:max-h-[85vh] flex flex-col rounded-lg bg-background border-2 border-stone-800 dark:border-stone-200 shadow-2xl overflow-hidden my-auto"
+        className="project-modal-window relative w-full max-w-2xl max-h-[82vh] sm:max-h-[85vh] flex flex-col overflow-hidden my-auto"
         style={{ zIndex: 100000 }}
       >
         {/* ── Fixed Modal Header ── */}
-        <div className="shrink-0 bg-background border-b border-border px-5 sm:px-8 py-4 sm:py-5 flex items-start justify-between gap-4">
+        <div className="project-modal-header shrink-0 flex items-start justify-between gap-4">
           <div>
-            <p className="stamp mb-1 text-[11px] text-muted-foreground">
+            <p className="project-modal-kicker">
               {project.tags.slice(0, 2).join(" · ")}
             </p>
-            <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            <h2 className="project-modal-title">
               {project.title}
             </h2>
           </div>
@@ -163,7 +163,7 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
           {/* Close button with large tap target */}
           <button
             onClick={onClose}
-            className="stamp text-xl leading-none p-2 -mr-2 rounded hover:bg-stone-200/60 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            className="project-modal-close"
             aria-label={labels.projectModalClose}
           >
             ×
@@ -171,7 +171,7 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
         </div>
 
         {/* ── Scrollable Modal Body (scrollbar visually hidden, scrolling preserved) ── */}
-        <div className="overflow-y-auto flex-1 px-5 sm:px-8 py-6 space-y-6 no-scrollbar">
+        <div className="project-modal-content overflow-y-auto flex-1 no-scrollbar">
           {/* Formatted description with list items & inline code badges */}
           <ProjectDescription content={project.longDescription} />
 
@@ -191,12 +191,12 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
           </div>
 
           {/* Action links */}
-          <div className="pt-4 border-t border-border flex flex-wrap gap-3">
+          <div className="project-modal-actions flex flex-wrap gap-3">
             <a
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:opacity-90 transition-opacity"
+              className="station-button station-button-primary"
             >
               {labels.viewOnGitHub}
             </a>
@@ -205,7 +205,7 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 border border-stone-300 dark:border-stone-700 px-5 py-2.5 text-xs font-mono font-bold tracking-widest uppercase rounded hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
+                className="station-button"
               >
                 {labels.liveDemo}
               </a>

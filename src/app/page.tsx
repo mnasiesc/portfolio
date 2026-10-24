@@ -16,81 +16,67 @@ export default async function HomePage() {
   const articles = getAllArticles();
 
   return (
-    <div className="flex flex-col flex-1">
-
-      {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="border-b border-border py-12 md:py-16">
-        <div className="container-editorial">
-          <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest mb-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-500 animate-pulse" />
-            <span>{portfolio.home.availability}</span>
+    <div className="station-page">
+      <div className="station-shell">
+        <section className="profile-console" aria-labelledby="profile-title">
+          <div className="console-rail">
+            <span>PROFILE.SYS</span>
+            <span>USER: {portfolio.site.name.toUpperCase()}</span>
           </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8 md:gap-10">
-            {/* ── Signature Image: Ernst Haeckel Plate 92 Filicinae (Left side, bigger, sharp edges, no border) ── */}
-            <div className="shrink-0">
+          <div className="profile-console-body">
+            <div className="profile-portrait">
               <Image
                 src={getImage(portfolio.home.avatarImage).generatedFile}
                 alt={getImage(portfolio.home.avatarImage).alt}
                 width={getImage(portfolio.home.avatarImage).width}
                 height={getImage(portfolio.home.avatarImage).height}
-                sizes="(max-width: 640px) 112px, (max-width: 768px) 144px, 176px"
+                sizes="(max-width: 640px) 112px, 144px"
                 preload
-                className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 object-cover object-top shadow-lg"
+                className="h-full w-full object-cover object-top"
               />
             </div>
-
-            <div>
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.12]">
-                {portfolio.home.heroTitle}
-              </h1>
-
-              <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-sans">
-                {portfolio.home.heroDescription}
-              </p>
+            <div className="profile-copy">
+              <p className="profile-kicker">{portfolio.site.role}</p>
+              <h1 id="profile-title">{portfolio.home.heroTitle}</h1>
+              <p className="profile-description">{portfolio.home.heroDescription}</p>
+              <div className="profile-actions">
+                {portfolio.home.actions.map((action, index) => (
+                  <a
+                    key={action.href}
+                    href={action.href}
+                    className={index === 0 ? "station-button station-button-primary" : "station-button"}
+                  >
+                    {action.label}
+                  </a>
+                ))}
+              </div>
             </div>
+            <aside className="profile-readout" aria-label={portfolio.home.availability}>
+              <span className="readout-label">STATUS</span>
+              <span className="readout-indicator" aria-hidden="true" />
+              <span className="readout-value">{portfolio.home.availability}</span>
+            </aside>
           </div>
+        </section>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider">
-            <a
-              href={portfolio.home.actions[0].href}
-              className="px-5 py-2.5 rounded bg-foreground text-background hover:opacity-90 transition-opacity"
-            >
-              {portfolio.home.actions[0].label}
-            </a>
-            <a
-              href={portfolio.home.actions[1].href}
-              className="px-5 py-2.5 rounded border border-border text-foreground hover:bg-muted transition-colors"
-            >
-              {portfolio.home.actions[1].label}
-            </a>
-          </div>
+        <div className="dashboard-grid">
+          <section className="dashboard-bay project-bay" aria-label={portfolio.home.projectHeading}>
+            <ProjectsSection projects={projects} labels={{ ...portfolio.home, ...portfolio.writing }} />
+          </section>
+          <section className="dashboard-bay writing-bay" aria-label={portfolio.home.writingHeading}>
+            <WritingsSection articles={articles} labels={{ ...portfolio.home, ...portfolio.writing }} />
+          </section>
         </div>
-      </section>
 
-      {/* ── EDITORIAL RULE ────────────────────────────────────────────────── */}
-      <div className="container-editorial">
-        <hr className="rule-editorial" />
+        <section className="dashboard-bay contact-bay" aria-label={portfolio.home.contactHeading}>
+          <ContactSection socials={socials} labels={portfolio.home} />
+        </section>
+        <footer className="station-footer">
+          <span>{portfolio.site.name}</span>
+          <span>{portfolio.site.issueLabel}</span>
+          <span>LOCAL SYSTEM / PUBLIC PORTFOLIO</span>
+        </footer>
       </div>
-
-      {/* ── PROJECTS ──────────────────────────────────────────────────────── */}
-      <ProjectsSection projects={projects} labels={{ ...portfolio.home, ...portfolio.writing }} />
-
-      {/* ── WRITINGS / ARTICLES ───────────────────────────────────────────── */}
-      <div className="container-editorial">
-        <WritingsSection articles={articles} labels={{ ...portfolio.home, ...portfolio.writing }} />
-      </div>
-
-      {/* ── EDITORIAL RULE ────────────────────────────────────────────────── */}
-      <div className="container-editorial">
-        <hr className="rule-editorial" />
-      </div>
-
-      {/* ── CONTACT SECTION ────────────────────────────────────────────────── */}
-      <div className="container-editorial">
-        <ContactSection socials={socials} labels={portfolio.home} />
-      </div>
-
     </div>
   );
 }
