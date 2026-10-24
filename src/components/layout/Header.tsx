@@ -14,6 +14,7 @@ import { portfolio } from "@/lib/portfolio";
 import { NavLinks } from "@/components/layout/NavLinks";
 import { HeaderSocials } from "@/components/layout/HeaderSocials";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { ViewSwitcher } from "@/components/layout/ViewSwitcher";
 
 export function Header() {
   return (
@@ -35,6 +36,10 @@ export function Header() {
         </Link>
         <div className="station-header-controls">
           <NavLinks items={portfolio.navigation} ariaLabel={portfolio.writing.primaryNavigationLabel} />
+          <ViewSwitcher
+            terminalLabel={portfolio.terminal.navLabel}
+            visualLabel={portfolio.terminal.switchToVisualLabel}
+          />
           <div className="station-socials">
             <HeaderSocials socials={portfolio.socials} ariaSuffix={portfolio.writing.socialLinkAriaSuffix} />
           </div>
