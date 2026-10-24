@@ -18,6 +18,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import type { NavItem } from "@/types";
 
 // ─── Props interface ──────────────────────────────────────────────────────────
@@ -30,18 +31,27 @@ interface NavLinksProps {
 }
 
 export function NavLinks({ items, ariaLabel }: NavLinksProps) {
-  // usePathname() returns the current URL path, e.g. "/blog" or "/"
-  // When the user navigates, it updates and React re-renders this component.
   const pathname = usePathname();
+  const hash = useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener("hashchange", onChange);
+      window.addEventListener("popstate", onChange);
+      return () => {
+        window.removeEventListener("hashchange", onChange);
+        window.removeEventListener("popstate", onChange);
+      };
+    },
+    () => window.location.hash,
+    () => "",
+  );
 
   return (
     <nav aria-label={ariaLabel}>
       <ul className="station-nav-list">
         {items.map((item) => {
-          // Determine if this link is "active" (current page).
-          // For hash links like "/#projects" we check just the "/" part.
-          const href = item.href.split("#")[0] || "/";
-          const isActive = pathname === href;
+          const [hrefPath, hrefHash] = item.href.split("#");
+          const targetPath = hrefPath || "/";
+          const isActive = pathname === targetPath && (hrefHash ? hash === `#${hrefHash}` : true);
 
           return (
             <li key={item.href}>
