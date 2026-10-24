@@ -304,7 +304,7 @@
     }
   ],
   "terminal": {
-    "pageTitle": "Terminal Workstation | Mnasie",
+    "pageTitle": "Terminal Workstation",
     "pageDescription": "Interactive command simulator for exploring Mnasie's systems projects, articles, and contacts.",
     "promptUser": "guest",
     "promptHost": "mnasie-station",
