@@ -84,9 +84,13 @@ Work proceeds in order. Each phase has a gate; later phases begin only when the 
 
 ## Current Progress
 
-- Planning: the architecture and implementation plan are documented in `.agents/`.
-- Phase 1: in progress. The next action is to finish the source inventory, add the schema, and migrate existing content and images into JSON.
-- Phases 2–6: not started; advance only when each prior exit gate passes.
+- Planning: architecture and implementation details are documented in `.agents/`.
+- Phase 1: complete. The source inventory was migrated into the versioned JSON document and schema, including article bodies and embedded image payloads.
+- Phase 2: implementation complete. The server-side loader, schema validation, uniqueness/reference checks, and `npm run content:validate` are in place. Automated focused test files have not been added, so the original test portion of this phase's exit gate remains open.
+- Phase 3: complete. Public routes and rendered copy use the validated JSON boundary; legacy config and Markdown article sources are absent. Remaining route paths and Markdown rendering syntax are implementation details, not editable content.
+- Phase 4: complete. Image derivatives are reproducibly generated from embedded JSON payloads and validation checks their encoding and references.
+- Phase 5: complete. The local-only editor supports content editing, collection changes, image replacement, schema validation, and stale-write protection.
+- Phase 6: in progress. The final content-literal audit found no remaining hard-coded user-facing portfolio copy in the app routes/components. Content validation, lint, typecheck, and production build remain the final checks; README changes are currently user-owned and must be preserved. The focused-test gap from Phase 2 remains open.
 
 ## Guardrails
 
