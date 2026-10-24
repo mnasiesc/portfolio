@@ -10,6 +10,7 @@ export type PortfolioImage = PortfolioContent["images"][number];
 export type PortfolioArticle = PortfolioContent["articles"][number] & { content: string };
 export type PortfolioProject = PortfolioContent["projects"][number];
 export type PortfolioSocial = PortfolioContent["socials"][number];
+export type PortfolioTerminal = PortfolioContent["terminal"];
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);

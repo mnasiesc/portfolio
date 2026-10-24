@@ -53,3 +53,17 @@ export interface Article extends ArticleMetadata {
   slug: string;
   content: string; // Raw or converted body text
 }
+
+// Terminal workstation configuration
+export interface TerminalConfig {
+  pageTitle: string;
+  pageDescription: string;
+  promptUser: string;
+  promptHost: string;
+  welcomeBanner: string[];
+  helpIntro: string;
+  switchToVisualLabel: string;
+  switchToVisualHref: string;
+  navLabel: string;
+}
+

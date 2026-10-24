@@ -4,9 +4,35 @@
   "title": "Portfolio Content",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "site", "navigation", "socials", "home", "projects", "writing", "articles", "images"],
+  "required": ["schemaVersion", "site", "navigation", "socials", "home", "projects", "writing", "terminal", "articles", "images"],
   "properties": {
     "schemaVersion": { "const": 1 },
+    "terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pageTitle",
+        "pageDescription",
+        "promptUser",
+        "promptHost",
+        "welcomeBanner",
+        "helpIntro",
+        "switchToVisualLabel",
+        "switchToVisualHref",
+        "navLabel"
+      ],
+      "properties": {
+        "pageTitle": { "type": "string" },
+        "pageDescription": { "type": "string" },
+        "promptUser": { "type": "string" },
+        "promptHost": { "type": "string" },
+        "welcomeBanner": { "type": "array", "items": { "type": "string" } },
+        "helpIntro": { "type": "string" },
+        "switchToVisualLabel": { "type": "string" },
+        "switchToVisualHref": { "type": "string", "minLength": 1 },
+        "navLabel": { "type": "string" }
+      }
+    },
     "site": {
       "type": "object",
       "additionalProperties": false,

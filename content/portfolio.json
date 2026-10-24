@@ -27,6 +27,10 @@
       "href": "/writing"
     },
     {
+      "label": "Terminal",
+      "href": "/terminal"
+    },
+    {
       "label": "Contact",
       "href": "/#contact"
     }
@@ -298,5 +302,19 @@
       "height": 32,
       "generatedFile": "/generated-content/favicon.ico"
     }
-  ]
+  ],
+  "terminal": {
+    "pageTitle": "Terminal Workstation | Mnasie",
+    "pageDescription": "Interactive command simulator for exploring Mnasie's systems projects, articles, and contacts.",
+    "promptUser": "guest",
+    "promptHost": "mnasie-station",
+    "welcomeBanner": [
+      "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR v1.0",
+      "Type 'help' to inspect available commands, or 'home' to switch to visual mode."
+    ],
+    "helpIntro": "Available commands in this portfolio simulator:",
+    "switchToVisualLabel": "RETURN TO VISUAL PORTFOLIO",
+    "switchToVisualHref": "/",
+    "navLabel": "Terminal"
+  }
 }
