@@ -36,7 +36,7 @@ export interface Project {
   demoUrl?: string;        // Live demo link (optional)
 }
 
-// Metadata header stored in markdown frontmatter
+// Metadata stored in the JSON-backed article content model
 export interface ArticleMetadata {
   title: string;
   excerpt: string;
@@ -48,18 +48,8 @@ export interface ArticleMetadata {
   featured?: boolean;
 }
 
-// Full Article object parsed from local markdown files
+// Full article object from the validated JSON document
 export interface Article extends ArticleMetadata {
   slug: string;
   content: string; // Raw or converted body text
-}
-
-// The top-level site configuration shape
-export interface SiteConfig {
-  name: string;
-  role: string;
-  issueLabel: string;
-  nav: NavItem[];
-  socials: SocialLink[];
-  projects: Project[];     // All project data lives in config, not in components
 }

@@ -1,12 +1,12 @@
 // ─── Header — Server Component ────────────────────────────────────────────────
 // No "use client" here — this runs on the server and produces static HTML.
-// It reads site config and renders the masthead structure.
+// It reads validated portfolio data and renders the masthead structure.
 //
 // The only interactive part (active link highlighting) is delegated to
 // <NavLinks />, which is a small Client Component boundary.
 //
 // To change the header design entirely: edit ONLY this file.
-// The nav data still comes from config.ts untouched.
+// The nav data comes from the JSON-backed portfolio content.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";

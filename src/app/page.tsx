@@ -3,10 +3,7 @@
 // Interactive pieces (ProjectsSection modal) are Client Components imported
 // inside it. Next.js handles the boundary automatically.
 //
-// Data flow:
-//   siteConfig (config.ts) → this page → ProjectsSection (as props)
-// The page acts like a thin "data fetcher + assembler". It reads from config
-// and passes the right data down to each section component.
+// The page loads validated content and passes the fields each section needs.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Image from "next/image";
@@ -77,13 +74,6 @@ export default async function HomePage() {
       </div>
 
       {/* ── PROJECTS ──────────────────────────────────────────────────────── */}
-      {/*
-        We pass siteConfig.projects DOWN as props.
-        This is the "data in, UI out" React pattern.
-        ProjectsSection handles rendering + modal state internally.
-        If you want to later load projects from an API or CMS instead,
-        you only change THIS line — not any component.
-      */}
       <ProjectsSection projects={projects} labels={{ ...portfolio.home, ...portfolio.writing }} />
 
       {/* ── WRITINGS / ARTICLES ───────────────────────────────────────────── */}

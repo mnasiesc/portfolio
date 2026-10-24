@@ -10,7 +10,7 @@
 //   we keep ProjectCard simple and testable on its own.
 //
 // Data flow:
-//   config.ts (data) → ProjectsSection (state owner)
+//   portfolio JSON (data) → ProjectsSection (state owner)
 //     → ProjectCard (display, calls onSelect)
 //     → ProjectModal (display, calls onClose)
 //
