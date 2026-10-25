@@ -47,6 +47,16 @@ export const COMMAND_REGISTRY: CommandHelpItem[] = [
     description: "Clear terminal buffer output.",
   },
   {
+    name: "gui",
+    syntax: "gui",
+    description: "Exit terminal emulator and switch back to the visual portfolio GUI (or press ESC).",
+  },
+  {
+    name: "fullscreen",
+    syntax: "fullscreen",
+    description: "Toggle browser fullscreen display mode (or press F11).",
+  },
+  {
     name: "home",
     syntax: "home",
     description: "Exit terminal emulator and switch back to the visual portfolio workstation.",
@@ -70,9 +80,10 @@ const ALIAS_MAP: Record<string, string> = {
   social: "socials",
   links: "socials",
   cls: "clear",
-  exit: "home",
-  quit: "home",
-  gui: "home",
+  exit: "gui",
+  quit: "gui",
+  home: "gui",
+  f11: "fullscreen",
 };
 
 function resolveExternalArticleUrl(
@@ -238,11 +249,19 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
       };
     }
 
+    case "gui":
     case "home": {
       return {
         type: "home",
         targetUrl: context.terminal.switchToVisualHref || "/",
         message: "Switching to visual workstation portfolio...",
+      };
+    }
+
+    case "fullscreen": {
+      return {
+        type: "fullscreen",
+        active: true,
       };
     }
 

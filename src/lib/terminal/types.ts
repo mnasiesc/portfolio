@@ -55,6 +55,7 @@ export type TerminalOutput =
     }
   | { type: "socials"; socials: SocialLink[] }
   | { type: "clear" }
+  | { type: "fullscreen"; active: boolean }
   | { type: "home"; targetUrl: string; message: string }
   | {
       type: "error";

@@ -88,7 +88,7 @@ describe("Terminal Command Parser", () => {
   it("handles 'help' command and registry", () => {
     const result = parseCommand("help", mockContext);
     assert.equal(result.type, "help");
-    assert.equal(result.commands.length, 10);
+    assert.equal(result.commands.length, 12);
     assert.deepEqual(result.commands, COMMAND_REGISTRY);
 
     // Aliases
@@ -198,13 +198,21 @@ describe("Terminal Command Parser", () => {
     assert.equal(parseCommand("cls", mockContext).type, "clear");
   });
 
-  it("handles 'home' command", () => {
+  it("handles 'home' and 'gui' command", () => {
     const result = parseCommand("home", mockContext);
     assert.equal(result.type, "home");
     assert.equal(result.targetUrl, "/");
 
     assert.equal(parseCommand("exit", mockContext).type, "home");
     assert.equal(parseCommand("gui", mockContext).type, "home");
+  });
+
+  it("handles 'fullscreen' and 'f11' command", () => {
+    const result = parseCommand("fullscreen", mockContext);
+    assert.equal(result.type, "fullscreen");
+    assert.equal(result.active, true);
+
+    assert.equal(parseCommand("f11", mockContext).type, "fullscreen");
   });
 
   it("handles unknown commands and provides closest suggestion", () => {

@@ -9,8 +9,9 @@ const CHIPS = [
   { label: "writing", command: "writing" },
   { label: "contact", command: "contact" },
   { label: "socials", command: "socials" },
+  { label: "fullscreen", command: "fullscreen" },
   { label: "clear", command: "clear" },
-  { label: "home (esc)", command: "home" },
+  { label: "gui (esc)", command: "gui" },
 ];
 
 export function TerminalQuickChips({ onSelectCommand }: TerminalQuickChipsProps) {

@@ -342,6 +342,13 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
     case "clear":
       return null;
 
+    case "fullscreen":
+      return (
+        <div className="terminal-output-block font-mono text-xs sm:text-sm text-emerald-400 dark:text-[#8dff55]">
+          Fullscreen mode toggled. (Press F11 or type &apos;fullscreen&apos; again to toggle, or press ESC / type &apos;gui&apos; to exit to visual mode).
+        </div>
+      );
+
     case "home":
       return (
         <div className="terminal-output-block space-y-2 font-mono text-xs sm:text-sm text-emerald-400 dark:text-[#8dff55]">

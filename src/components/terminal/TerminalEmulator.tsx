@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback, useSyncExternalStore, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import type { TerminalContext, TerminalOutput } from "@/lib/terminal/types";
 import { parseCommand } from "@/lib/terminal/parser";
 import { TerminalOutputView } from "./TerminalOutputView";
@@ -50,6 +49,7 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draftInput, setDraftInput] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,22 +65,45 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
       mediaQuery.addEventListener("change", onChange);
       return () => mediaQuery.removeEventListener("change", onChange);
     },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => (typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false),
     () => false,
   );
 
+  const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
 
-  // Listen for Escape key anywhere to return to visual mode
+  // Listen for fullscreen change events
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
+  // Global Escape and F11 listener
   useEffect(() => {
     const handleGlobalKeyDown = (e: globalThis.KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
         router.push(context.terminal.switchToVisualHref || "/");
+      } else if (e.key === "F11") {
+        e.preventDefault();
+        toggleFullscreen();
       }
     };
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [context.terminal.switchToVisualHref, router]);
+  }, [context.terminal.switchToVisualHref, router, toggleFullscreen]);
 
   // Scroll to bottom when entries update
   useEffect(() => {
@@ -140,18 +163,20 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         },
       ]);
 
-      // Route transitions for 'home' and 'article'
+      // Route transitions for 'home'/'gui' and 'article'
       if (output.type === "home") {
         setTimeout(() => {
           router.push(output.targetUrl);
-        }, 350);
+        }, 200);
       } else if (output.type === "article") {
         setTimeout(() => {
           router.push(output.localRoute);
-        }, 400);
+        }, 350);
+      } else if (output.type === "fullscreen") {
+        toggleFullscreen();
       }
     },
-    [context, router],
+    [context, router, toggleFullscreen],
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -159,6 +184,13 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
     if (e.key === "Escape") {
       e.preventDefault();
       router.push(context.terminal.switchToVisualHref || "/");
+      return;
+    }
+
+    // F11 to toggle fullscreen
+    if (e.key === "F11") {
+      e.preventDefault();
+      toggleFullscreen();
       return;
     }
 
@@ -219,6 +251,8 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         "contact",
         "socials",
         "clear",
+        "gui",
+        "fullscreen",
         "home",
       ];
       const match = candidates.find((c) => c.startsWith(trimmed));
@@ -262,50 +296,37 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
           focusInput();
         }
       }}
-      className="terminal-station-window w-full h-full flex-1 border-0 rounded-none bg-stone-950 text-stone-100 font-mono flex flex-col overflow-hidden"
+      className="relative w-full h-full flex-1 bg-black text-stone-100 font-mono flex flex-col overflow-hidden select-text"
     >
-      {/* Terminal Title Bar / Station Rail */}
-      <div className="terminal-header-rail flex items-center justify-between px-3 sm:px-4 py-2 bg-stone-900 border-b border-stone-800 text-xs text-stone-400 select-none shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80 dark:bg-[#8dff55]/90 inline-block animate-pulse" />
-          <span className="font-bold text-stone-200">
-            {context.terminal.promptUser}@{context.terminal.promptHost}
-          </span>
-          <span className="text-stone-600 hidden sm:inline">|</span>
-          <span className="text-emerald-400 dark:text-[#8dff55] font-semibold text-[11px] hidden sm:inline">
-            PRESS [ESC] TO EXIT TO VISUAL MODE
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setEntries([])}
-            className="text-stone-500 hover:text-stone-300 text-[11px] uppercase tracking-wider hover:underline cursor-pointer"
-          >
-            clear buffer
-          </button>
-          <Link
-            href={context.terminal.switchToVisualHref}
-            className="px-2.5 py-1 rounded bg-stone-800 hover:bg-stone-700 text-emerald-400 dark:text-[#8dff55] border border-stone-700 text-[11px] font-bold no-underline transition-colors inline-flex items-center gap-1.5"
-            title="Press Escape or click to return to visual mode"
-          >
-            <span className="px-1 py-0.2 rounded bg-stone-900 text-[10px] text-stone-400 font-mono border border-stone-700">ESC</span>
-            <span>{context.terminal.switchToVisualLabel}</span>
-          </Link>
-        </div>
+      {/* Discreet floating helper buttons in corner */}
+      <div className="absolute top-2.5 right-3 z-30 flex items-center gap-2 opacity-35 hover:opacity-100 transition-opacity select-none text-[11px] font-mono">
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="px-2 py-0.5 rounded border border-stone-800 bg-stone-900/90 text-stone-400 hover:text-emerald-400 hover:border-stone-700 transition-colors cursor-pointer"
+          title="Toggle browser fullscreen (F11 or type 'fullscreen')"
+        >
+          {isFullscreen ? "⛶ window" : "⛶ fullscreen"}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push(context.terminal.switchToVisualHref || "/")}
+          className="px-2 py-0.5 rounded border border-stone-800 bg-stone-900/90 text-stone-400 hover:text-emerald-400 hover:border-stone-700 transition-colors cursor-pointer"
+          title="Return to visual GUI portfolio (press ESC or type 'gui')"
+        >
+          ESC: GUI
+        </button>
       </div>
 
-      {/* Terminal Output Area */}
-      <div className="terminal-screen flex-1 p-3 sm:p-5 overflow-y-auto space-y-4 focus:outline-none scrollbar-thin scrollbar-thumb-stone-800">
+      {/* Pure Terminal Screen (takes 100% of the screen) */}
+      <div className="terminal-screen flex-1 p-3 sm:p-6 overflow-y-auto space-y-4 focus:outline-none scrollbar-none font-mono">
         {/* Welcome Banner */}
-        <div className="terminal-banner space-y-1 pb-2 border-b border-stone-800/80 text-xs sm:text-sm text-stone-400">
-          {context.terminal.welcomeBanner.map((line, idx) => (
-            <div key={idx} className="font-bold text-emerald-400 dark:text-[#8dff55]">
-              {line}
-            </div>
-          ))}
-          <div className="text-stone-500 text-xs pt-1">
-            Type <span className="text-stone-300 font-semibold">&apos;help&apos;</span> for a list of commands, or click any quick action below.
+        <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
+          <div className="font-bold text-emerald-400 dark:text-[#8dff55]">
+            {context.terminal.welcomeBanner[0] || "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR"}
+          </div>
+          <div className="text-stone-400 text-xs sm:text-sm">
+            Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;fullscreen&apos;</span> to toggle full screen, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to exit.
           </div>
         </div>
 
@@ -354,15 +375,15 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
             autoCorrect="off"
             spellCheck={false}
             className="flex-1 bg-transparent border-none outline-none text-stone-100 font-mono text-sm sm:text-base p-0 caret-emerald-400 dark:caret-[#8dff55] focus:ring-0 placeholder:text-stone-700"
-            placeholder="type command... (e.g. 'help', 'projects', 'about')"
+            placeholder="type command... ('help', 'gui', 'fullscreen', or press ESC)"
           />
         </div>
 
-        <div ref={bottomRef} className="h-2" />
+        <div ref={bottomRef} className="h-4" />
       </div>
 
-      {/* Touch-Friendly Quick Command Toolbar for Mobile & Convenience */}
-      <div className="terminal-footer border-t border-stone-800 bg-stone-900/90 px-3 py-1.5">
+      {/* Minimal Touch-Friendly Quick Command Toolbar */}
+      <div className="terminal-footer border-t border-stone-900 bg-black/90 px-3 py-1 shrink-0">
         <TerminalQuickChips onSelectCommand={(cmd) => executeCommand(cmd)} />
       </div>
     </div>
