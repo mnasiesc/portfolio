@@ -152,15 +152,11 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         },
       ]);
 
-      // Route transitions for 'gui' and 'writing'
+      // Route transitions for 'gui'
       if (output.type === "gui") {
         setTimeout(() => {
           router.push(output.targetUrl);
         }, 200);
-      } else if (output.type === "writing") {
-        setTimeout(() => {
-          router.push(output.localRoute);
-        }, 500);
       } else if (output.type === "fullscreen") {
         toggleFullscreen();
       }
@@ -288,8 +284,8 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
     >
       {/* Welcome Banner */}
       <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
-        <div className="font-bold text-emerald-400 dark:text-[#8dff55]">
-          {context.terminal.welcomeBanner[0] || "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR"}
+        <div className="font-bold text-emerald-400 dark:text-[#8dff55] tracking-wide">
+          TERMINAL SIMULATOR
         </div>
         <div className="text-stone-400 text-xs sm:text-sm">
           Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;fullscreen&apos;</span> to toggle fullscreen, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to return.

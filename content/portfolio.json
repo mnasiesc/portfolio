@@ -305,7 +305,7 @@
     "promptUser": "guest",
     "promptHost": "mnasie-station",
     "welcomeBanner": [
-      "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR v1.0",
+      "TERMINAL SIMULATOR",
       "Type \"help\" to inspect commands, or press [ESC] / type \"home\" to exit to visual mode."
     ],
     "helpIntro": "Available commands in this portfolio simulator:",

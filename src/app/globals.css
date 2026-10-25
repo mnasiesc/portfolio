@@ -451,6 +451,39 @@
     color: var(--primary);
   }
 
+  .station-view-switcher {
+    display: inline-flex;
+    height: 34px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--card);
+    color: var(--muted-foreground);
+    font: 600 11px/1 var(--font-mono);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    user-select: none;
+    transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+  }
+
+  .station-view-switcher:hover {
+    border-color: var(--primary);
+    background: var(--secondary);
+    color: var(--primary);
+  }
+
+  .station-view-switcher .terminal-icon {
+    color: var(--primary);
+    transition: transform 140ms ease;
+  }
+
+  .station-view-switcher:hover .terminal-icon {
+    transform: scale(1.08);
+  }
+
   .station-theme-toggle {
     cursor: pointer;
   }
