@@ -66,8 +66,8 @@ function renderProgressBar(percentage: number, totalChars = 24): string {
 
 export function BusyStream({ onExit }: BusyStreamProps) {
   const [lines, setLines] = useState<StreamLine[]>([
-    { id: 1, text: "[SIMULATOR BOOT] Initiating parallel worker pipeline (threads: 16)...", highlight: "cmd" },
-    { id: 2, text: "Target: x86_64-pc-linux-gnu · Dynamic organic pacing engine", highlight: "dim" },
+    { id: 1, text: ":: Starting build job: linux-6.12.8-zen1 (target: x86_64-pc-linux-gnu)...", highlight: "cmd" },
+    { id: 2, text: ":: Compiler: gcc (GCC) 14.2.1 · Flags: -march=native -O3 -pipe -D__KERNEL__", highlight: "dim" },
   ]);
 
   const idCounter = useRef(3);
@@ -260,29 +260,18 @@ export function BusyStream({ onExit }: BusyStreamProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black text-stone-200 font-mono flex flex-col p-3 sm:p-6 select-none overflow-hidden">
-      {/* Top HUD */}
-      <div className="flex items-center justify-between pb-3 mb-2 border-b border-stone-800 text-xs sm:text-sm bg-black/95">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="font-bold text-emerald-400 dark:text-[#8dff55]">
-            BUSY SIMULATOR // ORGANIC PACING & IN-PLACE DOWNLOADS
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-stone-400 text-xs hidden md:inline">
-            Mash any key to fake-type C++ code · Press <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">q</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">ESC</kbd>
-          </span>
-          <button
-            type="button"
-            onClick={onExit}
-            className="px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 text-xs font-bold cursor-pointer"
-          >
-            EXIT [q]
-          </button>
-        </div>
+      {/* Invisible/Discreet corner hover exit button (keyboard 'q' / 'ESC' is primary) */}
+      <div className="absolute top-2 right-3 z-20 opacity-0 hover:opacity-80 transition-opacity">
+        <button
+          type="button"
+          onClick={onExit}
+          className="px-2 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-400 hover:text-stone-200 text-[11px] font-mono cursor-pointer"
+        >
+          exit (q)
+        </button>
       </div>
 
-      {/* Stream Area */}
+      {/* Stream Area — Pure terminal with no fake titles */}
       <div className="flex-1 overflow-y-auto space-y-1.5 text-xs sm:text-sm font-mono scrollbar-none leading-relaxed">
         {lines.map((item) => (
           <div
