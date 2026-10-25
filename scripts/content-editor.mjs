@@ -584,23 +584,37 @@ const page = `<!doctype html>
           frame.style.justifyContent="center";
 
           const clean=previewUrl.split("?")[0].toLowerCase();
-          const asciinemaMatch = previewUrl.match(/asciinema\.org\/a\/([a-zA-Z0-9_\-]+)/);
-          const youtubeMatch = previewUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_\-]+)/);
-          const vimeoMatch = previewUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+          let asciinemaId = null;
+          if (previewUrl.includes("asciinema.org/a/")) {
+            asciinemaId = previewUrl.split("asciinema.org/a/")[1].split("/")[0].split("?")[0];
+          }
+          let youtubeId = null;
+          if (previewUrl.includes("youtube.com/watch?v=")) {
+            youtubeId = previewUrl.split("watch?v=")[1].split("&")[0];
+          } else if (previewUrl.includes("youtube.com/embed/")) {
+            youtubeId = previewUrl.split("embed/")[1].split("?")[0];
+          } else if (previewUrl.includes("youtu.be/")) {
+            youtubeId = previewUrl.split("youtu.be/")[1].split("?")[0];
+          }
+          let vimeoId = null;
+          if (previewUrl.includes("vimeo.com/")) {
+            const vparts = previewUrl.split("vimeo.com/")[1].split("?")[0].replace("video/", "").split("/");
+            if (vparts[0] && /^[0-9]+$/.test(vparts[0])) vimeoId = vparts[0];
+          }
 
-          if(asciinemaMatch){
+          if(asciinemaId){
             const ifr=document.createElement("iframe");
-            ifr.src="https://asciinema.org/a/"+asciinemaMatch[1]+"/iframe";
+            ifr.src="https://asciinema.org/a/"+asciinemaId+"/iframe";
             ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
             frame.append(ifr);
-          }else if(youtubeMatch){
+          }else if(youtubeId){
             const ifr=document.createElement("iframe");
-            ifr.src="https://www.youtube-nocookie.com/embed/"+youtubeMatch[1];
+            ifr.src="https://www.youtube-nocookie.com/embed/"+youtubeId;
             ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
             frame.append(ifr);
-          }else if(vimeoMatch){
+          }else if(vimeoId){
             const ifr=document.createElement("iframe");
-            ifr.src="https://player.vimeo.com/video/"+vimeoMatch[1];
+            ifr.src="https://player.vimeo.com/video/"+vimeoId;
             ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
             frame.append(ifr);
           }else{
