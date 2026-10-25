@@ -34,7 +34,13 @@ assertUnique(content.articles.map(({ slug }) => slug), "article slug");
 assertUnique(content.images.map(({ id }) => id), "image ID");
 
 const imageIds = new Set(content.images.map(({ id }) => id));
-const imageReferences = [content.home.avatarImage, ...Object.values(content.site.icons)];
+const typedProjects = content.projects as unknown as Project[];
+const imageReferences = [
+  content.home.avatarImage,
+  ...Object.values(content.site.icons),
+  ...typedProjects.map((project) => project.image).filter(Boolean) as string[],
+  ...typedProjects.map((project) => project.proofOfWork?.imageId).filter(Boolean) as string[],
+];
 for (const imageId of imageReferences) {
   if (!imageIds.has(imageId)) throw new Error(`Missing portfolio image: ${imageId}`);
 }

@@ -64,7 +64,11 @@ export default async function HomePage() {
 
         <div className="dashboard-grid">
           <section className="dashboard-bay project-bay" aria-label={portfolio.home.projectHeading}>
-            <ProjectsSection projects={projects} labels={{ ...portfolio.home, ...portfolio.writing }} />
+            <ProjectsSection
+              projects={projects}
+              images={portfolio.images}
+              labels={{ ...portfolio.home, ...portfolio.writing }}
+            />
           </section>
           <section className="dashboard-bay writing-bay" aria-label={portfolio.home.writingHeading}>
             <WritingsSection articles={articles} labels={{ ...portfolio.home, ...portfolio.writing }} />

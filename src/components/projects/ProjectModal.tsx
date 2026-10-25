@@ -9,8 +9,18 @@ import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Project } from "@/types";
 
+interface ModalImageRecord {
+  id: string;
+  mimeType: string;
+  generatedFile: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
 interface ProjectModalProps {
   project: Project | null;
+  images?: ModalImageRecord[];
   onClose: () => void;
   labels: {
     projectModalClose: string;
@@ -18,6 +28,43 @@ interface ProjectModalProps {
     builtWith: string;
     viewOnGitHub: string;
     liveDemo: string;
+  };
+}
+
+function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
+  const pow = project.proofOfWork;
+  const directImageId = pow?.imageId || project.image;
+  const imageMatch = directImageId ? images?.find((img) => img.id === directImageId) : undefined;
+
+  const url = pow?.url || imageMatch?.generatedFile;
+  if (!url) return null;
+
+  const mimeType = imageMatch?.mimeType;
+  const explicitType = pow?.mediaType;
+
+  const cleanUrl = url.split("?")[0].toLowerCase();
+  const isVideo = explicitType === "video" ||
+    (explicitType !== "image" && (
+      Boolean(mimeType?.startsWith("video/")) ||
+      cleanUrl.endsWith(".mp4") ||
+      cleanUrl.endsWith(".webm") ||
+      cleanUrl.endsWith(".ogg") ||
+      cleanUrl.endsWith(".ogv") ||
+      cleanUrl.endsWith(".mov")
+    ));
+
+  const width = pow?.width || imageMatch?.width || 720;
+  const height = pow?.height || imageMatch?.height || 405;
+  const caption = pow?.caption;
+  const alt = pow?.alt || imageMatch?.alt || `${project.title} proof of work`;
+
+  return {
+    url,
+    isVideo,
+    width,
+    height,
+    caption,
+    alt,
   };
 }
 
@@ -99,7 +146,8 @@ function ProjectDescription({ content }: { content: string }) {
   );
 }
 
-export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
+export function ProjectModal({ project, images, onClose, labels }: ProjectModalProps) {
+  const media = project ? resolveProjectMedia(project, images) : null;
   // ── Escape key handler ───────────────────────────────────────────────────
   useEffect(() => {
     if (!project) return;
@@ -174,6 +222,67 @@ export function ProjectModal({ project, onClose, labels }: ProjectModalProps) {
         <div className="project-modal-content overflow-y-auto flex-1 no-scrollbar">
           {/* Formatted description with list items & inline code badges */}
           <ProjectDescription content={project.longDescription} />
+
+          {/* ── Proof of Work Media Attachment (Image, Video, GIF) ── */}
+          {media && (
+            <div className="project-proof-of-work my-4 border border-station-panel-border/80 rounded bg-stone-950/70 p-2.5 sm:p-3 overflow-hidden">
+              <div className="proof-header flex items-center justify-between pb-2 mb-2.5 border-b border-station-panel-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 text-accent font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse" />
+                  PROOF OF WORK // ARTIFACT
+                </span>
+                <span>{media.isVideo ? "STREAM // VIDEO" : "CAPTURE // MEDIA"}</span>
+              </div>
+
+              <div
+                className="proof-media-frame relative w-full overflow-hidden rounded bg-black/60 border border-station-panel-border/90 flex items-center justify-center mx-auto"
+                style={{
+                  aspectRatio: `${media.width} / ${media.height}`,
+                  maxHeight: `${Math.min(media.height, 460)}px`,
+                }}
+              >
+                {media.isVideo ? (
+                  <video
+                    src={media.url}
+                    controls
+                    playsInline
+                    autoPlay
+                    muted
+                    loop
+                    className="w-full h-full object-cover object-center block"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                    }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={media.url}
+                    alt={media.alt}
+                    className="w-full h-full object-cover object-center block"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                    }}
+                    loading="lazy"
+                  />
+                )}
+              </div>
+
+              {media.caption && (
+                <p className="mt-2 text-xs font-mono text-muted-foreground text-center">
+                  {media.caption}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Tech stack badges */}
           <div>

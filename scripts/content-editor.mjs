@@ -29,8 +29,8 @@ function validateDocument(document) {
 
   for (const image of document.images) {
     const bytes = Buffer.from(image.data, "base64");
-    if (!bytes.length || bytes.length > 9_000_000 || bytes.toString("base64") !== image.data) {
-      throw new Error(`Image ${image.id} has invalid base64 or exceeds the 9 MB image limit.`);
+    if (!bytes.length || bytes.length > 25_000_000 || bytes.toString("base64") !== image.data) {
+      throw new Error(`Media ${image.id} has invalid base64 or exceeds the 25 MB limit.`);
     }
   }
 }
@@ -53,8 +53,8 @@ function readRequestBody(request) {
     let size = 0;
     request.on("data", (chunk) => {
       size += chunk.length;
-      if (size > 20_000_000) {
-        reject(new Error("Editor request exceeds 20 MB."));
+      if (size > 50_000_000) {
+        reject(new Error("Editor request exceeds 50 MB."));
         request.destroy();
         return;
       }
@@ -90,7 +90,7 @@ const page = `<!doctype html>
     .field select{cursor:pointer}.field select option{background:#181c18;color:var(--text)}
     .field textarea{min-height:76px;resize:vertical}.field input[type=file]{max-width:100%;color:var(--muted)}
     .array-item{margin:11px 0;padding:11px;border-left:2px solid #718b4d;background:#191c19}.array-heading{display:flex;align-items:center;gap:6px;padding-bottom:5px}.array-heading strong{font-size:12px;color:var(--muted);margin-right:auto}.array-heading button{padding:4px 8px;font-size:12px}.array-heading .remove{color:var(--danger)}
-    .preview{display:block;max-width:190px;max-height:150px;object-fit:contain;background:#111;padding:6px;margin:8px 0;border:1px solid var(--line)}.array-actions{display:flex;gap:8px;margin-top:10px}details{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted)}
+    .preview{display:block;max-width:240px;max-height:160px;object-fit:cover;object-position:center;background:#111;padding:4px;margin:8px 0;border:1px solid var(--line);border-radius:4px}.array-actions{display:flex;gap:8px;margin-top:10px}details{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted)}
     details textarea{display:block;width:100%;min-height:280px;margin:10px 0;background:#101210;color:var(--text);border:1px solid var(--line);padding:12px;font:12px/1.5 ui-monospace,monospace}.toast{position:fixed;bottom:18px;right:18px;z-index:4;max-width:min(520px,calc(100vw - 36px));white-space:pre-wrap;background:#282e28;border:1px solid var(--line);padding:12px 16px;border-radius:5px;box-shadow:0 8px 30px #0008}.toast.error{border-color:var(--danger)}
     @media(max-width:700px){header{padding:12px}h1{font-size:16px}.shell{grid-template-columns:1fr}nav{display:flex;overflow-x:auto;gap:8px;padding:9px;border-right:0;border-bottom:1px solid var(--line)}.nav-group{display:flex;gap:4px;margin:0}.nav-group-title{display:none}nav button{width:auto;white-space:nowrap;margin:0}.field{grid-template-columns:1fr;gap:3px}.field>label{padding-top:0}}
   </style>
@@ -133,9 +133,9 @@ const page = `<!doctype html>
 
     function newEntry(path,items){
       const area=path.join(".");
-      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"early",year:String(new Date().getFullYear()),repoUrl:"https://github.com/"};
+      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"early",year:String(new Date().getFullYear()),repoUrl:"https://github.com/",proofOfWork:{mediaType:"auto",imageId:"",url:"",caption:"",alt:"",width:720,height:405}};
       if(area==="articles")return{slug:"new-article",title:"New article",excerpt:"",date:new Date().toISOString().slice(0,10),readingTime:"1 min read",category:"Notes",tags:[],featured:false,externalRedirect:true,body:""};
-      if(area==="images")return{id:"new-image",mimeType:"image/png",data:"",alt:"",width:1,height:1,generatedFile:"/generated-content/new-image.png"};
+      if(area==="images")return{id:"new-media",mimeType:"image/png",data:"",alt:"",width:720,height:405,generatedFile:"/generated-content/new-media.png"};
       if(area==="navigation")return{label:"New link",href:"/"};
       if(area==="socials")return{label:"New social",href:"https://example.com",handle:""};
       if(area==="home.actions")return{label:"New action",href:"/"};
@@ -147,20 +147,47 @@ const page = `<!doctype html>
 
     function makeImageField(value,path){
       const row=document.createElement("div");row.className="field";
-      const label=document.createElement("label");label.textContent="Image file";row.append(label);
+      const label=document.createElement("label");label.textContent="Media file";row.append(label);
       const wrap=document.createElement("div"),record=getCollection(path.slice(0,path.length-1));
-      const preview=document.createElement("img");preview.className="preview";preview.alt=record.alt||"Image preview";
+      const isVideo=Boolean(record.mimeType&&record.mimeType.startsWith("video/"));
+      let preview=document.createElement(isVideo?"video":"img");
+      preview.className="preview";
+      if(isVideo){
+        preview.controls=true;preview.muted=true;preview.playsInline=true;
+      }else{
+        preview.alt=record.alt||"Media preview";
+      }
       if(value)preview.src="data:"+record.mimeType+";base64,"+value;
-      const upload=document.createElement("input");upload.type="file";upload.accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon";
+      const upload=document.createElement("input");upload.type="file";
+      upload.accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/x-icon,image/avif,video/mp4,video/webm,video/ogg";
       upload.addEventListener("change",()=>{
         const file=upload.files[0];if(!file)return;
-        const supported=["image/png","image/jpeg","image/webp","image/svg+xml","image/x-icon"];
-        if(!supported.includes(file.type)){notify("Use PNG, JPEG, WebP, SVG, or ICO images.",true);upload.value="";return}
-        if(file.size>9_000_000){notify("Image is over the 9 MB limit.",true);upload.value="";return}
+        const supported=["image/png","image/jpeg","image/webp","image/gif","image/svg+xml","image/x-icon","image/avif","video/mp4","video/webm","video/ogg"];
+        if(!supported.includes(file.type)){notify("Supported: PNG, JPEG, WebP, GIF, SVG, AVIF, MP4, WebM, OGG.",true);upload.value="";return}
+        if(file.size>25_000_000){notify("File exceeds the 25 MB limit.",true);upload.value="";return}
         const reader=new FileReader();reader.onload=()=>{
           const data=String(reader.result).split(",")[1];record.data=data;record.mimeType=file.type;
-          const extension={"image/jpeg":"jpg","image/svg+xml":"svg","image/x-icon":"ico"}[file.type]||file.type.split("/")[1];
-          record.generatedFile="/generated-content/"+record.id+"."+extension;preview.onload=()=>{record.width=preview.naturalWidth||record.width;record.height=preview.naturalHeight||record.height;syncRaw()};preview.src=String(reader.result);syncRaw();
+          const extMap={"image/jpeg":"jpg","image/svg+xml":"svg","image/x-icon":"ico","video/mp4":"mp4","video/webm":"webm","video/ogg":"ogg"};
+          const extension=extMap[file.type]||file.type.split("/")[1]||"bin";
+          record.generatedFile="/generated-content/"+record.id+"."+extension;
+          if(file.type.startsWith("video/")){
+            let vPreview=preview;
+            if(preview.tagName.toLowerCase()!=="video"){
+              vPreview=document.createElement("video");vPreview.className="preview";vPreview.controls=true;vPreview.muted=true;vPreview.playsInline=true;
+              wrap.replaceChild(vPreview,preview);preview=vPreview;
+            }
+            vPreview.onloadedmetadata=()=>{record.width=vPreview.videoWidth||record.width||720;record.height=vPreview.videoHeight||record.height||405;syncRaw()};
+            vPreview.src=String(reader.result);
+          }else{
+            let iPreview=preview;
+            if(preview.tagName.toLowerCase()!=="img"){
+              iPreview=document.createElement("img");iPreview.className="preview";
+              wrap.replaceChild(iPreview,preview);preview=iPreview;
+            }
+            iPreview.onload=()=>{record.width=iPreview.naturalWidth||record.width||720;record.height=iPreview.naturalHeight||record.height||405;syncRaw()};
+            iPreview.src=String(reader.result);
+          }
+          syncRaw();
         };reader.readAsDataURL(file);
       });
       wrap.append(preview,upload);row.append(wrap);return row;
@@ -232,13 +259,33 @@ const page = `<!doctype html>
         return row;
       }
 
-      // Image ID reference dropdown
-      if((key==="avatarImage"||(key==="image"&&path.includes("projects"))||(path.includes("icons")&&typeof value==="string"))&&Array.isArray(documentData?.images)){
+      // Media Type dropdown (Proof of Work)
+      if(key==="mediaType"){
         const select=document.createElement("select");
-        if(key==="image"){
+        const mediaOpts=[
+          {value:"auto",label:"Auto-detect format (Recommended)"},
+          {value:"image",label:"Image / Screenshot / GIF (image/*)"},
+          {value:"video",label:"Video Stream (MP4, WebM, OGG)"}
+        ];
+        for(const opt of mediaOpts){
+          const option=document.createElement("option");
+          option.value=opt.value;
+          option.textContent=opt.label;
+          if((value||"auto")===opt.value)option.selected=true;
+          select.append(option);
+        }
+        select.addEventListener("change",()=>setPath(path,select.value));
+        row.append(select);
+        return row;
+      }
+
+      // Image ID reference dropdown
+      if((key==="avatarImage"||key==="imageId"||(key==="image"&&path.includes("projects"))||(path.includes("icons")&&typeof value==="string"))&&Array.isArray(documentData?.images)){
+        const select=document.createElement("select");
+        if(key==="image"||key==="imageId"){
           const optNone=document.createElement("option");
           optNone.value="";
-          optNone.textContent="— None —";
+          optNone.textContent="— None (or direct URL) —";
           select.append(optNone);
         }
         for(const img of documentData.images){
@@ -248,8 +295,109 @@ const page = `<!doctype html>
           if (value === img.id) option.selected = true;
           select.append(option);
         }
-        select.addEventListener("change",()=>setPath(path,select.value));
+        select.addEventListener("change",()=>{
+          setPath(path,select.value);
+          if(key==="imageId"&&path.includes("proofOfWork")){
+            const found=documentData.images.find(img=>img.id===select.value);
+            if(found){
+              const parentPath=path.slice(0,-1);
+              const target=getCollection(parentPath);
+              if(target){
+                target.width=found.width||720;
+                target.height=found.height||405;
+                render();
+              }
+            }
+          }
+        });
         row.append(select);
+        return row;
+      }
+
+      // Proof of Work dedicated block with live crop preview
+      if(key==="proofOfWork"&&value&&typeof value==="object"){
+        const wrapper=document.createElement("div");
+        wrapper.style.padding="10px";
+        wrapper.style.background="#141714";
+        wrapper.style.border="1px solid #718b4d";
+        wrapper.style.borderRadius="4px";
+        wrapper.style.margin="8px 0";
+
+        const topBar=document.createElement("div");
+        topBar.style.display="flex";topBar.style.justifyContent="space-between";topBar.style.alignItems="center";topBar.style.marginBottom="8px";
+        const title=document.createElement("strong");
+        title.style.color="#9ec468";title.style.fontSize="12px";
+        title.textContent="Proof of Work / Artifact Attachment";
+        const removeBtn=document.createElement("button");
+        removeBtn.type="button";removeBtn.className="remove";removeBtn.textContent="− Remove Proof of Work";
+        removeBtn.addEventListener("click",()=>{
+          const parent=getCollection(path.slice(0,-1));
+          if(parent){delete parent.proofOfWork;render();}
+        });
+        topBar.append(title,removeBtn);
+        wrapper.append(topBar);
+
+        for(const[childKey,childValue]of Object.entries(value)){
+          wrapper.append(makeField(childKey,childValue,[...path,childKey]));
+        }
+
+        const pow=value;
+        const linkedImg=documentData.images?.find(img=>img.id===pow.imageId);
+        const previewUrl=pow.url||(linkedImg?.data?"data:"+linkedImg.mimeType+";base64,"+linkedImg.data:linkedImg?.generatedFile);
+        const w=pow.width||720;
+        const h=pow.height||405;
+
+        const previewContainer=document.createElement("div");
+        previewContainer.style.marginTop="12px";
+        previewContainer.style.padding="10px";
+        previewContainer.style.background="#0c0e0c";
+        previewContainer.style.border="1px dashed #51633d";
+        previewContainer.style.borderRadius="4px";
+
+        const previewHeader=document.createElement("div");
+        previewHeader.style.display="flex";previewHeader.style.justifyContent="space-between";previewHeader.style.alignItems="center";
+        previewHeader.style.fontSize="11px";previewHeader.style.color="#8ca370";previewHeader.style.marginBottom="8px";
+        previewHeader.innerHTML="<strong>LIVE CROP PREVIEW ("+w+" × "+h+")</strong><span style='font-size:10px;color:var(--muted);'>object-fit: cover (no distortion)</span>";
+        previewContainer.append(previewHeader);
+
+        if(previewUrl){
+          const frame=document.createElement("div");
+          frame.style.width="100%";
+          frame.style.maxWidth="360px";
+          frame.style.aspectRatio=w+" / "+h;
+          frame.style.maxHeight="220px";
+          frame.style.overflow="hidden";
+          frame.style.margin="0 auto";
+          frame.style.background="#000";
+          frame.style.border="1px solid #333";
+          frame.style.borderRadius="3px";
+          frame.style.display="flex";
+          frame.style.alignItems="center";
+          frame.style.justifyContent="center";
+
+          const clean=previewUrl.split("?")[0].toLowerCase();
+          const isVid=pow.mediaType==="video"||(pow.mediaType!=="image"&&(linkedImg?.mimeType?.startsWith("video/")||clean.endsWith(".mp4")||clean.endsWith(".webm")||clean.endsWith(".ogg")||clean.endsWith(".mov")));
+          if(isVid){
+            const vid=document.createElement("video");
+            vid.src=previewUrl;vid.controls=true;vid.muted=true;vid.playsInline=true;
+            vid.style.width="100%";vid.style.height="100%";vid.style.objectFit="cover";vid.style.objectPosition="center";vid.style.display="block";
+            frame.append(vid);
+          }else{
+            const img=document.createElement("img");
+            img.src=previewUrl;img.alt=pow.alt||"Crop preview";
+            img.style.width="100%";img.style.height="100%";img.style.objectFit="cover";img.style.objectPosition="center";img.style.display="block";
+            frame.append(img);
+          }
+          previewContainer.append(frame);
+        }else{
+          const note=document.createElement("p");
+          note.style.fontSize="11px";note.style.color="var(--muted)";note.style.margin="0";
+          note.textContent="Select an Image ID or enter a Media URL above to preview live cropping.";
+          previewContainer.append(note);
+        }
+
+        wrapper.append(previewContainer);
+        row.append(wrapper);
         return row;
       }
 
@@ -281,8 +429,20 @@ const page = `<!doctype html>
             const down=document.createElement("button");down.type="button";down.textContent="↓";down.title="Move down";down.disabled=index===value.length-1;down.addEventListener("click",()=>{[value[index+1],value[index]]=[value[index],value[index+1]];render()});
             const remove=document.createElement("button");remove.type="button";remove.className="remove";remove.textContent="Remove";remove.addEventListener("click",()=>{value.splice(index,1);render()});
             heading.append(up,down,remove);item.append(heading);
-            if(entry&&typeof entry==="object")for(const[childKey,childValue]of Object.entries(entry))item.append(makeField(childKey,childValue,[...path,index,childKey]));
-            else item.append(makeField(String(index+1),entry,[...path,index]));
+            if(entry&&typeof entry==="object"){
+              for(const[childKey,childValue]of Object.entries(entry))item.append(makeField(childKey,childValue,[...path,index,childKey]));
+              if(path[0]==="projects"&&!entry.proofOfWork){
+                const attachRow=document.createElement("div");attachRow.style.marginTop="10px";attachRow.style.paddingTop="8px";attachRow.style.borderTop="1px dashed var(--line)";
+                const attachBtn=document.createElement("button");attachBtn.type="button";
+                attachBtn.textContent="+ Attach Proof of Work (Screenshot / Video)";
+                attachBtn.addEventListener("click",()=>{
+                  const firstImg=documentData.images?.[0]?.id||"";
+                  entry.proofOfWork={mediaType:"auto",imageId:firstImg,url:"",caption:"",alt:"",width:720,height:405};
+                  render();
+                });
+                attachRow.append(attachBtn);item.append(attachRow);
+              }
+            }else item.append(makeField(String(index+1),entry,[...path,index]));
             wrapper.append(item);
           });
           const add=document.createElement("button");add.type="button";
@@ -295,6 +455,12 @@ const page = `<!doctype html>
       }
       if(typeof value==="boolean"){
         const input=document.createElement("input");input.type="checkbox";input.checked=value;input.addEventListener("change",()=>setPath(path,input.checked));row.append(input);return row;
+      }
+      if(typeof value==="number"||key==="width"||key==="height"){
+        const input=document.createElement("input");input.type="number";input.min="1";input.step="1";
+        input.value=value!=null?value:(key==="width"?720:405);
+        input.addEventListener("input",()=>setPath(path,Number(input.value)||0));
+        row.append(input);return row;
       }
       const input=typeof value==="string"&&(value.length>100||key==="body"||key==="longDescription")?document.createElement("textarea"):document.createElement("input");
       input.value=value??"";input.addEventListener("input",()=>setPath(path,input.value));row.append(input);return row;

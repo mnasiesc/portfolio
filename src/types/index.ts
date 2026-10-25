@@ -23,6 +23,17 @@ export interface SocialLink {
   handle?: string; // e.g. "@mnasie" — short display text
 }
 
+// Proof of work attachment (screenshot, video, gif) for a project
+export interface ProjectProofOfWork {
+  mediaType?: "image" | "video" | "auto";
+  imageId?: string;
+  url?: string;
+  caption?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
+
 // A single project entry
 export interface Project {
   id: string;              // Unique slug used as React key
@@ -34,6 +45,8 @@ export interface Project {
   year: string;            // Year built / last updated
   repoUrl: string;         // GitHub link
   demoUrl?: string;        // Live demo link (optional)
+  image?: string;          // Direct image reference (optional)
+  proofOfWork?: ProjectProofOfWork; // Proof of work attachment (optional)
 }
 
 // Metadata stored in the JSON-backed article content model

@@ -27,6 +27,7 @@ import { ProjectModal } from "@/components/projects/ProjectModal";
 
 interface ProjectsSectionProps {
   projects: Project[]; // Passed in from page.tsx (which reads from config)
+  images?: { id: string; mimeType: string; generatedFile: string; width: number; height: number; alt: string }[];
   labels: {
     projectHeading: string;
     projectCountLabel: string;
@@ -41,7 +42,7 @@ interface ProjectsSectionProps {
   };
 }
 
-export function ProjectsSection({ projects, labels }: ProjectsSectionProps) {
+export function ProjectsSection({ projects, images, labels }: ProjectsSectionProps) {
   // ── State ────────────────────────────────────────────────────────────────
   // `selectedProject` is either a Project object (modal open) or null (closed).
   // useState<Project | null>(null) means: "start with no project selected".
@@ -104,6 +105,7 @@ export function ProjectsSection({ projects, labels }: ProjectsSectionProps) {
       {/* When a project is set, it renders the overlay.                 */}
       <ProjectModal
         project={selectedProject}
+        images={images}
         onClose={handleClose}
         labels={labels}
       />
