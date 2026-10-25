@@ -74,11 +74,6 @@ export const MISC_TOOLS = [
     syntax: "matrix",
     description: "unleash the green phosphor digital rain",
   },
-  {
-    name: "top",
-    syntax: "top (or htop)",
-    description: "live interactive process & CPU core monitor",
-  },
 ];
 
 const ALIAS_MAP: Record<string, string> = {
@@ -89,7 +84,6 @@ const ALIAS_MAP: Record<string, string> = {
   exit: "gui",
   quit: "gui",
   home: "gui",
-  htop: "top",
 };
 
 function resolveExternalArticleUrl(
@@ -319,13 +313,6 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
             disclaimer: "SIMULATION: Digital phosphor code rain. Press 'q', 'ESC', or Ctrl+C to return.",
           };
         }
-        if (sub === "top" || sub === "htop") {
-          return {
-            type: "interactive_mode",
-            mode: "htop",
-            disclaimer: "SIMULATION: Interactive process monitor with your real core count. Press 'q', 'ESC', or Ctrl+C to return.",
-          };
-        }
       }
 
       return {
@@ -349,14 +336,6 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
         type: "interactive_mode",
         mode: "matrix",
         disclaimer: "SIMULATION: Digital phosphor code rain. Press 'q', 'ESC', or Ctrl+C to return.",
-      };
-    }
-
-    case "top": {
-      return {
-        type: "interactive_mode",
-        mode: "htop",
-        disclaimer: "SIMULATION: Interactive process monitor with your real core count. Press 'q', 'ESC', or Ctrl+C to return.",
       };
     }
 

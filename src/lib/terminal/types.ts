@@ -71,7 +71,7 @@ export type TerminalOutput =
     }
   | {
       type: "interactive_mode";
-      mode: "busy" | "matrix" | "htop";
+      mode: "busy" | "matrix";
       disclaimer: string;
     }
   | {

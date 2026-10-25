@@ -7,7 +7,6 @@ import { parseCommand } from "@/lib/terminal/parser";
 import { TerminalOutputView } from "./TerminalOutputView";
 import { MatrixRain } from "./simulations/MatrixRain";
 import { BusyStream } from "./simulations/BusyStream";
-import { HtopMonitor } from "./simulations/HtopMonitor";
 
 interface TerminalEntry {
   id: string;
@@ -51,7 +50,7 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draftInput, setDraftInput] = useState("");
-  const [activeSimulation, setActiveSimulation] = useState<"busy" | "matrix" | "htop" | null>(null);
+  const [activeSimulation, setActiveSimulation] = useState<"busy" | "matrix" | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -247,7 +246,6 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         "misc",
         "busy",
         "matrix",
-        "top",
       ];
       const match = candidates.find((c) => c.startsWith(trimmed));
       if (match) {
@@ -292,14 +290,6 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
       )}
       {activeSimulation === "busy" && (
         <BusyStream
-          onExit={() => {
-            setActiveSimulation(null);
-            setTimeout(focusInput, 50);
-          }}
-        />
-      )}
-      {activeSimulation === "htop" && (
-        <HtopMonitor
           onExit={() => {
             setActiveSimulation(null);
             setTimeout(focusInput, 50);

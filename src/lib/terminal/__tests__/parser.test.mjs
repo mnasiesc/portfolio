@@ -258,10 +258,10 @@ describe("Terminal Command Parser - Strict 11 Commands", () => {
     assert.equal(result.type, "misc");
     assert.equal(result.description, "wanna try out some cool stuff?");
     assert.match(result.disclaimer, /simulations/i);
-    assert.equal(result.tools.length, 3);
+    assert.equal(result.tools.length, 2);
   });
 
-  it("handles 'busy', 'matrix', and 'top' (direct and via 'misc <tool>')", () => {
+  it("handles 'busy' and 'matrix' (direct and via 'misc <tool>')", () => {
     // Direct
     const busy = parseCommand("busy", mockContext);
     assert.equal(busy.type, "interactive_mode");
@@ -271,18 +271,9 @@ describe("Terminal Command Parser - Strict 11 Commands", () => {
     assert.equal(matrix.type, "interactive_mode");
     assert.equal(matrix.mode, "matrix");
 
-    const top = parseCommand("top", mockContext);
-    assert.equal(top.type, "interactive_mode");
-    assert.equal(top.mode, "htop");
-
-    const htop = parseCommand("htop", mockContext);
-    assert.equal(htop.type, "interactive_mode");
-    assert.equal(htop.mode, "htop");
-
     // Via misc prefix
     assert.equal(parseCommand("misc busy", mockContext).mode, "busy");
     assert.equal(parseCommand("misc matrix", mockContext).mode, "matrix");
-    assert.equal(parseCommand("misc top", mockContext).mode, "htop");
   });
 
   it("handles unknown commands and provides closest suggestion", () => {
