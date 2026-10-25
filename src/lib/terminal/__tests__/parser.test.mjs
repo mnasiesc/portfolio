@@ -85,10 +85,10 @@ describe("Terminal Command Parser - Strict 11 Commands", () => {
     assert.deepEqual(parseCommand("   ", mockContext), { type: "empty" });
   });
 
-  it("handles 'help' command and registry with exactly 11 commands", () => {
+  it("handles 'help' command and registry with 12 commands (including misc)", () => {
     const result = parseCommand("help", mockContext);
     assert.equal(result.type, "help");
-    assert.equal(result.commands.length, 11);
+    assert.equal(result.commands.length, 12);
     assert.deepEqual(result.commands, COMMAND_REGISTRY);
 
     const commandNames = result.commands.map((c) => c.name);
@@ -104,6 +104,7 @@ describe("Terminal Command Parser - Strict 11 Commands", () => {
       "clear",
       "gui",
       "fullscreen",
+      "misc",
     ]);
 
     // Help aliases
@@ -250,6 +251,38 @@ describe("Terminal Command Parser - Strict 11 Commands", () => {
     assert.equal(result.active, true);
 
     assert.equal(parseCommand("f11", mockContext).type, "fullscreen");
+  });
+
+  it("handles 'misc' command with disclaimer and simulation tools", () => {
+    const result = parseCommand("misc", mockContext);
+    assert.equal(result.type, "misc");
+    assert.equal(result.description, "wanna try out some cool stuff?");
+    assert.match(result.disclaimer, /simulations/i);
+    assert.equal(result.tools.length, 3);
+  });
+
+  it("handles 'busy', 'matrix', and 'top' (direct and via 'misc <tool>')", () => {
+    // Direct
+    const busy = parseCommand("busy", mockContext);
+    assert.equal(busy.type, "interactive_mode");
+    assert.equal(busy.mode, "busy");
+
+    const matrix = parseCommand("matrix", mockContext);
+    assert.equal(matrix.type, "interactive_mode");
+    assert.equal(matrix.mode, "matrix");
+
+    const top = parseCommand("top", mockContext);
+    assert.equal(top.type, "interactive_mode");
+    assert.equal(top.mode, "htop");
+
+    const htop = parseCommand("htop", mockContext);
+    assert.equal(htop.type, "interactive_mode");
+    assert.equal(htop.mode, "htop");
+
+    // Via misc prefix
+    assert.equal(parseCommand("misc busy", mockContext).mode, "busy");
+    assert.equal(parseCommand("misc matrix", mockContext).mode, "matrix");
+    assert.equal(parseCommand("misc top", mockContext).mode, "htop");
   });
 
   it("handles unknown commands and provides closest suggestion", () => {

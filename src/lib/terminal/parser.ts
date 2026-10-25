@@ -56,6 +56,29 @@ export const COMMAND_REGISTRY: CommandHelpItem[] = [
     syntax: "fullscreen",
     description: "Toggle browser fullscreen display mode (or press F11).",
   },
+  {
+    name: "misc",
+    syntax: "misc",
+    description: "wanna try out some cool stuff?",
+  },
+];
+
+export const MISC_TOOLS = [
+  {
+    name: "busy",
+    syntax: "busy",
+    description: "look furiously productive for your boss (fake compiler logs & download stream)",
+  },
+  {
+    name: "matrix",
+    syntax: "matrix",
+    description: "unleash the green phosphor digital rain",
+  },
+  {
+    name: "top",
+    syntax: "top (or htop)",
+    description: "live interactive process & CPU core monitor",
+  },
 ];
 
 const ALIAS_MAP: Record<string, string> = {
@@ -66,6 +89,7 @@ const ALIAS_MAP: Record<string, string> = {
   exit: "gui",
   quit: "gui",
   home: "gui",
+  htop: "top",
 };
 
 function resolveExternalArticleUrl(
@@ -275,6 +299,64 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
       return {
         type: "fullscreen",
         active: true,
+      };
+    }
+
+    case "misc": {
+      if (args.length > 0) {
+        const sub = args[0].toLowerCase();
+        if (sub === "busy") {
+          return {
+            type: "interactive_mode",
+            mode: "busy",
+            disclaimer: "SIMULATION: Fake compiler logs, downloads, and interactive hacker typing. Press 'q', 'ESC', or Ctrl+C to return.",
+          };
+        }
+        if (sub === "matrix") {
+          return {
+            type: "interactive_mode",
+            mode: "matrix",
+            disclaimer: "SIMULATION: Digital phosphor code rain. Press 'q', 'ESC', or Ctrl+C to return.",
+          };
+        }
+        if (sub === "top" || sub === "htop") {
+          return {
+            type: "interactive_mode",
+            mode: "htop",
+            disclaimer: "SIMULATION: Interactive process monitor with your real core count. Press 'q', 'ESC', or Ctrl+C to return.",
+          };
+        }
+      }
+
+      return {
+        type: "misc",
+        description: "wanna try out some cool stuff?",
+        disclaimer: "NOTICE: None of this is real — these are purely visual playground simulations. No actual OS files or private system commands are touched.",
+        tools: MISC_TOOLS,
+      };
+    }
+
+    case "busy": {
+      return {
+        type: "interactive_mode",
+        mode: "busy",
+        disclaimer: "SIMULATION: Fake compiler logs, downloads, and interactive hacker typing. Press 'q', 'ESC', or Ctrl+C to return.",
+      };
+    }
+
+    case "matrix": {
+      return {
+        type: "interactive_mode",
+        mode: "matrix",
+        disclaimer: "SIMULATION: Digital phosphor code rain. Press 'q', 'ESC', or Ctrl+C to return.",
+      };
+    }
+
+    case "top": {
+      return {
+        type: "interactive_mode",
+        mode: "htop",
+        disclaimer: "SIMULATION: Interactive process monitor with your real core count. Press 'q', 'ESC', or Ctrl+C to return.",
       };
     }
 

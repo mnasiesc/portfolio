@@ -364,6 +364,49 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
         </div>
       );
 
+    case "misc":
+      return (
+        <div className="terminal-output-block space-y-3 font-mono text-xs sm:text-sm">
+          <div className="border-b border-stone-800 pb-1 text-emerald-400 dark:text-[#8dff55] font-bold">
+            MISCELLANEOUS SIMULATION TOOLS
+          </div>
+          <p className="text-stone-300 italic">{output.description}</p>
+          <div className="p-2.5 rounded bg-amber-950/30 border border-amber-800/40 text-amber-300/90 text-xs">
+            {output.disclaimer}
+          </div>
+          <div className="space-y-2 pt-1">
+            {output.tools.map((t) => (
+              <div
+                key={t.name}
+                className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4 py-1 border-b border-stone-800/30"
+              >
+                <button
+                  type="button"
+                  onClick={() => onExecuteCommand?.(t.name)}
+                  className="font-bold text-emerald-400 dark:text-[#8dff55] hover:underline cursor-pointer text-left min-w-[140px]"
+                >
+                  {t.syntax}
+                </button>
+                <span className="text-stone-400 text-xs sm:text-sm">
+                  {t.description}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-stone-500 pt-1">
+            Click any tool or type its command to launch. Press <span className="text-stone-300 font-bold">[q]</span>, <span className="text-stone-300 font-bold">[Ctrl+C]</span>, or <span className="text-stone-300 font-bold">[ESC]</span> to exit anytime.
+          </p>
+        </div>
+      );
+
+    case "interactive_mode":
+      return (
+        <div className="terminal-output-block space-y-1 font-mono text-xs text-emerald-400 dark:text-[#8dff55]">
+          <div>[LAUNCHING {output.mode.toUpperCase()} SIMULATOR...]</div>
+          <div className="text-stone-400 text-[11px]">{output.disclaimer}</div>
+        </div>
+      );
+
     case "error":
       return (
         <div className="terminal-output-block space-y-1 font-mono text-xs sm:text-sm">

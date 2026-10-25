@@ -60,6 +60,21 @@ export type TerminalOutput =
   | { type: "fullscreen"; active: boolean }
   | { type: "gui"; targetUrl: string; message: string }
   | {
+      type: "misc";
+      description: string;
+      disclaimer: string;
+      tools: Array<{
+        name: string;
+        syntax: string;
+        description: string;
+      }>;
+    }
+  | {
+      type: "interactive_mode";
+      mode: "busy" | "matrix" | "htop";
+      disclaimer: string;
+    }
+  | {
       type: "error";
       errorType: "unknown_command" | "missing_argument" | "not_found";
       message: string;

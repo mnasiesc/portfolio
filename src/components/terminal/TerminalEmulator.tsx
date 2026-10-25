@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import type { TerminalContext, TerminalOutput } from "@/lib/terminal/types";
 import { parseCommand } from "@/lib/terminal/parser";
 import { TerminalOutputView } from "./TerminalOutputView";
+import { MatrixRain } from "./simulations/MatrixRain";
+import { BusyStream } from "./simulations/BusyStream";
+import { HtopMonitor } from "./simulations/HtopMonitor";
 
 interface TerminalEntry {
   id: string;
@@ -48,6 +51,7 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draftInput, setDraftInput] = useState("");
+  const [activeSimulation, setActiveSimulation] = useState<"busy" | "matrix" | "htop" | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -152,13 +156,15 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         },
       ]);
 
-      // Route transitions for 'gui'
+      // Route transitions for 'gui' and interactive simulations
       if (output.type === "gui") {
         setTimeout(() => {
           router.push(output.targetUrl);
         }, 200);
       } else if (output.type === "fullscreen") {
         toggleFullscreen();
+      } else if (output.type === "interactive_mode") {
+        setActiveSimulation(output.mode);
       }
     },
     [context, router, toggleFullscreen],
@@ -220,7 +226,7 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
       return;
     }
 
-    // Tab for command autocompletion (11 supported commands)
+    // Tab for command autocompletion
     if (e.key === "Tab") {
       e.preventDefault();
       const trimmed = inputValue.trim().toLowerCase();
@@ -238,6 +244,10 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         "clear",
         "gui",
         "fullscreen",
+        "misc",
+        "busy",
+        "matrix",
+        "top",
       ];
       const match = candidates.find((c) => c.startsWith(trimmed));
       if (match) {
@@ -271,77 +281,104 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      onClick={(e) => {
-        // Prevent stealing focus if selecting text or clicking links/buttons
-        const target = e.target as HTMLElement;
-        if (target.tagName !== "A" && target.tagName !== "BUTTON") {
-          focusInput();
-        }
-      }}
-      className="terminal-screen w-full h-full flex-1 bg-black text-stone-100 font-mono flex flex-col p-3 sm:p-6 overflow-y-auto space-y-4 focus:outline-none scrollbar-none select-text"
-    >
-      {/* Welcome Banner */}
-      <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
-        <div className="font-bold text-emerald-400 dark:text-[#8dff55] tracking-wide">
-          TERMINAL SIMULATOR
-        </div>
-        <div className="text-stone-400 text-xs sm:text-sm">
-          Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;fullscreen&apos;</span> to toggle fullscreen, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to return.
-        </div>
-      </div>
+    <>
+      {activeSimulation === "matrix" && (
+        <MatrixRain
+          onExit={() => {
+            setActiveSimulation(null);
+            setTimeout(focusInput, 50);
+          }}
+        />
+      )}
+      {activeSimulation === "busy" && (
+        <BusyStream
+          onExit={() => {
+            setActiveSimulation(null);
+            setTimeout(focusInput, 50);
+          }}
+        />
+      )}
+      {activeSimulation === "htop" && (
+        <HtopMonitor
+          onExit={() => {
+            setActiveSimulation(null);
+            setTimeout(focusInput, 50);
+          }}
+        />
+      )}
 
-      {/* History Entries */}
-      {entries.map((entry) => (
-        <div key={entry.id} className="terminal-log-entry space-y-2">
-          {entry.rawInput && (
-            <div className="flex items-center gap-2 text-xs sm:text-sm">
-              <span className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0">
-                {promptPrefix}
-              </span>
-              <span className="text-stone-100 font-bold break-all">
-                {entry.rawInput}
-              </span>
-              <span className="text-stone-600 text-[10px] ml-auto select-none shrink-0 hidden sm:inline">
-                {entry.timestamp}
-              </span>
-            </div>
-          )}
-          <div className="pl-0 sm:pl-3">
-            <TerminalOutputView
-              output={entry.output}
-              onExecuteCommand={(cmd) => executeCommand(cmd)}
-            />
+      <div
+        ref={containerRef}
+        onClick={(e) => {
+          // Prevent stealing focus if selecting text or clicking links/buttons
+          const target = e.target as HTMLElement;
+          if (target.tagName !== "A" && target.tagName !== "BUTTON") {
+            focusInput();
+          }
+        }}
+        className="terminal-screen w-full h-full flex-1 bg-black text-stone-100 font-mono flex flex-col p-3 sm:p-6 overflow-y-auto space-y-4 focus:outline-none scrollbar-none select-text"
+      >
+        {/* Welcome Banner */}
+        <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
+          <div className="font-bold text-emerald-400 dark:text-[#8dff55] tracking-wide">
+            TERMINAL SIMULATOR
+          </div>
+          <div className="text-stone-400 text-xs sm:text-sm">
+            Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;misc&apos;</span> for simulations, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to return.
           </div>
         </div>
-      ))}
 
-      {/* Active Command Prompt Line */}
-      <div className="terminal-prompt-line flex items-center gap-2 pt-2">
-        <label
-          htmlFor="terminal-command-input"
-          className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0 text-xs sm:text-sm"
-        >
-          {promptPrefix}
-        </label>
-        <input
-          id="terminal-command-input"
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect="off"
-          spellCheck={false}
-          className="flex-1 bg-transparent border-none outline-none text-stone-100 font-mono text-sm sm:text-base p-0 caret-emerald-400 dark:caret-[#8dff55] focus:ring-0 placeholder:text-stone-700"
-          placeholder="type command... ('help', 'projects', 'writings', 'gui', or press ESC)"
-        />
+        {/* History Entries */}
+        {entries.map((entry) => (
+          <div key={entry.id} className="terminal-log-entry space-y-2">
+            {entry.rawInput && (
+              <div className="flex items-center gap-2 text-xs sm:text-sm">
+                <span className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0">
+                  {promptPrefix}
+                </span>
+                <span className="text-stone-100 font-bold break-all">
+                  {entry.rawInput}
+                </span>
+                <span className="text-stone-600 text-[10px] ml-auto select-none shrink-0 hidden sm:inline">
+                  {entry.timestamp}
+                </span>
+              </div>
+            )}
+            <div className="pl-0 sm:pl-3">
+              <TerminalOutputView
+                output={entry.output}
+                onExecuteCommand={(cmd) => executeCommand(cmd)}
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* Active Command Prompt Line */}
+        <div className="terminal-prompt-line flex items-center gap-2 pt-2">
+          <label
+            htmlFor="terminal-command-input"
+            className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0 text-xs sm:text-sm"
+          >
+            {promptPrefix}
+          </label>
+          <input
+            id="terminal-command-input"
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            className="flex-1 bg-transparent border-none outline-none text-stone-100 font-mono text-sm sm:text-base p-0 caret-emerald-400 dark:caret-[#8dff55] focus:ring-0 placeholder:text-stone-700"
+            placeholder="type command... ('help', 'projects', 'writings', 'misc', or press ESC)"
+          />
+        </div>
+
+        <div ref={bottomRef} className="h-4" />
       </div>
-
-      <div ref={bottomRef} className="h-4" />
-    </div>
+    </>
   );
 }
