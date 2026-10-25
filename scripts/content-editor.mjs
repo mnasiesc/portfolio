@@ -133,7 +133,7 @@ const page = `<!doctype html>
 
     function newEntry(path,items){
       const area=path.join(".");
-      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"early",year:String(new Date().getFullYear()),repoUrl:"https://github.com/",proofOfWork:{mediaType:"auto",imageId:"",url:"",caption:"",alt:"",width:720,height:405}};
+      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"early",year:String(new Date().getFullYear()),repoUrl:"https://github.com/",proofOfWork:{mediaType:"auto",imageId:"",url:"",posterImageId:"",posterUrl:"",caption:"",alt:"",width:720,height:405}};
       if(area==="articles")return{slug:"new-article",title:"New article",excerpt:"",date:new Date().toISOString().slice(0,10),readingTime:"1 min read",category:"Notes",tags:[],featured:false,externalRedirect:true,body:""};
       if(area==="images")return{id:"new-media",mimeType:"image/png",data:"",alt:"",width:720,height:405,generatedFile:"/generated-content/new-media.png"};
       if(area==="navigation")return{label:"New link",href:"/"};
@@ -196,7 +196,9 @@ const page = `<!doctype html>
     function makeField(key,value,path){
       if(key==="data"&&path.includes("images"))return makeImageField(value,path);
       const row=document.createElement("div");row.className="field";
-      const label=document.createElement("label");label.textContent=labelize(key);row.append(label);
+      const label=document.createElement("label");
+      label.textContent=key==="posterImageId"?"Video Preview Image (Poster)":key==="posterUrl"?"Video Preview URL (Poster)":labelize(key);
+      row.append(label);
 
       // Availability dropdown (Home availability status)
       if(key==="availability"){
@@ -280,15 +282,16 @@ const page = `<!doctype html>
       }
 
       // Image ID reference dropdown
-      if((key==="avatarImage"||key==="imageId"||(key==="image"&&path.includes("projects"))||(path.includes("icons")&&typeof value==="string"))&&Array.isArray(documentData?.images)){
+      if((key==="avatarImage"||key==="imageId"||key==="posterImageId"||(key==="image"&&path.includes("projects"))||(path.includes("icons")&&typeof value==="string"))&&Array.isArray(documentData?.images)){
         const select=document.createElement("select");
-        if(key==="image"||key==="imageId"){
+        if(key==="image"||key==="imageId"||key==="posterImageId"){
           const optNone=document.createElement("option");
           optNone.value="";
-          optNone.textContent="— None (or direct URL) —";
+          optNone.textContent=key==="posterImageId"?"— None (No preview image) —":"— None (or direct URL) —";
           select.append(optNone);
         }
         for(const img of documentData.images){
+          if(key==="posterImageId"&&img.mimeType?.startsWith("video/"))continue;
           const option=document.createElement("option");
           option.value = img.id;
           option.textContent = img.id + (img.alt ? " (" + img.alt + ")" : "");
@@ -309,6 +312,7 @@ const page = `<!doctype html>
               }
             }
           }
+          if(key==="posterImageId")render();
         });
         row.append(select);
         return row;
@@ -445,6 +449,102 @@ const page = `<!doctype html>
         localUploadRow.append(uploadLabel, uploadBox);
         wrapper.append(localUploadRow);
 
+        // Optional video preview/poster upload
+        const isVideoProof = value.mediaType === "video" || (value.mediaType !== "image" && (
+          documentData.images?.find(img => img.id === value.imageId)?.mimeType?.startsWith("video/") ||
+          (value.url && (value.url.endsWith(".mp4") || value.url.endsWith(".webm") || value.url.endsWith(".ogg") || value.url.endsWith(".mov")))
+        ));
+
+        if (isVideoProof || value.posterImageId || value.posterUrl) {
+          const posterRow = document.createElement("div");
+          posterRow.className = "field";
+          posterRow.style.background = "#181d18";
+          posterRow.style.padding = "8px 10px";
+          posterRow.style.border = "1px solid #2a342a";
+          posterRow.style.borderRadius = "4px";
+          posterRow.style.margin = "6px 0 10px";
+
+          const posterLabel = document.createElement("label");
+          posterLabel.textContent = "Video Preview / Poster (Optional)";
+          posterLabel.style.color = "#9ec468";
+          posterLabel.style.fontWeight = "bold";
+
+          const posterBox = document.createElement("div");
+          const posterInput = document.createElement("input");
+          posterInput.type = "file";
+          posterInput.accept = "image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/avif";
+          
+          const posterHelp = document.createElement("div");
+          posterHelp.style.fontSize = "11px";
+          posterHelp.style.color = "var(--muted)";
+          posterHelp.style.marginTop = "4px";
+          posterHelp.textContent = "Upload an optional preview image/poster frame for this video. Leave unselected if you prefer no preview image.";
+
+          posterInput.addEventListener("change", () => {
+            const pfile = posterInput.files[0];
+            if (!pfile) return;
+            if (pfile.size > 25_000_000) {
+              notify("File exceeds 25 MB limit.", true);
+              posterInput.value = "";
+              return;
+            }
+            const preader = new FileReader();
+            preader.onload = () => {
+              const projectItem = getCollection(path.slice(0, 2));
+              const baseId = (projectItem?.id || "project") + "-poster";
+              const extMap = {
+                "image/jpeg": "jpg",
+                "image/svg+xml": "svg",
+                "image/x-icon": "ico"
+              };
+              const ext = extMap[pfile.type] || pfile.type.split("/")[1] || "png";
+              
+              if (!Array.isArray(documentData.images)) documentData.images = [];
+              let imgRecord = documentData.images.find(img => img.id === baseId);
+              if (!imgRecord) {
+                imgRecord = {
+                  id: baseId,
+                  mimeType: pfile.type,
+                  data: "",
+                  alt: (projectItem?.title || "Project") + " video preview cover",
+                  width: value.width || 720,
+                  height: value.height || 405,
+                  generatedFile: "/generated-content/" + baseId + "." + ext
+                };
+                documentData.images.push(imgRecord);
+              }
+              imgRecord.mimeType = pfile.type;
+              imgRecord.data = String(preader.result).split(",")[1];
+              imgRecord.generatedFile = "/generated-content/" + baseId + "." + ext;
+              value.posterImageId = baseId;
+              value.posterUrl = "";
+              render();
+              notify("Video preview image attached: " + pfile.name);
+              syncRaw();
+            };
+            preader.readAsDataURL(pfile);
+          });
+
+          if (value.posterImageId || value.posterUrl) {
+            const clearPosterBtn = document.createElement("button");
+            clearPosterBtn.type = "button";
+            clearPosterBtn.className = "remove";
+            clearPosterBtn.style.marginTop = "6px";
+            clearPosterBtn.textContent = "✕ Remove / Clear Video Preview Image";
+            clearPosterBtn.addEventListener("click", () => {
+              value.posterImageId = "";
+              value.posterUrl = "";
+              render();
+              notify("Video preview image removed.");
+            });
+            posterBox.append(posterInput, posterHelp, clearPosterBtn);
+          } else {
+            posterBox.append(posterInput, posterHelp);
+          }
+          posterRow.append(posterLabel, posterBox);
+          wrapper.append(posterRow);
+        }
+
         for(const[childKey,childValue]of Object.entries(value)){
           wrapper.append(makeField(childKey,childValue,[...path,childKey]));
         }
@@ -508,6 +608,9 @@ const page = `<!doctype html>
             if(isVid){
               const vid=document.createElement("video");
               vid.src=previewUrl;vid.controls=true;vid.muted=true;vid.playsInline=true;
+              const posterImg=documentData.images?.find(i=>i.id===pow.posterImageId);
+              const posterSrc=pow.posterUrl||(posterImg?.data?"data:"+posterImg.mimeType+";base64,"+posterImg.data:posterImg?.generatedFile);
+              if(posterSrc)vid.poster=posterSrc;
               vid.style.width="100%";vid.style.height="100%";vid.style.objectFit="cover";vid.style.objectPosition="center";vid.style.display="block";
               frame.append(vid);
             }else{

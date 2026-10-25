@@ -85,6 +85,9 @@ function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
   if (isVideo) badgeLabel = "STREAM // VIDEO";
   else if (!isEmbed && (cleanUrl.endsWith(".gif") || mimeType === "image/gif")) badgeLabel = "ANIMATION // GIF";
 
+  const posterMatch = pow?.posterImageId ? images?.find((img) => img.id === pow.posterImageId) : undefined;
+  const posterUrl = (pow?.posterUrl && pow.posterUrl.trim()) ? pow.posterUrl.trim() : (posterMatch?.generatedFile || undefined);
+
   const width = pow?.width || imageMatch?.width || 720;
   const height = pow?.height || imageMatch?.height || 405;
   const caption = pow?.caption;
@@ -92,6 +95,7 @@ function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
 
   return {
     url: isEmbed ? embedUrl : rawUrl,
+    posterUrl,
     isEmbed,
     isVideo,
     badgeLabel,
@@ -291,6 +295,7 @@ export function ProjectModal({ project, images, onClose, labels }: ProjectModalP
                 ) : media.isVideo ? (
                   <video
                     src={media.url}
+                    poster={media.posterUrl}
                     controls
                     playsInline
                     autoPlay

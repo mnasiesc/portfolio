@@ -34,6 +34,7 @@ const references = [
   ...Object.values(content.site.icons),
   ...content.projects.map((project) => project.image).filter(Boolean),
   ...content.projects.map((project) => project.proofOfWork?.imageId).filter(Boolean),
+  ...content.projects.map((project) => project.proofOfWork?.posterImageId).filter(Boolean),
 ];
 
 for (const imageId of references) {

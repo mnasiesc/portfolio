@@ -28,6 +28,8 @@ export interface ProjectProofOfWork {
   mediaType?: "image" | "video" | "auto";
   imageId?: string;
   url?: string;
+  posterImageId?: string;
+  posterUrl?: string;
   caption?: string;
   alt?: string;
   width?: number;

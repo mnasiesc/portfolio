@@ -237,6 +237,8 @@
             "mediaType": { "type": "string", "enum": ["image", "video", "auto"] },
             "imageId": { "type": "string", "pattern": "^(?:|[a-z0-9][a-z0-9-]*)$" },
             "url": { "type": "string" },
+            "posterImageId": { "type": "string", "pattern": "^(?:|[a-z0-9][a-z0-9-]*)$" },
+            "posterUrl": { "type": "string" },
             "caption": { "type": "string" },
             "alt": { "type": "string" },
             "width": { "type": "integer", "minimum": 1 },
