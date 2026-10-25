@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { Header } from "@/components/layout/Header";
+import { HeaderVisibility } from "@/components/layout/HeaderVisibility";
 import { getImage, portfolio } from "@/lib/portfolio";
 import "./globals.css";
 
@@ -62,9 +63,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className="min-h-full flex flex-col bg-background text-foreground"
       >
-        {/* Header lives here in the layout so it appears on EVERY page */}
-        {/* without needing to import it in each individual page file.  */}
-        <Header />
+        {/* Header lives here in the layout but is hidden in /terminal mode */}
+        <HeaderVisibility>
+          <Header />
+        </HeaderVisibility>
         <main className="flex flex-col flex-1">
           {children}
         </main>

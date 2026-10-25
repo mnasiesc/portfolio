@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import type { TerminalContext, TerminalOutput } from "@/lib/terminal/types";
 import { parseCommand } from "@/lib/terminal/parser";
 import { TerminalOutputView } from "./TerminalOutputView";
-import { TerminalQuickChips } from "./TerminalQuickChips";
 
 interface TerminalEntry {
   id: string;
@@ -24,7 +23,7 @@ function getInitialEntries(context: TerminalContext): TerminalEntry[] {
       id: "initial-banner",
       rawInput: "system --boot",
       output: {
-        type: "about",
+        type: "whoami",
         name: context.site.name,
         role: context.site.role,
         bio: context.home.heroDescription,
@@ -49,7 +48,6 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draftInput, setDraftInput] = useState("");
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -76,15 +74,6 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
     } else {
       document.exitFullscreen().catch(() => {});
     }
-  }, []);
-
-  // Listen for fullscreen change events
-  useEffect(() => {
-    const handleFsChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement));
-    };
-    document.addEventListener("fullscreenchange", handleFsChange);
-    return () => document.removeEventListener("fullscreenchange", handleFsChange);
   }, []);
 
   // Global Escape and F11 listener
@@ -163,15 +152,15 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
         },
       ]);
 
-      // Route transitions for 'home'/'gui' and 'article'
-      if (output.type === "home") {
+      // Route transitions for 'gui' and 'writing'
+      if (output.type === "gui") {
         setTimeout(() => {
           router.push(output.targetUrl);
         }, 200);
-      } else if (output.type === "article") {
+      } else if (output.type === "writing") {
         setTimeout(() => {
           router.push(output.localRoute);
-        }, 350);
+        }, 500);
       } else if (output.type === "fullscreen") {
         toggleFullscreen();
       }
@@ -235,7 +224,7 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
       return;
     }
 
-    // Tab for basic command autocompletion
+    // Tab for command autocompletion (11 supported commands)
     if (e.key === "Tab") {
       e.preventDefault();
       const trimmed = inputValue.trim().toLowerCase();
@@ -243,17 +232,16 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
 
       const candidates = [
         "help",
-        "about",
+        "whoami",
         "projects",
         "project ",
-        "writing",
-        "article ",
+        "writings",
+        "writing ",
         "contact",
         "socials",
         "clear",
         "gui",
         "fullscreen",
-        "home",
       ];
       const match = candidates.find((c) => c.startsWith(trimmed));
       if (match) {
@@ -296,96 +284,68 @@ export function TerminalEmulator({ context }: TerminalEmulatorProps) {
           focusInput();
         }
       }}
-      className="relative w-full h-full flex-1 bg-black text-stone-100 font-mono flex flex-col overflow-hidden select-text"
+      className="terminal-screen w-full h-full flex-1 bg-black text-stone-100 font-mono flex flex-col p-3 sm:p-6 overflow-y-auto space-y-4 focus:outline-none scrollbar-none select-text"
     >
-      {/* Discreet floating helper buttons in corner */}
-      <div className="absolute top-2.5 right-3 z-30 flex items-center gap-2 opacity-35 hover:opacity-100 transition-opacity select-none text-[11px] font-mono">
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          className="px-2 py-0.5 rounded border border-stone-800 bg-stone-900/90 text-stone-400 hover:text-emerald-400 hover:border-stone-700 transition-colors cursor-pointer"
-          title="Toggle browser fullscreen (F11 or type 'fullscreen')"
-        >
-          {isFullscreen ? "⛶ window" : "⛶ fullscreen"}
-        </button>
-        <button
-          type="button"
-          onClick={() => router.push(context.terminal.switchToVisualHref || "/")}
-          className="px-2 py-0.5 rounded border border-stone-800 bg-stone-900/90 text-stone-400 hover:text-emerald-400 hover:border-stone-700 transition-colors cursor-pointer"
-          title="Return to visual GUI portfolio (press ESC or type 'gui')"
-        >
-          ESC: GUI
-        </button>
+      {/* Welcome Banner */}
+      <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
+        <div className="font-bold text-emerald-400 dark:text-[#8dff55]">
+          {context.terminal.welcomeBanner[0] || "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR"}
+        </div>
+        <div className="text-stone-400 text-xs sm:text-sm">
+          Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;fullscreen&apos;</span> to toggle fullscreen, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to return.
+        </div>
       </div>
 
-      {/* Pure Terminal Screen (takes 100% of the screen) */}
-      <div className="terminal-screen flex-1 p-3 sm:p-6 overflow-y-auto space-y-4 focus:outline-none scrollbar-none font-mono">
-        {/* Welcome Banner */}
-        <div className="terminal-banner space-y-1 pb-3 border-b border-stone-900 text-xs sm:text-sm text-stone-400">
-          <div className="font-bold text-emerald-400 dark:text-[#8dff55]">
-            {context.terminal.welcomeBanner[0] || "MNASIE PHOSPHOR WORKSTATION — COMMAND SIMULATOR"}
-          </div>
-          <div className="text-stone-400 text-xs sm:text-sm">
-            Type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;help&apos;</span> to inspect commands, <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;fullscreen&apos;</span> to toggle full screen, or press <span className="text-stone-200 font-bold">[ESC]</span> / type <span className="text-emerald-400 dark:text-[#8dff55] font-semibold">&apos;gui&apos;</span> to exit.
-          </div>
-        </div>
-
-        {/* History Entries */}
-        {entries.map((entry) => (
-          <div key={entry.id} className="terminal-log-entry space-y-2">
-            {entry.rawInput && (
-              <div className="flex items-center gap-2 text-xs sm:text-sm">
-                <span className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0">
-                  {promptPrefix}
-                </span>
-                <span className="text-stone-100 font-bold break-all">
-                  {entry.rawInput}
-                </span>
-                <span className="text-stone-600 text-[10px] ml-auto select-none shrink-0 hidden sm:inline">
-                  {entry.timestamp}
-                </span>
-              </div>
-            )}
-            <div className="pl-0 sm:pl-3">
-              <TerminalOutputView
-                output={entry.output}
-                onExecuteCommand={(cmd) => executeCommand(cmd)}
-              />
+      {/* History Entries */}
+      {entries.map((entry) => (
+        <div key={entry.id} className="terminal-log-entry space-y-2">
+          {entry.rawInput && (
+            <div className="flex items-center gap-2 text-xs sm:text-sm">
+              <span className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0">
+                {promptPrefix}
+              </span>
+              <span className="text-stone-100 font-bold break-all">
+                {entry.rawInput}
+              </span>
+              <span className="text-stone-600 text-[10px] ml-auto select-none shrink-0 hidden sm:inline">
+                {entry.timestamp}
+              </span>
             </div>
+          )}
+          <div className="pl-0 sm:pl-3">
+            <TerminalOutputView
+              output={entry.output}
+              onExecuteCommand={(cmd) => executeCommand(cmd)}
+            />
           </div>
-        ))}
-
-        {/* Active Command Prompt Line */}
-        <div className="terminal-prompt-line flex items-center gap-2 pt-2">
-          <label
-            htmlFor="terminal-command-input"
-            className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0 text-xs sm:text-sm"
-          >
-            {promptPrefix}
-          </label>
-          <input
-            id="terminal-command-input"
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            className="flex-1 bg-transparent border-none outline-none text-stone-100 font-mono text-sm sm:text-base p-0 caret-emerald-400 dark:caret-[#8dff55] focus:ring-0 placeholder:text-stone-700"
-            placeholder="type command... ('help', 'gui', 'fullscreen', or press ESC)"
-          />
         </div>
+      ))}
 
-        <div ref={bottomRef} className="h-4" />
+      {/* Active Command Prompt Line */}
+      <div className="terminal-prompt-line flex items-center gap-2 pt-2">
+        <label
+          htmlFor="terminal-command-input"
+          className="text-emerald-500 dark:text-[#8dff55] font-bold select-none shrink-0 text-xs sm:text-sm"
+        >
+          {promptPrefix}
+        </label>
+        <input
+          id="terminal-command-input"
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          className="flex-1 bg-transparent border-none outline-none text-stone-100 font-mono text-sm sm:text-base p-0 caret-emerald-400 dark:caret-[#8dff55] focus:ring-0 placeholder:text-stone-700"
+          placeholder="type command... ('help', 'projects', 'writings', 'gui', or press ESC)"
+        />
       </div>
 
-      {/* Minimal Touch-Friendly Quick Command Toolbar */}
-      <div className="terminal-footer border-t border-stone-900 bg-black/90 px-3 py-1 shrink-0">
-        <TerminalQuickChips onSelectCommand={(cmd) => executeCommand(cmd)} />
-      </div>
+      <div ref={bottomRef} className="h-4" />
     </div>
   );
 }

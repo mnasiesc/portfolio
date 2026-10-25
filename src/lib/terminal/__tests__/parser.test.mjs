@@ -79,102 +79,138 @@ const mockContext = {
   },
 };
 
-describe("Terminal Command Parser", () => {
+describe("Terminal Command Parser - Strict 11 Commands", () => {
   it("handles empty and whitespace input", () => {
     assert.deepEqual(parseCommand("", mockContext), { type: "empty" });
     assert.deepEqual(parseCommand("   ", mockContext), { type: "empty" });
   });
 
-  it("handles 'help' command and registry", () => {
+  it("handles 'help' command and registry with exactly 11 commands", () => {
     const result = parseCommand("help", mockContext);
     assert.equal(result.type, "help");
-    assert.equal(result.commands.length, 12);
+    assert.equal(result.commands.length, 11);
     assert.deepEqual(result.commands, COMMAND_REGISTRY);
 
-    // Aliases
+    const commandNames = result.commands.map((c) => c.name);
+    assert.deepEqual(commandNames, [
+      "help",
+      "whoami",
+      "projects",
+      "project",
+      "writings",
+      "writing",
+      "contact",
+      "socials",
+      "clear",
+      "gui",
+      "fullscreen",
+    ]);
+
+    // Help aliases
     assert.equal(parseCommand("?", mockContext).type, "help");
     assert.equal(parseCommand("h", mockContext).type, "help");
   });
 
-  it("handles 'about' command", () => {
-    const result = parseCommand("about", mockContext);
-    assert.equal(result.type, "about");
+  it("handles 'whoami' command (not about)", () => {
+    const result = parseCommand("whoami", mockContext);
+    assert.equal(result.type, "whoami");
     assert.equal(result.name, "Mnasie");
     assert.equal(result.role, "Systems & Low-Level Engineer");
+    assert.equal(result.bio, "Interested in the kernel, backend systems, and low-level tooling.");
     assert.equal(result.availability, "Open to Opportunities");
-
-    // Alias
-    assert.equal(parseCommand("whoami", mockContext).type, "about");
+    assert.equal(result.issueLabel, "Vol. 01 · Est. 2026");
   });
 
-  it("handles 'projects' command", () => {
+  it("handles 'projects' command with 1-based number IDs", () => {
     const result = parseCommand("projects", mockContext);
     assert.equal(result.type, "projects");
     assert.equal(result.projects.length, 2);
+    assert.equal(result.projects[0].numberId, 1);
     assert.equal(result.projects[0].id, "flowhook");
     assert.equal(result.projects[0].title, "FlowHook");
+    assert.equal(result.projects[1].numberId, 2);
+    assert.equal(result.projects[1].id, "block-storage-engine");
 
     // Case insensitivity
     assert.equal(parseCommand("PROJECTS", mockContext).type, "projects");
   });
 
-  it("handles 'project <id>' with valid id", () => {
-    const result = parseCommand("project flowhook", mockContext);
-    assert.equal(result.type, "project");
-    assert.equal(result.project.id, "flowhook");
-    assert.equal(result.project.title, "FlowHook");
-    assert.equal(result.project.longDescription, "Detailed FlowHook architecture writeup.");
-    assert.equal(result.project.demoUrl, "https://demo.example.com/flowhook");
+  it("handles 'project <id/name>' with number id and slug", () => {
+    // Lookup by number ID 1
+    const byNum = parseCommand("project 1", mockContext);
+    assert.equal(byNum.type, "project");
+    assert.equal(byNum.numberId, 1);
+    assert.equal(byNum.project.id, "flowhook");
+    assert.equal(byNum.project.title, "FlowHook");
+
+    // Lookup by string ID/name
+    const byId = parseCommand("project flowhook", mockContext);
+    assert.equal(byId.type, "project");
+    assert.equal(byId.numberId, 1);
+    assert.equal(byId.project.id, "flowhook");
+
+    // Lookup by second project number ID 2
+    const byNum2 = parseCommand("project 2", mockContext);
+    assert.equal(byNum2.type, "project");
+    assert.equal(byNum2.numberId, 2);
+    assert.equal(byNum2.project.id, "block-storage-engine");
   });
 
   it("handles 'project' with missing argument", () => {
     const result = parseCommand("project", mockContext);
     assert.equal(result.type, "error");
     assert.equal(result.errorType, "missing_argument");
-    assert.match(result.message, /Missing project ID/i);
-    assert.match(result.suggestion, /Type 'projects'/i);
+    assert.match(result.message, /Missing project ID or name/i);
+    assert.match(result.suggestion, /number IDs/i);
   });
 
   it("handles 'project <id>' with non-existent id and provides suggestion", () => {
-    const result = parseCommand("project flow", mockContext);
+    const result = parseCommand("project 99", mockContext);
     assert.equal(result.type, "error");
     assert.equal(result.errorType, "not_found");
-    assert.match(result.message, /Project not found: 'flow'/i);
-    assert.match(result.suggestion, /flowhook/i);
+    assert.match(result.message, /Project not found: '99'/i);
+
+    const byNameNotFound = parseCommand("project nonexistent", mockContext);
+    assert.equal(byNameNotFound.type, "error");
+    assert.equal(byNameNotFound.errorType, "not_found");
   });
 
-  it("handles 'writing' command", () => {
-    const result = parseCommand("writing", mockContext);
-    assert.equal(result.type, "writing");
+  it("handles 'writings' command with 1-based number IDs", () => {
+    const result = parseCommand("writings", mockContext);
+    assert.equal(result.type, "writings");
     assert.equal(result.articles.length, 2);
+    assert.equal(result.articles[0].numberId, 1);
     assert.equal(result.articles[0].slug, "building-a-recursive-filewatcher");
+    assert.equal(result.articles[1].numberId, 2);
+    assert.equal(result.articles[1].slug, "how-does-your-cpu-know-mouse-click");
   });
 
-  it("handles 'article <slug>' with canonical URL", () => {
-    const result = parseCommand("article building-a-recursive-filewatcher", mockContext);
-    assert.equal(result.type, "article");
-    assert.equal(result.article.slug, "building-a-recursive-filewatcher");
-    assert.equal(result.localRoute, "/writing/building-a-recursive-filewatcher");
-    assert.equal(result.externalUrl, "https://kernel-thoughts.hashnode.dev/building-a-recursive-filewatcher");
+  it("handles 'writing <id>' by number ID and slug", () => {
+    // By number ID 1
+    const byNum = parseCommand("writing 1", mockContext);
+    assert.equal(byNum.type, "writing");
+    assert.equal(byNum.article.numberId, 1);
+    assert.equal(byNum.article.slug, "building-a-recursive-filewatcher");
+    assert.equal(byNum.localRoute, "/writing/building-a-recursive-filewatcher");
+    assert.equal(byNum.externalUrl, "https://kernel-thoughts.hashnode.dev/building-a-recursive-filewatcher");
+
+    // By slug
+    const bySlug = parseCommand("writing how-does-your-cpu-know-mouse-click", mockContext);
+    assert.equal(bySlug.type, "writing");
+    assert.equal(bySlug.article.numberId, 2);
+    assert.equal(bySlug.article.slug, "how-does-your-cpu-know-mouse-click");
+    assert.equal(bySlug.localRoute, "/writing/how-does-your-cpu-know-mouse-click");
+    assert.equal(bySlug.externalUrl, "https://kernel-thoughts.hashnode.dev/how-does-your-cpu-know-mouse-click");
   });
 
-  it("handles 'article <slug>' falling back to template URL", () => {
-    const result = parseCommand("article how-does-your-cpu-know-mouse-click", mockContext);
-    assert.equal(result.type, "article");
-    assert.equal(result.article.slug, "how-does-your-cpu-know-mouse-click");
-    assert.equal(result.localRoute, "/writing/how-does-your-cpu-know-mouse-click");
-    assert.equal(result.externalUrl, "https://kernel-thoughts.hashnode.dev/how-does-your-cpu-know-mouse-click");
-  });
-
-  it("handles 'article' missing slug and non-existent slug", () => {
-    const missing = parseCommand("article", mockContext);
+  it("handles 'writing' missing argument or not found", () => {
+    const missing = parseCommand("writing", mockContext);
     assert.equal(missing.type, "error");
     assert.equal(missing.errorType, "missing_argument");
 
-    const notFound = parseCommand("article cpu", mockContext);
+    const notFound = parseCommand("writing 99", mockContext);
     assert.equal(notFound.type, "error");
     assert.equal(notFound.errorType, "not_found");
-    assert.match(notFound.suggestion, /how-does-your-cpu-know-mouse-click/i);
   });
 
   it("handles 'contact' command", () => {
@@ -198,16 +234,17 @@ describe("Terminal Command Parser", () => {
     assert.equal(parseCommand("cls", mockContext).type, "clear");
   });
 
-  it("handles 'home' and 'gui' command", () => {
-    const result = parseCommand("home", mockContext);
-    assert.equal(result.type, "home");
+  it("handles 'gui' command", () => {
+    const result = parseCommand("gui", mockContext);
+    assert.equal(result.type, "gui");
     assert.equal(result.targetUrl, "/");
 
-    assert.equal(parseCommand("exit", mockContext).type, "home");
-    assert.equal(parseCommand("gui", mockContext).type, "home");
+    // gui aliases
+    assert.equal(parseCommand("exit", mockContext).type, "gui");
+    assert.equal(parseCommand("quit", mockContext).type, "gui");
   });
 
-  it("handles 'fullscreen' and 'f11' command", () => {
+  it("handles 'fullscreen' command", () => {
     const result = parseCommand("fullscreen", mockContext);
     assert.equal(result.type, "fullscreen");
     assert.equal(result.active, true);

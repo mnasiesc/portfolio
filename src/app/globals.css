@@ -1502,6 +1502,11 @@
     letter-spacing: -0.01em;
   }
 
+  /* Ensure header navigation bar never appears inside terminal mode */
+  body:has(.terminal-screen) .station-header {
+    display: none !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .terminal-station-window,
     .terminal-station-window * {

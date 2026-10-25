@@ -17,7 +17,7 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
           <p className="text-stone-300 dark:text-stone-300 font-mono text-sm leading-relaxed">
             {output.intro}
           </p>
-          <div className="grid grid-cols-1 gap-2 pt-1 font-mono text-xs sm:text-sm">
+          <div className="grid grid-cols-1 gap-1.5 pt-1 font-mono text-xs sm:text-sm">
             {output.commands.map((cmd) => (
               <div
                 key={cmd.name}
@@ -26,23 +26,20 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
                 <button
                   type="button"
                   onClick={() => onExecuteCommand?.(cmd.syntax)}
-                  className="font-bold text-emerald-400 hover:text-emerald-300 dark:text-[#8dff55] dark:hover:text-[#aaff77] text-left underline sm:no-underline hover:underline cursor-pointer min-w-[140px]"
+                  className="font-bold text-emerald-400 hover:text-emerald-300 dark:text-[#8dff55] dark:hover:text-[#aaff77] text-left underline sm:no-underline hover:underline cursor-pointer min-w-[150px]"
                 >
                   {cmd.syntax}
                 </button>
-                <span className="text-stone-400 dark:text-stone-400 text-xs sm:text-sm">
+                <span className="text-stone-400 text-xs sm:text-sm">
                   {cmd.description}
                 </span>
               </div>
             ))}
           </div>
-          <p className="text-xs text-stone-500 font-mono pt-2">
-            Tip: Click any command above or use Up/Down arrow keys for command history.
-          </p>
         </div>
       );
 
-    case "about":
+    case "whoami":
       return (
         <div className="terminal-output-block space-y-3 font-mono text-sm">
           <div className="border-l-2 border-emerald-500 dark:border-[#8dff55] pl-3 py-1 space-y-1">
@@ -72,7 +69,7 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
           <div className="text-stone-400 text-xs uppercase tracking-wider pb-1 border-b border-stone-800">
             REGISTERED PROJECTS ({output.projects.length})
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {output.projects.map((proj) => (
               <div
                 key={proj.id}
@@ -80,14 +77,17 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
+                    <span className="px-1.5 py-0.5 text-xs font-bold rounded bg-emerald-950 text-emerald-300 dark:text-[#8dff55] border border-emerald-800">
+                      [{proj.numberId}]
+                    </span>
                     <button
                       type="button"
-                      onClick={() => onExecuteCommand?.(`project ${proj.id}`)}
+                      onClick={() => onExecuteCommand?.(`project ${proj.numberId}`)}
                       className="font-bold text-stone-100 hover:text-emerald-300 dark:hover:text-[#8dff55] underline cursor-pointer text-sm"
                     >
                       {proj.title}
                     </button>
-                    <span className="text-xs text-stone-500">[{proj.id}]</span>
+                    <span className="text-xs text-stone-500">({proj.id})</span>
                   </div>
                   <span className="px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-stone-800 text-stone-300 border border-stone-700">
                     {proj.status}
@@ -110,10 +110,10 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      onClick={() => onExecuteCommand?.(`project ${proj.id}`)}
+                      onClick={() => onExecuteCommand?.(`project ${proj.numberId}`)}
                       className="text-emerald-400 dark:text-[#8dff55] hover:underline cursor-pointer text-xs"
                     >
-                      inspect →
+                      inspect (project {proj.numberId}) →
                     </button>
                     <a
                       href={proj.repoUrl}
@@ -129,7 +129,7 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
             ))}
           </div>
           <p className="text-xs text-stone-500 pt-1">
-            Type <span className="text-emerald-400 dark:text-[#8dff55]">project &lt;id&gt;</span> (e.g. <button type="button" onClick={() => onExecuteCommand?.("project flowhook")} className="underline cursor-pointer">project flowhook</button>) to view full architecture details and logs.
+            Usage: <span className="text-emerald-400 dark:text-[#8dff55]">project &lt;id/name&gt;</span> (e.g. <button type="button" onClick={() => onExecuteCommand?.("project 1")} className="underline cursor-pointer">project 1</button> or <button type="button" onClick={() => onExecuteCommand?.("project flowhook")} className="underline cursor-pointer">project flowhook</button>) to view details.
           </p>
         </div>
       );
@@ -139,10 +139,13 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
         <div className="terminal-output-block space-y-4 font-mono text-xs sm:text-sm">
           <div className="border-l-2 border-emerald-500 dark:border-[#8dff55] pl-3 py-1 space-y-1">
             <div className="flex flex-wrap items-baseline gap-2">
+              <span className="px-1.5 py-0.5 text-xs font-bold rounded bg-emerald-950 text-emerald-300 dark:text-[#8dff55] border border-emerald-800">
+                [{output.numberId}]
+              </span>
               <span className="text-base sm:text-lg font-bold text-stone-100">
                 {output.project.title}
               </span>
-              <span className="text-xs text-stone-500">[{output.project.id}]</span>
+              <span className="text-xs text-stone-500">({output.project.id})</span>
               <span className="px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-stone-800 text-stone-300 border border-stone-700 ml-auto">
                 {output.project.status} · {output.project.year}
               </span>
@@ -195,11 +198,11 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
         </div>
       );
 
-    case "writing":
+    case "writings":
       return (
         <div className="terminal-output-block space-y-4 font-mono text-xs sm:text-sm">
           <div className="text-stone-400 text-xs uppercase tracking-wider pb-1 border-b border-stone-800">
-            TECHNICAL ESSAYS & KERNEL NOTES ({output.articles.length})
+            TECHNICAL WRITINGS & KERNEL NOTES ({output.articles.length})
           </div>
           <div className="space-y-3">
             {output.articles.map((article) => (
@@ -208,13 +211,18 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
                 className="p-3 rounded bg-stone-900/60 border border-stone-800 space-y-1.5 hover:border-stone-700 transition-colors"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onExecuteCommand?.(`article ${article.slug}`)}
-                    className="font-bold text-stone-100 hover:text-emerald-300 dark:hover:text-[#8dff55] underline cursor-pointer text-left text-sm"
-                  >
-                    {article.title}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="px-1.5 py-0.5 text-xs font-bold rounded bg-emerald-950 text-emerald-300 dark:text-[#8dff55] border border-emerald-800">
+                      [{article.numberId}]
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onExecuteCommand?.(`writing ${article.numberId}`)}
+                      className="font-bold text-stone-100 hover:text-emerald-300 dark:hover:text-[#8dff55] underline cursor-pointer text-left text-sm"
+                    >
+                      {article.title}
+                    </button>
+                  </div>
                   <span className="text-xs text-stone-500 whitespace-nowrap">
                     {article.date} · {article.readingTime}
                   </span>
@@ -228,27 +236,27 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
                   </span>
                   <button
                     type="button"
-                    onClick={() => onExecuteCommand?.(`article ${article.slug}`)}
+                    onClick={() => onExecuteCommand?.(`writing ${article.numberId}`)}
                     className="text-emerald-400 dark:text-[#8dff55] hover:underline cursor-pointer"
                   >
-                    read article (article {article.slug}) →
+                    open writing (writing {article.numberId}) →
                   </button>
                 </div>
               </div>
             ))}
           </div>
           <p className="text-xs text-stone-500 pt-1">
-            Type <span className="text-emerald-400 dark:text-[#8dff55]">article &lt;slug&gt;</span> to open the article reader and view its Hashnode destination.
+            Usage: <span className="text-emerald-400 dark:text-[#8dff55]">writing &lt;id&gt;</span> (e.g. <button type="button" onClick={() => onExecuteCommand?.("writing 1")} className="underline cursor-pointer">writing 1</button>) to open the article.
           </p>
         </div>
       );
 
-    case "article":
+    case "writing":
       return (
         <div className="terminal-output-block space-y-4 font-mono text-xs sm:text-sm">
           <div className="border-l-2 border-emerald-500 dark:border-[#8dff55] pl-3 py-1 space-y-1">
             <span className="text-xs text-stone-500 uppercase">
-              {output.article.category} · {output.article.date} · {output.article.readingTime}
+              [{output.article.numberId}] · {output.article.category} · {output.article.date} · {output.article.readingTime}
             </span>
             <div className="text-base sm:text-lg font-bold text-stone-100">
               {output.article.title}
@@ -260,14 +268,14 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
 
           <div className="p-3 rounded bg-emerald-950/30 border border-emerald-900/50 space-y-3">
             <div className="text-xs text-emerald-400 dark:text-[#8dff55] font-semibold uppercase tracking-wider">
-              ARTICLE ROUTE & EXTERNAL DESTINATION
+              OPENING ARTICLE READER & HASHNODE DESTINATION
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <Link
                 href={output.localRoute}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-bold text-xs no-underline transition-colors"
               >
-                <span>OPEN LOCAL ARTICLE READER</span>
+                <span>OPEN IN ARTICLE READER</span>
                 <span>→</span>
               </Link>
               {output.externalUrl && (
@@ -310,9 +318,6 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
               <span className="text-stone-200 font-semibold">{output.availability}</span>
             </div>
           </div>
-          <p className="text-xs text-stone-500 pt-2">
-            Run &apos;socials&lt; to inspect verified GitHub, X, LinkedIn, and Telegram channels.
-          </p>
         </div>
       );
 
@@ -349,7 +354,7 @@ export function TerminalOutputView({ output, onExecuteCommand }: TerminalOutputV
         </div>
       );
 
-    case "home":
+    case "gui":
       return (
         <div className="terminal-output-block space-y-2 font-mono text-xs sm:text-sm text-emerald-400 dark:text-[#8dff55]">
           <p>{output.message}</p>

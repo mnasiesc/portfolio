@@ -7,29 +7,29 @@ export const COMMAND_REGISTRY: CommandHelpItem[] = [
     description: "Display all available workstation commands and their usage.",
   },
   {
-    name: "about",
-    syntax: "about",
-    description: "Display systems developer background, role, and current status.",
+    name: "whoami",
+    syntax: "whoami",
+    description: "Display developer background, role, and availability status.",
   },
   {
     name: "projects",
     syntax: "projects",
-    description: "List all engineering projects, status badges, and tech stacks.",
+    description: "List all engineering projects with their number IDs.",
   },
   {
     name: "project",
-    syntax: "project <id>",
-    description: "Inspect in-depth architectural details, logs, and repository link for a project.",
+    syntax: "project <id/name>",
+    description: "Inspect architectural details and repository links by project number ID or name.",
+  },
+  {
+    name: "writings",
+    syntax: "writings",
+    description: "List all published technical essays with their number IDs.",
   },
   {
     name: "writing",
-    syntax: "writing",
-    description: "List published technical essays and low-level kernel breakdowns.",
-  },
-  {
-    name: "article",
-    syntax: "article <slug>",
-    description: "Open local article reader and display external Hashnode publication link.",
+    syntax: "writing <id>",
+    description: "Open article reader and view Hashnode destination by writing number ID or slug.",
   },
   {
     name: "contact",
@@ -49,41 +49,23 @@ export const COMMAND_REGISTRY: CommandHelpItem[] = [
   {
     name: "gui",
     syntax: "gui",
-    description: "Exit terminal emulator and switch back to the visual portfolio GUI (or press ESC).",
+    description: "Exit terminal emulator and switch back to the visual GUI portfolio (or press ESC).",
   },
   {
     name: "fullscreen",
     syntax: "fullscreen",
     description: "Toggle browser fullscreen display mode (or press F11).",
   },
-  {
-    name: "home",
-    syntax: "home",
-    description: "Exit terminal emulator and switch back to the visual portfolio workstation.",
-  },
 ];
 
 const ALIAS_MAP: Record<string, string> = {
   "?": "help",
   h: "help",
-  whoami: "about",
-  bio: "about",
-  info: "about",
-  proj: "projects",
-  work: "projects",
-  articles: "writing",
-  posts: "writing",
-  essays: "writing",
-  blog: "writing",
-  email: "contact",
-  mail: "contact",
-  social: "socials",
-  links: "socials",
   cls: "clear",
+  f11: "fullscreen",
   exit: "gui",
   quit: "gui",
   home: "gui",
-  f11: "fullscreen",
 };
 
 function resolveExternalArticleUrl(
@@ -116,9 +98,9 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
       };
     }
 
-    case "about": {
+    case "whoami": {
       return {
-        type: "about",
+        type: "whoami",
         name: context.site.name,
         role: context.site.role,
         bio: context.home.heroDescription,
@@ -130,7 +112,8 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
     case "projects": {
       return {
         type: "projects",
-        projects: context.projects.map((project) => ({
+        projects: context.projects.map((project, index) => ({
+          numberId: index + 1,
           id: project.id,
           title: project.title,
           status: project.status,
@@ -147,39 +130,50 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
         return {
           type: "error",
           errorType: "missing_argument",
-          message: "Missing project ID. Usage: project <id>",
-          suggestion: "Type 'projects' to list all valid project IDs.",
+          message: "Missing project ID or name. Usage: project <id/name>",
+          suggestion: "Type 'projects' to list all valid projects with their number IDs.",
         };
       }
 
-      const projectId = args[0].toLowerCase();
-      const foundProject = context.projects.find((p) => p.id.toLowerCase() === projectId);
+      const query = args[0].trim().toLowerCase();
+      const num = parseInt(query, 10);
+      let foundProject = undefined;
+      let projectNumber = -1;
+
+      if (!isNaN(num) && num >= 1 && num <= context.projects.length) {
+        foundProject = context.projects[num - 1];
+        projectNumber = num;
+      } else {
+        const foundIndex = context.projects.findIndex(
+          (p) => p.id.toLowerCase() === query || p.title.toLowerCase() === query,
+        );
+        if (foundIndex !== -1) {
+          foundProject = context.projects[foundIndex];
+          projectNumber = foundIndex + 1;
+        }
+      }
 
       if (!foundProject) {
-        // Find nearest project suggestion
-        const availableIds = context.projects.map((p) => p.id);
-        const closeMatch = availableIds.find((id) => id.includes(projectId) || projectId.includes(id));
-
         return {
           type: "error",
           errorType: "not_found",
           message: `Project not found: '${args[0]}'`,
-          suggestion: closeMatch
-            ? `Did you mean 'project ${closeMatch}'? (Type 'projects' to list all IDs)`
-            : "Type 'projects' to see all available project IDs.",
+          suggestion: "Type 'projects' to see all available project number IDs and names.",
         };
       }
 
       return {
         type: "project",
         project: foundProject,
+        numberId: projectNumber,
       };
     }
 
-    case "writing": {
+    case "writings": {
       return {
-        type: "writing",
-        articles: context.articles.map((article) => ({
+        type: "writings",
+        articles: context.articles.map((article, index) => ({
+          numberId: index + 1,
           slug: article.slug,
           title: article.title,
           date: article.date,
@@ -192,36 +186,56 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
       };
     }
 
-    case "article": {
+    case "writing": {
       if (args.length === 0) {
         return {
           type: "error",
           errorType: "missing_argument",
-          message: "Missing article slug. Usage: article <slug>",
-          suggestion: "Type 'writing' to list all available article slugs.",
+          message: "Missing writing ID or slug. Usage: writing <id>",
+          suggestion: "Type 'writings' to list all available essays with their number IDs.",
         };
       }
 
-      const slug = args[0].toLowerCase();
-      const foundArticle = context.articles.find((a) => a.slug.toLowerCase() === slug);
+      const query = args[0].trim().toLowerCase();
+      const num = parseInt(query, 10);
+      let foundArticle = undefined;
+      let articleNumber = -1;
+
+      if (!isNaN(num) && num >= 1 && num <= context.articles.length) {
+        foundArticle = context.articles[num - 1];
+        articleNumber = num;
+      } else {
+        const foundIndex = context.articles.findIndex(
+          (a) => a.slug.toLowerCase() === query || a.title.toLowerCase() === query,
+        );
+        if (foundIndex !== -1) {
+          foundArticle = context.articles[foundIndex];
+          articleNumber = foundIndex + 1;
+        }
+      }
 
       if (!foundArticle) {
-        const availableSlugs = context.articles.map((a) => a.slug);
-        const closeMatch = availableSlugs.find((s) => s.includes(slug) || slug.includes(s));
-
         return {
           type: "error",
           errorType: "not_found",
-          message: `Article not found: '${args[0]}'`,
-          suggestion: closeMatch
-            ? `Did you mean 'article ${closeMatch}'? (Type 'writing' to list all slugs)`
-            : "Type 'writing' to see all available article slugs.",
+          message: `Writing not found: '${args[0]}'`,
+          suggestion: "Type 'writings' to see all available writing number IDs and slugs.",
         };
       }
 
       return {
-        type: "article",
-        article: foundArticle,
+        type: "writing",
+        article: {
+          numberId: articleNumber,
+          slug: foundArticle.slug,
+          title: foundArticle.title,
+          date: foundArticle.date,
+          readingTime: foundArticle.readingTime,
+          category: foundArticle.category,
+          tags: foundArticle.tags,
+          excerpt: foundArticle.excerpt,
+          canonicalUrl: foundArticle.canonicalUrl,
+        },
         localRoute: `/writing/${foundArticle.slug}`,
         externalUrl: resolveExternalArticleUrl(foundArticle, context.writing.hashnodeLinkHref),
       };
@@ -249,10 +263,9 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
       };
     }
 
-    case "gui":
-    case "home": {
+    case "gui": {
       return {
-        type: "home",
+        type: "gui",
         targetUrl: context.terminal.switchToVisualHref || "/",
         message: "Switching to visual workstation portfolio...",
       };
@@ -266,7 +279,6 @@ export function parseCommand(rawInput: string, context: TerminalContext): Termin
     }
 
     default: {
-      // Find closest command suggestion
       const knownCommands = COMMAND_REGISTRY.map((c) => c.name);
       const closeMatch = knownCommands.find(
         (cmd) => cmd.startsWith(commandNormalized) || commandNormalized.startsWith(cmd),

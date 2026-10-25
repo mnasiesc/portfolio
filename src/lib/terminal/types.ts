@@ -7,6 +7,7 @@ export interface CommandHelpItem {
 }
 
 export interface ProjectSummaryItem {
+  numberId: number;
   id: string;
   title: string;
   status: string;
@@ -17,6 +18,7 @@ export interface ProjectSummaryItem {
 }
 
 export interface ArticleSummaryItem {
+  numberId: number;
   slug: string;
   title: string;
   date: string;
@@ -31,7 +33,7 @@ export type TerminalOutput =
   | { type: "empty" }
   | { type: "help"; intro: string; commands: CommandHelpItem[] }
   | {
-      type: "about";
+      type: "whoami";
       name: string;
       role: string;
       bio: string;
@@ -39,10 +41,10 @@ export type TerminalOutput =
       issueLabel: string;
     }
   | { type: "projects"; projects: ProjectSummaryItem[] }
-  | { type: "project"; project: Project }
-  | { type: "writing"; articles: ArticleSummaryItem[] }
+  | { type: "project"; project: Project; numberId: number }
+  | { type: "writings"; articles: ArticleSummaryItem[] }
   | {
-      type: "article";
+      type: "writing";
       article: ArticleSummaryItem;
       localRoute: string;
       externalUrl: string;
@@ -56,7 +58,7 @@ export type TerminalOutput =
   | { type: "socials"; socials: SocialLink[] }
   | { type: "clear" }
   | { type: "fullscreen"; active: boolean }
-  | { type: "home"; targetUrl: string; message: string }
+  | { type: "gui"; targetUrl: string; message: string }
   | {
       type: "error";
       errorType: "unknown_command" | "missing_argument" | "not_found";
