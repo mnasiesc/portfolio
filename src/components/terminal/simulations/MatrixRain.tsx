@@ -43,7 +43,7 @@ export function MatrixRain({ onExit }: MatrixRainProps) {
 
     const chars =
       "0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ{}[];*&%$#@!<>~sys_kernel_epoll_inotify";
-    const fontSize = 14;
+    const fontSize = width < 640 ? 18 : 22;
     const columns = Math.floor(width / fontSize);
     const drops: number[] = Array.from({ length: columns }, () => Math.floor(Math.random() * -50));
 
@@ -61,7 +61,7 @@ export function MatrixRain({ onExit }: MatrixRainProps) {
       ctx.fillStyle = "rgba(0, 0, 0, 0.07)";
       ctx.fillRect(0, 0, width, height);
 
-      ctx.font = `${fontSize}px monospace`;
+      ctx.font = `bold ${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = chars.charAt(Math.floor(Math.random() * chars.length));

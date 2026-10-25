@@ -6,44 +6,54 @@ interface BusyStreamProps {
   onExit: () => void;
 }
 
-const KERNEL_LOGS = [
-  "  CC      kernel/sched/core.o",
-  "  CC      kernel/sched/loadavg.o",
-  "  CC      kernel/sched/clock.o",
-  "  CC      kernel/locking/mutex.o",
-  "  CC      fs/notify/inotify/inotify_user.o",
-  "  CC      fs/notify/inotify/inotify_fsnotify.o",
-  "  CC      fs/epoll.o",
-  "  CC      arch/x86/kernel/entry_64.o",
-  "  CC      arch/x86/kernel/traps.o",
-  "  CC      arch/x86/kernel/irq.o",
-  "  AR      arch/x86/kernel/built-in.a",
-  "  LD [M]  drivers/net/ethernet/intel/e1000/e1000.o",
-  "  CC [M]  drivers/char/random.o",
-  "  CC      mm/memory.o",
-  "  CC      mm/mmap.o",
-  "  CC      mm/page_alloc.o",
-  "  CC      mm/vmalloc.o",
-  "  LD      vmlinux.o",
-  "  MODPOST Module.symvers",
-  "  CC      arch/x86/boot/compressed/head_64.o",
-  "  CC      arch/x86/boot/compressed/misc.o",
-  "  OBJCOPY arch/x86/boot/vmlinux.bin",
-  "  BUILD   arch/x86/boot/bzImage (Kernel: arch/x86/boot/bzImage is ready)",
-];
+interface LogStep {
+  text: string;
+  delayMs: number;
+  highlight?: "cmd" | "download" | "success" | "warn" | "dim";
+}
 
-const DOWNLOAD_LOGS = [
-  "[fetch] downloading pkg: clang-tools-extra-18.1.8-x86_64.pkg.tar.zst (84.2 MB)...",
-  "  -> [██████████████████████░░░░░░░░] 74% 28.4 MB/s ETA 00:01",
-  "  -> [██████████████████████████████] 100% 32.1 MB/s [DONE] SHA256 verified.",
-  "[git] cloning repository: https://github.com/torvalds/linux.git --depth=1",
-  "remote: Enumerating objects: 82140, done.",
-  "remote: Counting objects: 100% (82140/82140), done.",
-  "remote: Compressing objects: 100% (64120/64120), done.",
-  "Receiving objects:  92% (75568/82140), 184.20 MiB | 24.12 MiB/s",
-  "Resolving deltas: 100% (24110/24110), done.",
-  "[wal] syncing write-ahead-log segment 0x00004f21 -> fsync(fd) latency: 0.12ms",
-  "[flowhook] active epoll_wait cycle: 42 files watched, inotify_mask: IN_MODIFY | IN_CREATE",
+const GENERATOR_PIPELINE: LogStep[] = [
+  { text: "[pipeline] initiating compilation worker pools (threads: 8)...", delayMs: 400, highlight: "cmd" },
+  { text: "  CC      kernel/sched/core.o", delayMs: 280 },
+  { text: "  CC      kernel/sched/loadavg.o", delayMs: 220 },
+  { text: "  CC      kernel/sched/clock.o", delayMs: 180 },
+  { text: "  CC      kernel/locking/mutex.o", delayMs: 250 },
+  { text: "  CC      fs/notify/inotify/inotify_user.o", delayMs: 320 },
+  { text: "  CC      fs/notify/inotify/inotify_fsnotify.o", delayMs: 260 },
+  { text: "  CC      fs/epoll.o", delayMs: 350 },
+  { text: "  CC      arch/x86/kernel/entry_64.o", delayMs: 420 },
+  { text: "  CC      arch/x86/kernel/traps.o", delayMs: 290 },
+  { text: "  CC      drivers/gpu/drm/nouveau/nouveau_bo.o [compiling templates...]", delayMs: 1200, highlight: "warn" },
+  { text: "  AR      arch/x86/kernel/built-in.a", delayMs: 380 },
+  
+  // Package download phase (realistic pauses and speeds)
+  { text: ":: Synchronizing package databases...", delayMs: 700, highlight: "cmd" },
+  { text: ":: Starting dependency verification & package resolution...", delayMs: 650 },
+  { text: "resolving dependencies (3 packages)...", delayMs: 800 },
+  { text: "Packages (3) clang-18.1.8-1  llvm-libs-18.1.8-1  rust-1.80.0-1", delayMs: 900, highlight: "dim" },
+  { text: "[fetch] downloading clang-18.1.8-x86_64.pkg.tar.zst (84.2 MiB)...", delayMs: 500, highlight: "download" },
+  { text: "  -> [████░░░░░░░░░░░░░░░░░░░░] 16%  3.8 MiB/s  ETA 00:18", delayMs: 450, highlight: "download" },
+  { text: "  -> [████████░░░░░░░░░░░░░░░░] 35%  5.4 MiB/s  ETA 00:10", delayMs: 500, highlight: "download" },
+  { text: "  -> [█████████████░░░░░░░░░░░] 56%  6.8 MiB/s  ETA 00:06", delayMs: 480, highlight: "download" },
+  { text: "  -> [██████████████████░░░░░░] 78%  7.2 MiB/s  ETA 00:03", delayMs: 420, highlight: "download" },
+  { text: "  -> [████████████████████████] 100% 7.6 MiB/s  [COMPLETED] 84.2 MiB in 00:11.2", delayMs: 700, highlight: "success" },
+  { text: "checking keys in keyring...", delayMs: 550 },
+  { text: "checking package integrity (sha256)...", delayMs: 750, highlight: "dim" },
+  { text: "loading package files & unpacking zstd archives...", delayMs: 1100, highlight: "warn" },
+  { text: "installing clang-18.1.8... [████████████████████] 100%", delayMs: 450, highlight: "success" },
+  
+  // Git & WAL engine phase
+  { text: "[git] syncing submodules from github.com/torvalds/linux.git --depth=1", delayMs: 800, highlight: "cmd" },
+  { text: "remote: Enumerating objects: 4210, done.", delayMs: 380 },
+  { text: "remote: Counting objects: 100% (4210/4210), done.", delayMs: 320 },
+  { text: "remote: Compressing objects: 100% (3120/3120), done.", delayMs: 450 },
+  { text: "Receiving objects:  84% (3536/4210), 18.40 MiB | 14.20 MiB/s", delayMs: 550, highlight: "download" },
+  { text: "Resolving deltas: 100% (1640/1640), done.", delayMs: 420 },
+  { text: "[wal] flushing write-ahead-log segment 0x00004f21 -> fsync(fd) latency: 0.14ms", delayMs: 360 },
+  { text: "[flowhook] active epoll_wait cycle: 1,280 directories watched, inotify_mask: IN_MODIFY | IN_CREATE", delayMs: 480 },
+  { text: "  LD      vmlinux.o", delayMs: 600 },
+  { text: "  MODPOST Module.symvers", delayMs: 750, highlight: "dim" },
+  { text: "  BUILD   arch/x86/boot/bzImage (Kernel: arch/x86/boot/bzImage is ready)", delayMs: 900, highlight: "success" },
 ];
 
 const HACKER_CODE_SNIPPETS = [
@@ -64,12 +74,13 @@ const HACKER_CODE_SNIPPETS = [
 ];
 
 export function BusyStream({ onExit }: BusyStreamProps) {
-  const [logs, setLogs] = useState<string[]>([
-    "[SIMULATOR BOOT] Initiating parallel build & sync pipeline...",
-    "System target: x86_64-pc-linux-gnu · Opt-level: -O3",
+  const [logs, setLogs] = useState<Array<{ id: number; text: string; highlight?: string }>>([
+    { id: 1, text: "[SIMULATOR BOOT] Initiating compiler pipeline & package synchronizer...", highlight: "cmd" },
+    { id: 2, text: "System target: x86_64-pc-linux-gnu · Opt-level: -O3 · Pacing: Organic", highlight: "dim" },
   ]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const snippetIdx = useRef(0);
+  const logIdCounter = useRef(3);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -84,7 +95,10 @@ export function BusyStream({ onExit }: BusyStreamProps) {
       e.preventDefault();
       const code = HACKER_CODE_SNIPPETS[snippetIdx.current % HACKER_CODE_SNIPPETS.length];
       snippetIdx.current++;
-      setLogs((prev) => [...prev.slice(-150), `>>> ${code}`]);
+      setLogs((prev) => [
+        ...prev.slice(-120),
+        { id: logIdCounter.current++, text: `>>> ${code}`, highlight: "hacker" },
+      ]);
     },
     [onExit],
   );
@@ -94,27 +108,38 @@ export function BusyStream({ onExit }: BusyStreamProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  // Autonomous fast stream of compile & download logs
+  // Organic paced stream with realistic pauses
   useEffect(() => {
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      let newLog = "";
-      if (count % 3 === 0) {
-        newLog = DOWNLOAD_LOGS[Math.floor(Math.random() * DOWNLOAD_LOGS.length)];
-      } else {
-        newLog = KERNEL_LOGS[Math.floor(Math.random() * KERNEL_LOGS.length)];
-      }
+    let isMounted = true;
+    let stepIndex = 0;
+    let timeoutId: NodeJS.Timeout;
 
-      setLogs((prev) => [...prev.slice(-150), newLog]);
-    }, 120);
+    const runNextStep = () => {
+      if (!isMounted) return;
 
-    return () => clearInterval(interval);
+      const step = GENERATOR_PIPELINE[stepIndex % GENERATOR_PIPELINE.length];
+      stepIndex++;
+
+      setLogs((prev) => [
+        ...prev.slice(-120),
+        { id: logIdCounter.current++, text: step.text, highlight: step.highlight },
+      ]);
+
+      // Schedule next step with step-specific delay
+      timeoutId = setTimeout(runNextStep, step.delayMs);
+    };
+
+    timeoutId = setTimeout(runNextStep, 500);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Auto-scroll
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "auto" });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
   return (
@@ -124,12 +149,12 @@ export function BusyStream({ onExit }: BusyStreamProps) {
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
           <span className="font-bold text-emerald-400 dark:text-[#8dff55]">
-            BUSY SIMULATOR // HIGH WORKLOAD STREAM
+            BUSY SIMULATOR // ORGANIC WORKLOAD STREAM
           </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-stone-400 text-xs hidden md:inline">
-            Mash any key to fake-type C++ code · Press <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">q</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">ESC</kbd>
+            Mash any key to fake-type code · Press <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">q</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-200">ESC</kbd>
           </span>
           <button
             type="button"
@@ -142,21 +167,27 @@ export function BusyStream({ onExit }: BusyStreamProps) {
       </div>
 
       {/* Stream Area */}
-      <div className="flex-1 overflow-y-auto space-y-1 text-xs sm:text-sm font-mono scrollbar-none">
-        {logs.map((line, idx) => (
+      <div className="flex-1 overflow-y-auto space-y-1.5 text-xs sm:text-sm font-mono scrollbar-none leading-relaxed">
+        {logs.map((item) => (
           <div
-            key={idx}
+            key={item.id}
             className={
-              line.startsWith(">>>")
+              item.highlight === "hacker"
                 ? "text-emerald-300 dark:text-[#8dff55] font-bold"
-                : line.includes("BUILD") || line.includes("[DONE]")
-                  ? "text-cyan-400 font-semibold"
-                  : line.includes("fetch") || line.includes("git")
-                    ? "text-amber-400"
-                    : "text-stone-400"
+                : item.highlight === "cmd"
+                  ? "text-cyan-400 font-bold"
+                  : item.highlight === "download"
+                    ? "text-amber-300"
+                    : item.highlight === "success"
+                      ? "text-emerald-400 font-semibold"
+                      : item.highlight === "warn"
+                        ? "text-amber-400 italic"
+                        : item.highlight === "dim"
+                          ? "text-stone-500"
+                          : "text-stone-400"
             }
           >
-            {line}
+            {item.text}
           </div>
         ))}
         <div ref={bottomRef} className="h-6" />
