@@ -808,64 +808,6 @@
     white-space: nowrap;
   }
 
-  /* Project Card Status Top Bars */
-  .project-instrument-body.card-status-featured {
-    border-top: 3px solid #eab308;
-  }
-
-  .project-instrument-body.card-status-archived {
-    border-top: 3px solid #b45309;
-  }
-
-  .project-instrument-body.card-status-active {
-    border-top: 3px solid #22c55e;
-  }
-
-  .project-instrument-body.card-status-experimental {
-    border-top: 3px solid #a855f7;
-  }
-
-  .project-instrument-body.card-status-early {
-    border-top: 3px solid #0ea5e9;
-  }
-
-  .project-instrument-body.card-status-concept {
-    border-top: 3px solid #818cf8;
-  }
-
-  .project-instrument-body.card-status-maintenance {
-    border-top: 3px solid #f97316;
-  }
-
-  /* Status-aware Card Hover Borders */
-  .instrument-featured:hover .project-instrument-body {
-    border-color: #eab308;
-  }
-
-  .instrument-archived:hover .project-instrument-body {
-    border-color: #b45309;
-  }
-
-  .instrument-active:hover .project-instrument-body {
-    border-color: #22c55e;
-  }
-
-  .instrument-experimental:hover .project-instrument-body {
-    border-color: #a855f7;
-  }
-
-  .instrument-early:hover .project-instrument-body {
-    border-color: #0ea5e9;
-  }
-
-  .instrument-concept:hover .project-instrument-body {
-    border-color: #818cf8;
-  }
-
-  .instrument-maintenance:hover .project-instrument-body {
-    border-color: #f97316;
-  }
-
   /* Project Status Badges */
   .project-status.status-featured {
     border-color: #ca8a04;
@@ -1639,35 +1581,6 @@
   :root:not(.dark) .readout-value.avail-busy,
   :root:not(.dark) .station-status-text.avail-busy {
     color: #b91c1c;
-  }
-
-  /* Light Mode Project Card Status Bars */
-  :root:not(.dark) .project-instrument-body.card-status-featured {
-    border-top: 3px solid #d97706;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-archived {
-    border-top: 3px solid #92400e;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-active {
-    border-top: 3px solid #16a34a;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-experimental {
-    border-top: 3px solid #9333ea;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-early {
-    border-top: 3px solid #0284c7;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-concept {
-    border-top: 3px solid #6366f1;
-  }
-
-  :root:not(.dark) .project-instrument-body.card-status-maintenance {
-    border-top: 3px solid #ea580c;
   }
 
   /* Light Mode Project Status Badges */

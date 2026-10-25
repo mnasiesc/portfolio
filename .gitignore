@@ -17,6 +17,7 @@
 /.next/
 /out/
 /.agents/
+/.vscode/
 /public/generated-content/
 
 # production

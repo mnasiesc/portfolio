@@ -53,10 +53,10 @@ export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
     // Pressing Tab to focus and Enter/Space to "click" works automatically.
     <button
       onClick={onSelect}
-      className={`project-instrument group w-full text-left cursor-pointer instrument-${project.status}`}
+      className="project-instrument group w-full text-left cursor-pointer"
       aria-label={`${labels.projectCardAriaPrefix} ${project.title}`}
     >
-      <article className={`project-instrument-body card-status-${project.status}`}>
+      <article className="project-instrument-body">
 
         {/* ── Card header: tags + status badge ── */}
         <div className="flex items-center justify-between">
