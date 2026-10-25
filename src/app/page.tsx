@@ -66,7 +66,14 @@ export default async function HomePage() {
           <section className="dashboard-bay project-bay" aria-label={portfolio.home.projectHeading}>
             <ProjectsSection
               projects={projects}
-              images={portfolio.images}
+              images={portfolio.images.map(({ id, mimeType, generatedFile, width, height, alt }) => ({
+                id,
+                mimeType,
+                generatedFile,
+                width,
+                height,
+                alt,
+              }))}
               labels={{ ...portfolio.home, ...portfolio.writing }}
             />
           </section>

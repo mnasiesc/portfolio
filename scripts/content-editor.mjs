@@ -337,6 +337,114 @@ const page = `<!doctype html>
         topBar.append(title,removeBtn);
         wrapper.append(topBar);
 
+        // Local storage file upload input right inside project editor
+        const localUploadRow = document.createElement("div");
+        localUploadRow.className = "field";
+        localUploadRow.style.background = "#181d18";
+        localUploadRow.style.padding = "8px 10px";
+        localUploadRow.style.border = "1px solid #2a342a";
+        localUploadRow.style.borderRadius = "4px";
+        localUploadRow.style.margin = "6px 0 10px";
+
+        const uploadLabel = document.createElement("label");
+        uploadLabel.textContent = "Upload from local";
+        uploadLabel.style.color = "#9ec468";
+        uploadLabel.style.fontWeight = "bold";
+
+        const uploadBox = document.createElement("div");
+        const uploadInput = document.createElement("input");
+        uploadInput.type = "file";
+        uploadInput.accept = "image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/avif,video/mp4,video/webm,video/ogg,video/quicktime";
+        
+        const uploadHelp = document.createElement("div");
+        uploadHelp.style.fontSize = "11px";
+        uploadHelp.style.color = "var(--muted)";
+        uploadHelp.style.marginTop = "4px";
+        uploadHelp.textContent = "Select a local screenshot, animated GIF, or MP4/WebM video. It is saved directly to local project assets.";
+
+        uploadInput.addEventListener("change", () => {
+          const file = uploadInput.files[0];
+          if (!file) return;
+          if (file.size > 25_000_000) {
+            notify("File exceeds 25 MB limit.", true);
+            uploadInput.value = "";
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            const projectItem = getCollection(path.slice(0, 2));
+            const baseId = (projectItem?.id || "project") + "-proof";
+            const extMap = {
+              "image/jpeg": "jpg",
+              "image/svg+xml": "svg",
+              "image/x-icon": "ico",
+              "video/mp4": "mp4",
+              "video/webm": "webm",
+              "video/ogg": "ogg",
+              "video/quicktime": "mov"
+            };
+            const ext = extMap[file.type] || file.type.split("/")[1] || "bin";
+            
+            if (!Array.isArray(documentData.images)) documentData.images = [];
+            let imgRecord = documentData.images.find(img => img.id === baseId);
+            if (!imgRecord) {
+              imgRecord = {
+                id: baseId,
+                mimeType: file.type,
+                data: "",
+                alt: (projectItem?.title || "Project") + " proof of work",
+                width: 720,
+                height: 405,
+                generatedFile: "/generated-content/" + baseId + "." + ext
+              };
+              documentData.images.push(imgRecord);
+            }
+            imgRecord.mimeType = file.type;
+            imgRecord.data = String(reader.result).split(",")[1];
+            imgRecord.generatedFile = "/generated-content/" + baseId + "." + ext;
+
+            const isVid = file.type.startsWith("video/");
+            if (isVid) {
+              const testVid = document.createElement("video");
+              testVid.preload = "metadata";
+              testVid.onloadedmetadata = () => {
+                const w = testVid.videoWidth || 720;
+                const h = testVid.videoHeight || 405;
+                imgRecord.width = w;
+                imgRecord.height = h;
+                value.width = w;
+                value.height = h;
+                value.imageId = baseId;
+                value.url = "";
+                render();
+                notify("Local video loaded into assets: " + file.name);
+              };
+              testVid.src = String(reader.result);
+            } else {
+              const testImg = new Image();
+              testImg.onload = () => {
+                const w = testImg.naturalWidth || 720;
+                const h = testImg.naturalHeight || 405;
+                imgRecord.width = w;
+                imgRecord.height = h;
+                value.width = w;
+                value.height = h;
+                value.imageId = baseId;
+                value.url = "";
+                render();
+                notify("Local image loaded into assets: " + file.name);
+              };
+              testImg.src = String(reader.result);
+            }
+            syncRaw();
+          };
+          reader.readAsDataURL(file);
+        });
+
+        uploadBox.append(uploadInput, uploadHelp);
+        localUploadRow.append(uploadLabel, uploadBox);
+        wrapper.append(localUploadRow);
+
         for(const[childKey,childValue]of Object.entries(value)){
           wrapper.append(makeField(childKey,childValue,[...path,childKey]));
         }
@@ -376,17 +484,38 @@ const page = `<!doctype html>
           frame.style.justifyContent="center";
 
           const clean=previewUrl.split("?")[0].toLowerCase();
-          const isVid=pow.mediaType==="video"||(pow.mediaType!=="image"&&(linkedImg?.mimeType?.startsWith("video/")||clean.endsWith(".mp4")||clean.endsWith(".webm")||clean.endsWith(".ogg")||clean.endsWith(".mov")));
-          if(isVid){
-            const vid=document.createElement("video");
-            vid.src=previewUrl;vid.controls=true;vid.muted=true;vid.playsInline=true;
-            vid.style.width="100%";vid.style.height="100%";vid.style.objectFit="cover";vid.style.objectPosition="center";vid.style.display="block";
-            frame.append(vid);
+          const asciinemaMatch = previewUrl.match(/asciinema\.org\/a\/([a-zA-Z0-9_\-]+)/);
+          const youtubeMatch = previewUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_\-]+)/);
+          const vimeoMatch = previewUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+
+          if(asciinemaMatch){
+            const ifr=document.createElement("iframe");
+            ifr.src="https://asciinema.org/a/"+asciinemaMatch[1]+"/iframe";
+            ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
+            frame.append(ifr);
+          }else if(youtubeMatch){
+            const ifr=document.createElement("iframe");
+            ifr.src="https://www.youtube-nocookie.com/embed/"+youtubeMatch[1];
+            ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
+            frame.append(ifr);
+          }else if(vimeoMatch){
+            const ifr=document.createElement("iframe");
+            ifr.src="https://player.vimeo.com/video/"+vimeoMatch[1];
+            ifr.style.width="100%";ifr.style.height="100%";ifr.style.border="0";
+            frame.append(ifr);
           }else{
-            const img=document.createElement("img");
-            img.src=previewUrl;img.alt=pow.alt||"Crop preview";
-            img.style.width="100%";img.style.height="100%";img.style.objectFit="cover";img.style.objectPosition="center";img.style.display="block";
-            frame.append(img);
+            const isVid=pow.mediaType==="video"||(pow.mediaType!=="image"&&(linkedImg?.mimeType?.startsWith("video/")||clean.endsWith(".mp4")||clean.endsWith(".webm")||clean.endsWith(".ogg")||clean.endsWith(".mov")));
+            if(isVid){
+              const vid=document.createElement("video");
+              vid.src=previewUrl;vid.controls=true;vid.muted=true;vid.playsInline=true;
+              vid.style.width="100%";vid.style.height="100%";vid.style.objectFit="cover";vid.style.objectPosition="center";vid.style.display="block";
+              frame.append(vid);
+            }else{
+              const img=document.createElement("img");
+              img.src=previewUrl;img.alt=pow.alt||"Crop preview";
+              img.style.width="100%";img.style.height="100%";img.style.objectFit="cover";img.style.objectPosition="center";img.style.display="block";
+              frame.append(img);
+            }
           }
           previewContainer.append(frame);
         }else{

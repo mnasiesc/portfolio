@@ -118,7 +118,16 @@
       ],
       "status": "featured",
       "year": "2026",
-      "repoUrl": "https://github.com/mnasies/FlowHook"
+      "repoUrl": "https://github.com/mnasies/FlowHook",
+      "proofOfWork": {
+        "mediaType": "auto",
+        "imageId": "",
+        "url": "https://asciinema.org/a/Wc2xprecUM1YnUK0",
+        "caption": "Live FlowHook inotify terminal execution replay",
+        "alt": "FlowHook terminal execution demo",
+        "width": 700,
+        "height": 420
+      }
     },
     {
       "id": "block-storage-engine",

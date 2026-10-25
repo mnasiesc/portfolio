@@ -235,7 +235,7 @@
           "additionalProperties": false,
           "properties": {
             "mediaType": { "type": "string", "enum": ["image", "video", "auto"] },
-            "imageId": { "$ref": "#/$defs/imageId" },
+            "imageId": { "type": "string", "pattern": "^(?:|[a-z0-9][a-z0-9-]*)$" },
             "url": { "type": "string" },
             "caption": { "type": "string" },
             "alt": { "type": "string" },

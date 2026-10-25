@@ -36,14 +36,43 @@ function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
   const directImageId = pow?.imageId || project.image;
   const imageMatch = directImageId ? images?.find((img) => img.id === directImageId) : undefined;
 
-  const url = pow?.url || imageMatch?.generatedFile;
-  if (!url) return null;
+  // If pow.url is provided, use it; otherwise use local uploaded asset file
+  const rawUrl = (pow?.url && pow.url.trim()) ? pow.url.trim() : (imageMatch?.generatedFile || "");
+  if (!rawUrl) return null;
 
   const mimeType = imageMatch?.mimeType;
-  const explicitType = pow?.mediaType;
+  const explicitType = pow?.mediaType || "auto";
 
-  const cleanUrl = url.split("?")[0].toLowerCase();
-  const isVideo = explicitType === "video" ||
+  let isEmbed = false;
+  let embedUrl = "";
+  let badgeLabel = "CAPTURE // MEDIA";
+
+  // Asciinema recording (e.g. https://asciinema.org/a/Wc2xprecUM1YnUK0)
+  const asciinemaMatch = rawUrl.match(/asciinema\.org\/a\/([a-zA-Z0-9_\-]+)/);
+  if (asciinemaMatch) {
+    isEmbed = true;
+    embedUrl = `https://asciinema.org/a/${asciinemaMatch[1]}/iframe`;
+    badgeLabel = "TERMINAL // ASCIINEMA";
+  }
+
+  // YouTube recording (e.g. https://youtube.com/watch?v=... or https://youtu.be/...)
+  const youtubeMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_\-]+)/);
+  if (!isEmbed && youtubeMatch) {
+    isEmbed = true;
+    embedUrl = `https://www.youtube-nocookie.com/embed/${youtubeMatch[1]}`;
+    badgeLabel = "STREAM // YOUTUBE";
+  }
+
+  // Vimeo recording
+  const vimeoMatch = rawUrl.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+  if (!isEmbed && vimeoMatch) {
+    isEmbed = true;
+    embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    badgeLabel = "STREAM // VIMEO";
+  }
+
+  const cleanUrl = rawUrl.split("?")[0].toLowerCase();
+  const isVideo = !isEmbed && (explicitType === "video" ||
     (explicitType !== "image" && (
       Boolean(mimeType?.startsWith("video/")) ||
       cleanUrl.endsWith(".mp4") ||
@@ -51,7 +80,10 @@ function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
       cleanUrl.endsWith(".ogg") ||
       cleanUrl.endsWith(".ogv") ||
       cleanUrl.endsWith(".mov")
-    ));
+    )));
+
+  if (isVideo) badgeLabel = "STREAM // VIDEO";
+  else if (!isEmbed && (cleanUrl.endsWith(".gif") || mimeType === "image/gif")) badgeLabel = "ANIMATION // GIF";
 
   const width = pow?.width || imageMatch?.width || 720;
   const height = pow?.height || imageMatch?.height || 405;
@@ -59,8 +91,10 @@ function resolveProjectMedia(project: Project, images?: ModalImageRecord[]) {
   const alt = pow?.alt || imageMatch?.alt || `${project.title} proof of work`;
 
   return {
-    url,
+    url: isEmbed ? embedUrl : rawUrl,
+    isEmbed,
     isVideo,
+    badgeLabel,
     width,
     height,
     caption,
@@ -231,7 +265,7 @@ export function ProjectModal({ project, images, onClose, labels }: ProjectModalP
                   <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block animate-pulse" />
                   PROOF OF WORK // ARTIFACT
                 </span>
-                <span>{media.isVideo ? "STREAM // VIDEO" : "CAPTURE // MEDIA"}</span>
+                <span>{media.badgeLabel}</span>
               </div>
 
               <div
@@ -241,7 +275,20 @@ export function ProjectModal({ project, images, onClose, labels }: ProjectModalP
                   maxHeight: `${Math.min(media.height, 460)}px`,
                 }}
               >
-                {media.isVideo ? (
+                {media.isEmbed ? (
+                  <iframe
+                    src={media.url}
+                    title={media.alt}
+                    className="w-full h-full border-0 block"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      border: 0,
+                    }}
+                    allow="autoplay; fullscreen; clipboard-read; clipboard-write"
+                    loading="lazy"
+                  />
+                ) : media.isVideo ? (
                   <video
                     src={media.url}
                     controls
