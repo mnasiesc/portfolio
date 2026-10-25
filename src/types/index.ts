@@ -6,7 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Status of a project — controls how it's visually badged
-export type ProjectStatus = "featured" | "active" | "experimental" | "archived";
+export type ProjectStatus = "featured" | "active" | "experimental" | "archived" | "early" | "concept" | "maintenance";
 
 // A single navigation link item
 export interface NavItem {
@@ -67,3 +67,18 @@ export interface TerminalConfig {
   navLabel: string;
 }
 
+// Modular custom section item (e.g. hobby, open source contribution, speaking)
+export interface CustomSectionItem {
+  title: string;
+  description: string;
+  meta?: string;
+  link?: string;
+}
+
+// Modular custom section container
+export interface CustomSection {
+  id: string;
+  title: string;
+  description: string;
+  items: CustomSectionItem[];
+}

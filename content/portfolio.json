@@ -86,7 +86,10 @@
       "featured": "Featured",
       "active": "Active",
       "experimental": "Experimental",
-      "archived": "Archived"
+      "archived": "Archived",
+      "early": "Early",
+      "concept": "Concept",
+      "maintenance": "Maintenance"
     },
     "writingHeading": "Writings & Technical Notes",
     "viewAllArticles": "VIEW ALL",
@@ -97,7 +100,8 @@
     "contactEmailLabel": "Email",
     "copyEmail": "COPY EMAIL",
     "copiedEmail": "COPIED!",
-    "linksLabel": "Links"
+    "linksLabel": "Links",
+    "customSections": []
   },
   "projects": [
     {

@@ -26,6 +26,9 @@ const STATUS_CONFIG: Record<Project["status"], string> = {
   active: "status-active",
   experimental: "status-experimental",
   archived: "status-archived",
+  early: "status-early",
+  concept: "status-concept",
+  maintenance: "status-maintenance",
 };
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -50,10 +53,10 @@ export function ProjectCard({ project, onSelect, labels }: ProjectCardProps) {
     // Pressing Tab to focus and Enter/Space to "click" works automatically.
     <button
       onClick={onSelect}
-      className="project-instrument group w-full text-left cursor-pointer"
+      className={`project-instrument group w-full text-left cursor-pointer instrument-${project.status}`}
       aria-label={`${labels.projectCardAriaPrefix} ${project.title}`}
     >
-      <article className="project-instrument-body">
+      <article className={`project-instrument-body card-status-${project.status}`}>
 
         {/* ── Card header: tags + status badge ── */}
         <div className="flex items-center justify-between">

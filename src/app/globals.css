@@ -345,8 +345,66 @@
     height: 7px;
     flex: 0 0 auto;
     border-radius: 50%;
-    background: #a7c98d;
-    box-shadow: 0 0 9px rgb(167 201 141 / 55%);
+    background: #22c55e;
+    box-shadow: 0 0 9px rgb(34 197 94 / 60%);
+    transition: background 180ms ease, box-shadow 180ms ease;
+  }
+
+  /* Availability status indicators */
+  .station-status-light.avail-open,
+  .readout-indicator.avail-open {
+    background: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+  }
+
+  .station-status-light.avail-freelance,
+  .readout-indicator.avail-freelance {
+    background: #84cc16;
+    box-shadow: 0 0 10px rgba(132, 204, 22, 0.7);
+  }
+
+  .station-status-light.avail-limited,
+  .readout-indicator.avail-limited {
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+  }
+
+  .station-status-light.avail-exploring,
+  .readout-indicator.avail-exploring {
+    background: #06b6d4;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+  }
+
+  .station-status-light.avail-busy,
+  .readout-indicator.avail-busy {
+    background: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+  }
+
+  /* Availability text coloring */
+  .readout-value.avail-open,
+  .station-status-text.avail-open {
+    color: #86efac;
+  }
+
+  .readout-value.avail-freelance,
+  .station-status-text.avail-freelance {
+    color: #bef264;
+  }
+
+  .readout-value.avail-limited,
+  .station-status-text.avail-limited {
+    color: #fde047;
+  }
+
+  .readout-value.avail-exploring,
+  .station-status-text.avail-exploring {
+    color: #67e8f9;
+  }
+
+  .readout-value.avail-busy,
+  .station-status-text.avail-busy {
+    color: #fca5a5;
   }
 
   .station-status-divider {
@@ -750,21 +808,105 @@
     white-space: nowrap;
   }
 
+  /* Project Card Status Top Bars */
+  .project-instrument-body.card-status-featured {
+    border-top: 3px solid #eab308;
+  }
+
+  .project-instrument-body.card-status-archived {
+    border-top: 3px solid #b45309;
+  }
+
+  .project-instrument-body.card-status-active {
+    border-top: 3px solid #22c55e;
+  }
+
+  .project-instrument-body.card-status-experimental {
+    border-top: 3px solid #a855f7;
+  }
+
+  .project-instrument-body.card-status-early {
+    border-top: 3px solid #0ea5e9;
+  }
+
+  .project-instrument-body.card-status-concept {
+    border-top: 3px solid #818cf8;
+  }
+
+  .project-instrument-body.card-status-maintenance {
+    border-top: 3px solid #f97316;
+  }
+
+  /* Status-aware Card Hover Borders */
+  .instrument-featured:hover .project-instrument-body {
+    border-color: #eab308;
+  }
+
+  .instrument-archived:hover .project-instrument-body {
+    border-color: #b45309;
+  }
+
+  .instrument-active:hover .project-instrument-body {
+    border-color: #22c55e;
+  }
+
+  .instrument-experimental:hover .project-instrument-body {
+    border-color: #a855f7;
+  }
+
+  .instrument-early:hover .project-instrument-body {
+    border-color: #0ea5e9;
+  }
+
+  .instrument-concept:hover .project-instrument-body {
+    border-color: #818cf8;
+  }
+
+  .instrument-maintenance:hover .project-instrument-body {
+    border-color: #f97316;
+  }
+
+  /* Project Status Badges */
   .project-status.status-featured {
-    border-color: #64895f;
-    color: var(--primary);
-  }
-
-  .project-status.status-active {
-    color: #9bc1aa;
-  }
-
-  .project-status.status-experimental {
-    color: var(--accent);
+    border-color: #ca8a04;
+    color: #facc15;
+    background: rgba(234, 179, 8, 0.12);
   }
 
   .project-status.status-archived {
-    color: var(--muted-foreground);
+    border-color: #92400e;
+    color: #d97706;
+    background: rgba(180, 83, 9, 0.12);
+  }
+
+  .project-status.status-active {
+    border-color: #16a34a;
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  .project-status.status-experimental {
+    border-color: #9333ea;
+    color: #c084fc;
+    background: rgba(168, 85, 247, 0.12);
+  }
+
+  .project-status.status-early {
+    border-color: #0284c7;
+    color: #38bdf8;
+    background: rgba(14, 165, 233, 0.12);
+  }
+
+  .project-status.status-concept {
+    border-color: #6366f1;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.12);
+  }
+
+  .project-status.status-maintenance {
+    border-color: #ea580c;
+    color: #fb923c;
+    background: rgba(249, 115, 22, 0.12);
   }
 
   .project-title {
@@ -1473,12 +1615,102 @@
     color: var(--station-text-muted);
   }
 
+  /* Light Mode Availability text & lights */
+  :root:not(.dark) .readout-value.avail-open,
+  :root:not(.dark) .station-status-text.avail-open {
+    color: #15803d;
+  }
+
+  :root:not(.dark) .readout-value.avail-freelance,
+  :root:not(.dark) .station-status-text.avail-freelance {
+    color: #4d7c0f;
+  }
+
+  :root:not(.dark) .readout-value.avail-limited,
+  :root:not(.dark) .station-status-text.avail-limited {
+    color: #b45309;
+  }
+
+  :root:not(.dark) .readout-value.avail-exploring,
+  :root:not(.dark) .station-status-text.avail-exploring {
+    color: #0369a1;
+  }
+
+  :root:not(.dark) .readout-value.avail-busy,
+  :root:not(.dark) .station-status-text.avail-busy {
+    color: #b91c1c;
+  }
+
+  /* Light Mode Project Card Status Bars */
+  :root:not(.dark) .project-instrument-body.card-status-featured {
+    border-top: 3px solid #d97706;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-archived {
+    border-top: 3px solid #92400e;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-active {
+    border-top: 3px solid #16a34a;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-experimental {
+    border-top: 3px solid #9333ea;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-early {
+    border-top: 3px solid #0284c7;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-concept {
+    border-top: 3px solid #6366f1;
+  }
+
+  :root:not(.dark) .project-instrument-body.card-status-maintenance {
+    border-top: 3px solid #ea580c;
+  }
+
+  /* Light Mode Project Status Badges */
+  :root:not(.dark) .project-status.status-featured {
+    color: #b45309;
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.08);
+  }
+
+  :root:not(.dark) .project-status.status-archived {
+    color: #78350f;
+    border-color: #b45309;
+    background: rgba(180, 83, 9, 0.08);
+  }
+
   :root:not(.dark) .project-status.status-active {
-    color: #28623a;
+    color: #15803d;
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.08);
   }
 
   :root:not(.dark) .project-status.status-experimental {
-    color: #81500e;
+    color: #7e22ce;
+    border-color: #a855f7;
+    background: rgba(168, 85, 247, 0.08);
+  }
+
+  :root:not(.dark) .project-status.status-early {
+    color: #0369a1;
+    border-color: #0ea5e9;
+    background: rgba(14, 165, 233, 0.08);
+  }
+
+  :root:not(.dark) .project-status.status-concept {
+    color: #4338ca;
+    border-color: #818cf8;
+    background: rgba(99, 102, 241, 0.08);
+  }
+
+  :root:not(.dark) .project-status.status-maintenance {
+    color: #c2410c;
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.08);
   }
 
   :root:not(.dark) .station-button-primary {

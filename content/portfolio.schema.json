@@ -69,7 +69,17 @@
       "additionalProperties": false,
       "required": ["availability", "avatarImage", "heroTitle", "heroDescription", "actions", "projectHeading", "projectCountLabel", "projectMore", "projectCardAriaPrefix", "projectStatuses", "writingHeading", "viewAllArticles", "viewAllArticlesHref", "contactHeading", "contactDescription", "contactFallbackEmail", "contactEmailLabel", "copyEmail", "copiedEmail", "linksLabel"],
       "properties": {
-        "availability": { "type": "string" },
+        "availability": {
+          "type": "string",
+          "enum": [
+            "Open to Opportunities",
+            "Available for Full-time",
+            "Available for Freelance",
+            "Limited Availability",
+            "Exploring Ideas",
+            "Unavailable / Busy"
+          ]
+        },
         "avatarImage": { "$ref": "#/$defs/imageId" },
         "heroTitle": { "type": "string", "minLength": 1 },
         "heroDescription": { "type": "string" },
@@ -83,8 +93,43 @@
         "projectCardAriaPrefix": { "type": "string" },
         "projectStatuses": {
           "type": "object", "additionalProperties": false,
-          "required": ["featured", "active", "experimental", "archived"],
-          "properties": { "featured": { "type": "string" }, "active": { "type": "string" }, "experimental": { "type": "string" }, "archived": { "type": "string" } }
+          "required": ["featured", "active", "experimental", "archived", "early", "concept", "maintenance"],
+          "properties": {
+            "featured": { "type": "string" },
+            "active": { "type": "string" },
+            "experimental": { "type": "string" },
+            "archived": { "type": "string" },
+            "early": { "type": "string" },
+            "concept": { "type": "string" },
+            "maintenance": { "type": "string" }
+          }
+        },
+        "customSections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "title", "description", "items"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+              "title": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["title", "description"],
+                  "properties": {
+                    "title": { "type": "string", "minLength": 1 },
+                    "description": { "type": "string" },
+                    "meta": { "type": "string" },
+                    "link": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
         },
         "writingHeading": { "type": "string" },
         "viewAllArticles": { "type": "string" },
@@ -167,7 +212,7 @@
         "description": { "type": "string" },
         "longDescription": { "type": "string" },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "status": { "enum": ["featured", "active", "experimental", "archived"] },
+        "status": { "enum": ["featured", "active", "experimental", "archived", "early", "concept", "maintenance"] },
         "year": { "type": "string" },
         "repoUrl": { "type": "string", "format": "uri" },
         "demoUrl": { "type": "string", "format": "uri" },

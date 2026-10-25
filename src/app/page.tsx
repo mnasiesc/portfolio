@@ -11,9 +11,12 @@ import { getAllArticles, getImage, portfolio, projects, socials } from "@/lib/po
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { WritingsSection } from "@/components/writing/WritingsSection";
 import { ContactSection } from "@/components/contact/ContactSection";
+import { CustomSectionGrid } from "@/components/home/CustomSectionGrid";
+import { getAvailabilityClass } from "@/lib/status";
 
 export default async function HomePage() {
   const articles = getAllArticles();
+  const availClass = getAvailabilityClass(portfolio.home.availability);
 
   return (
     <div className="station-page">
@@ -51,10 +54,10 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <aside className="profile-readout" aria-label={portfolio.home.availability}>
+            <aside className={`profile-readout ${availClass}`} aria-label={portfolio.home.availability}>
               <span className="readout-label">STATUS</span>
-              <span className="readout-indicator" aria-hidden="true" />
-              <span className="readout-value">{portfolio.home.availability}</span>
+              <span className={`readout-indicator ${availClass}`} aria-hidden="true" />
+              <span className={`readout-value ${availClass}`}>{portfolio.home.availability}</span>
             </aside>
           </div>
         </section>
@@ -67,6 +70,10 @@ export default async function HomePage() {
             <WritingsSection articles={articles} labels={{ ...portfolio.home, ...portfolio.writing }} />
           </section>
         </div>
+
+        {portfolio.home.customSections && portfolio.home.customSections.length > 0 && (
+          <CustomSectionGrid sections={portfolio.home.customSections} />
+        )}
 
         <section className="dashboard-bay contact-bay" aria-label={portfolio.home.contactHeading}>
           <ContactSection socials={socials} labels={portfolio.home} />

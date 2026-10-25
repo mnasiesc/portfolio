@@ -77,15 +77,22 @@ const page = `<!doctype html>
     header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:14px;padding:15px 22px;background:#171917ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
     h1{font:600 19px/1.2 Georgia,serif;margin:0}.status{font-size:13px;color:var(--muted);margin-left:auto}
     button{border:1px solid var(--line);border-radius:5px;background:#292e29;color:var(--text);padding:7px 10px;cursor:pointer;font:inherit}button:hover{border-color:var(--accent)}button:disabled{opacity:.4;cursor:default}
-    button.primary{background:var(--accent);color:#17200d;border-color:var(--accent);font-weight:700}.shell{display:grid;grid-template-columns:215px minmax(0,1fr);min-height:calc(100vh - 63px)}
-    nav{padding:18px 12px;border-right:1px solid var(--line)}nav button{display:block;width:100%;text-align:left;margin:0 0 5px;background:transparent;border-color:transparent;color:var(--muted)}nav button.active{background:var(--panel);color:var(--text);border-color:var(--line)}
+    button.primary{background:var(--accent);color:#17200d;border-color:var(--accent);font-weight:700}.shell{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 63px)}
+    nav{padding:18px 12px;border-right:1px solid var(--line)}
+    .nav-group{margin:0 0 18px}
+    .nav-group-title{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;padding:0 8px 6px;border-bottom:1px solid #2d332d;margin-bottom:6px;opacity:.9}
+    nav button{display:block;width:100%;text-align:left;margin:0 0 4px;padding:7px 10px;border-radius:4px;background:transparent;border:1px solid transparent;color:var(--muted);font-size:13px}
+    nav button:hover{background:#222622;color:var(--text)}
+    nav button.active{background:var(--panel);color:var(--text);border-color:var(--line);font-weight:600}
     main{max-width:1120px;width:100%;padding:26px clamp(16px,4vw,48px)}.intro{color:var(--muted);margin:0 0 22px}.group{margin:0 0 18px;padding:15px;border:1px solid var(--line);background:var(--panel);border-radius:5px}.group>legend{padding:0 7px;font:600 17px Georgia,serif}
     .field{display:grid;grid-template-columns:minmax(145px,220px) minmax(0,1fr);align-items:start;gap:14px;padding:10px 0;border-bottom:1px solid #343934}.field:last-child{border-bottom:0}.field>label{font-size:13px;color:var(--muted);overflow-wrap:anywhere;padding-top:8px}
-    .field input:not([type=file]),.field textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:4px;padding:9px 10px;background:#151815;color:var(--text);font:13px/1.5 ui-monospace,monospace}.field textarea{min-height:76px;resize:vertical}.field input[type=file]{max-width:100%;color:var(--muted)}
+    .field input:not([type=file]),.field textarea,.field select{width:100%;min-width:0;border:1px solid var(--line);border-radius:4px;padding:9px 10px;background:#151815;color:var(--text);font:13px/1.5 ui-monospace,monospace}
+    .field select{cursor:pointer}.field select option{background:#181c18;color:var(--text)}
+    .field textarea{min-height:76px;resize:vertical}.field input[type=file]{max-width:100%;color:var(--muted)}
     .array-item{margin:11px 0;padding:11px;border-left:2px solid #718b4d;background:#191c19}.array-heading{display:flex;align-items:center;gap:6px;padding-bottom:5px}.array-heading strong{font-size:12px;color:var(--muted);margin-right:auto}.array-heading button{padding:4px 8px;font-size:12px}.array-heading .remove{color:var(--danger)}
     .preview{display:block;max-width:190px;max-height:150px;object-fit:contain;background:#111;padding:6px;margin:8px 0;border:1px solid var(--line)}.array-actions{display:flex;gap:8px;margin-top:10px}details{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted)}
     details textarea{display:block;width:100%;min-height:280px;margin:10px 0;background:#101210;color:var(--text);border:1px solid var(--line);padding:12px;font:12px/1.5 ui-monospace,monospace}.toast{position:fixed;bottom:18px;right:18px;z-index:4;max-width:min(520px,calc(100vw - 36px));white-space:pre-wrap;background:#282e28;border:1px solid var(--line);padding:12px 16px;border-radius:5px;box-shadow:0 8px 30px #0008}.toast.error{border-color:var(--danger)}
-    @media(max-width:700px){header{padding:12px}h1{font-size:16px}.shell{grid-template-columns:1fr}nav{display:flex;overflow-x:auto;gap:5px;padding:9px;border-right:0;border-bottom:1px solid var(--line)}nav button{width:auto;white-space:nowrap;margin:0}.field{grid-template-columns:1fr;gap:3px}.field>label{padding-top:0}}
+    @media(max-width:700px){header{padding:12px}h1{font-size:16px}.shell{grid-template-columns:1fr}nav{display:flex;overflow-x:auto;gap:8px;padding:9px;border-right:0;border-bottom:1px solid var(--line)}.nav-group{display:flex;gap:4px;margin:0}.nav-group-title{display:none}nav button{width:auto;white-space:nowrap;margin:0}.field{grid-template-columns:1fr;gap:3px}.field>label{padding-top:0}}
   </style>
 </head>
 <body>
@@ -97,24 +104,47 @@ const page = `<!doctype html>
   <script>
     let documentData;
     let contentVersion;
-    let currentSection="site";
+    let currentSection="home";
     const form=document.querySelector("#form"),nav=document.querySelector("#sections"),status=document.querySelector("#status"),raw=document.querySelector("#raw"),toast=document.querySelector("#toast");
     const labelize=(key)=>String(key).replace(/([a-z0-9])([A-Z])/g,"$1 $2").replace(/[-_]/g," ").replace(/^./,c=>c.toUpperCase());
     function notify(message,error=false){toast.textContent=message;toast.className=error?"toast error":"toast";toast.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.hidden=true,5000)}
     function syncRaw(){raw.value=JSON.stringify(documentData,null,2)}
     function getCollection(path){let value=documentData;for(const key of path)value=value[key];return value}
     function setPath(path,value){let parent=documentData;for(const key of path.slice(0,-1))parent=parent[key];parent[path.at(-1)]=value;syncRaw()}
+
+    const PROJECT_STATUSES = [
+      { value: "early", label: "Early" },
+      { value: "featured", label: "Featured" },
+      { value: "active", label: "Active" },
+      { value: "experimental", label: "Experimental" },
+      { value: "concept", label: "Concept" },
+      { value: "maintenance", label: "Maintenance" },
+      { value: "archived", label: "Archived" }
+    ];
+
+    const AVAILABILITY_OPTIONS = [
+      "Open to Opportunities",
+      "Available for Full-time",
+      "Available for Freelance",
+      "Limited Availability",
+      "Exploring Ideas",
+      "Unavailable / Busy"
+    ];
+
     function newEntry(path,items){
       const area=path.join(".");
-      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"experimental",year:String(new Date().getFullYear()),repoUrl:"https://github.com/"};
+      if(area==="projects")return{id:"new-project",title:"New project",description:"",longDescription:"",tags:[],status:"early",year:String(new Date().getFullYear()),repoUrl:"https://github.com/"};
       if(area==="articles")return{slug:"new-article",title:"New article",excerpt:"",date:new Date().toISOString().slice(0,10),readingTime:"1 min read",category:"Notes",tags:[],featured:false,externalRedirect:true,body:""};
       if(area==="images")return{id:"new-image",mimeType:"image/png",data:"",alt:"",width:1,height:1,generatedFile:"/generated-content/new-image.png"};
       if(area==="navigation")return{label:"New link",href:"/"};
       if(area==="socials")return{label:"New social",href:"https://example.com",handle:""};
       if(area==="home.actions")return{label:"New action",href:"/"};
+      if(area==="home.customSections")return{id:"new-section",title:"New Section (e.g. Hobbies / OSS)",description:"Short description of this section",items:[{title:"First Subsection Item",description:"Brief details about this item",meta:"",link:""}]};
+      if(area.endsWith(".items")&&path.includes("customSections"))return{title:"New Subsection Item",description:"Description of this subsection",meta:"",link:""};
       if(area.endsWith(".tags"))return"new-tag";
       return items.length?structuredClone(items[0]):"";
     }
+
     function makeImageField(value,path){
       const row=document.createElement("div");row.className="field";
       const label=document.createElement("label");label.textContent="Image file";row.append(label);
@@ -135,10 +165,111 @@ const page = `<!doctype html>
       });
       wrap.append(preview,upload);row.append(wrap);return row;
     }
+
     function makeField(key,value,path){
       if(key==="data"&&path.includes("images"))return makeImageField(value,path);
       const row=document.createElement("div");row.className="field";
       const label=document.createElement("label");label.textContent=labelize(key);row.append(label);
+
+      // Availability dropdown (Home availability status)
+      if(key==="availability"){
+        const select=document.createElement("select");
+        const allOpts=Array.from(new Set([...AVAILABILITY_OPTIONS,value||AVAILABILITY_OPTIONS[0]]));
+        for(const opt of allOpts){
+          const option=document.createElement("option");
+          option.value=opt;
+          option.textContent=opt;
+          if(value===opt)option.selected=true;
+          select.append(option);
+        }
+        select.addEventListener("change",()=>setPath(path,select.value));
+        row.append(select);
+        return row;
+      }
+
+      // Status dropdown (Project Status: Early, Featured, Active, Experimental, Concept, Maintenance, Archived)
+      if(key==="status"&&path.includes("projects")){
+        const select=document.createElement("select");
+        for(const opt of PROJECT_STATUSES){
+          const option=document.createElement("option");
+          option.value=opt.value;
+          option.textContent=opt.label;
+          if(value===opt.value)option.selected=true;
+          select.append(option);
+        }
+        select.addEventListener("change",()=>setPath(path,select.value));
+        row.append(select);
+        return row;
+      }
+
+      // Year dropdown (Year picker from currentYear + 2 down to 2018)
+      if(key==="year"){
+        const select=document.createElement("select");
+        const currentYear=new Date().getFullYear();
+        const yearSet=new Set();
+        for(let y=currentYear+2;y>=2018;y--)yearSet.add(String(y));
+        if(value)yearSet.add(String(value));
+        const sortedYears=Array.from(yearSet).sort((a,b)=>Number(b)-Number(a));
+        for(const y of sortedYears){
+          const option=document.createElement("option");
+          option.value=y;
+          option.textContent=y;
+          if(String(value)===y)option.selected=true;
+          select.append(option);
+        }
+        select.addEventListener("change",()=>setPath(path,select.value));
+        row.append(select);
+        return row;
+      }
+
+      // Full Date picker for articles and complete dates
+      if(key==="date"){
+        const input=document.createElement("input");
+        input.type="date";
+        input.value=value?String(value).slice(0,10):"";
+        input.addEventListener("input",()=>setPath(path,input.value));
+        row.append(input);
+        return row;
+      }
+
+      // Image ID reference dropdown
+      if((key==="avatarImage"||(key==="image"&&path.includes("projects"))||(path.includes("icons")&&typeof value==="string"))&&Array.isArray(documentData?.images)){
+        const select=document.createElement("select");
+        if(key==="image"){
+          const optNone=document.createElement("option");
+          optNone.value="";
+          optNone.textContent="— None —";
+          select.append(optNone);
+        }
+        for(const img of documentData.images){
+          const option=document.createElement("option");
+          option.value = img.id;
+          option.textContent = img.id + (img.alt ? " (" + img.alt + ")" : "");
+          if (value === img.id) option.selected = true;
+          select.append(option);
+        }
+        select.addEventListener("change",()=>setPath(path,select.value));
+        row.append(select);
+        return row;
+      }
+
+      // Article Category helper
+      if(key==="category"&&path.includes("articles")){
+        const wrap=document.createElement("div");wrap.style.display="flex";wrap.style.gap="8px";
+        const select=document.createElement("select");
+        const defaultCats=["Engineering","Architecture","Systems","Performance","Notes","Guides","Opinion"];
+        const allCats=Array.from(new Set([...defaultCats,value||"Notes"]));
+        for(const cat of allCats){
+          const opt=document.createElement("option");opt.value=cat;opt.textContent=cat;
+          if(value===cat)opt.selected=true;
+          select.append(opt);
+        }
+        const customInput=document.createElement("input");customInput.type="text";customInput.placeholder="Or type category...";customInput.value=value||"";
+        select.addEventListener("change",()=>{customInput.value=select.value;setPath(path,select.value)});
+        customInput.addEventListener("input",()=>setPath(path,customInput.value));
+        wrap.append(select,customInput);row.append(wrap);return row;
+      }
+
       if(value&&typeof value==="object"){
         const wrapper=document.createElement("div");
         if(Array.isArray(value)){
@@ -154,7 +285,11 @@ const page = `<!doctype html>
             else item.append(makeField(String(index+1),entry,[...path,index]));
             wrapper.append(item);
           });
-          const add=document.createElement("button");add.type="button";add.textContent="Add item";add.addEventListener("click",()=>{value.push(newEntry(path,value));render()});wrapper.append(add);
+          const add=document.createElement("button");add.type="button";
+          const addLabel=key==="customSections"?"+ Add Custom Section":(key==="items"&&path.includes("customSections")?"+ Add Subsection Item":"+ Add item");
+          add.textContent=addLabel;
+          add.addEventListener("click",()=>{value.push(newEntry(path,value));render()});
+          wrapper.append(add);
         }else for(const[childKey,childValue]of Object.entries(value))wrapper.append(makeField(childKey,childValue,[...path,childKey]));
         row.append(wrapper);return row;
       }
@@ -164,11 +299,74 @@ const page = `<!doctype html>
       const input=typeof value==="string"&&(value.length>100||key==="body"||key==="longDescription")?document.createElement("textarea"):document.createElement("input");
       input.value=value??"";input.addEventListener("input",()=>setPath(path,input.value));row.append(input);return row;
     }
+
+    const NAV_GROUPS=[
+      {
+        title:"Header & Masthead",
+        sections:[
+          {id:"site",label:"Site Identity & SEO"},
+          {id:"navigation",label:"Navigation Links"},
+          {id:"socials",label:"Social Profiles"}
+        ]
+      },
+      {
+        title:"Main Panels",
+        sections:[
+          {id:"home",label:"Home Panel & Sections"},
+          {id:"projects",label:"Engineering Projects"},
+          {id:"articles",label:"Technical Articles"},
+          {id:"writing",label:"Writing Settings"},
+          {id:"terminal",label:"Terminal Config"},
+          {id:"images",label:"Media & Assets"}
+        ]
+      }
+    ];
+
     function render(){
       nav.replaceChildren();
-      for(const section of Object.keys(documentData)){if(section==="schemaVersion")continue;const button=document.createElement("button");button.type="button";button.textContent=labelize(section);button.className=section===currentSection?"active":"";button.addEventListener("click",()=>{currentSection=section;render()});nav.append(button)}
-      form.replaceChildren();const fieldset=document.createElement("fieldset");fieldset.className="group";const legend=document.createElement("legend");legend.textContent=labelize(currentSection);fieldset.append(legend);
-      const section=documentData[currentSection];if(Array.isArray(section))fieldset.append(makeField(currentSection,section,[currentSection]));else for(const[key,value]of Object.entries(section))fieldset.append(makeField(key,value,[currentSection,key]));
+      const allSections=Object.keys(documentData).filter(s=>s!=="schemaVersion");
+      const placed=new Set();
+
+      for(const group of NAV_GROUPS){
+        const groupEl=document.createElement("div");groupEl.className="nav-group";
+        const groupTitle=document.createElement("div");groupTitle.className="nav-group-title";groupTitle.textContent=group.title;groupEl.append(groupTitle);
+        let hasSections=false;
+        for(const item of group.sections){
+          if(allSections.includes(item.id)){
+            hasSections=true;placed.add(item.id);
+            const button=document.createElement("button");button.type="button";
+            button.textContent=item.label;
+            button.className=item.id===currentSection?"active":"";
+            button.addEventListener("click",()=>{currentSection=item.id;render()});
+            groupEl.append(button);
+          }
+        }
+        if(hasSections)nav.append(groupEl);
+      }
+
+      const leftovers=allSections.filter(s=>!placed.has(s));
+      if(leftovers.length>0){
+        const extraGroup=document.createElement("div");extraGroup.className="nav-group";
+        const extraTitle=document.createElement("div");extraTitle.className="nav-group-title";extraTitle.textContent="Other Panels";extraGroup.append(extraTitle);
+        for(const s of leftovers){
+          const button=document.createElement("button");button.type="button";button.textContent=labelize(s);
+          button.className=s===currentSection?"active":"";
+          button.addEventListener("click",()=>{currentSection=s;render()});
+          extraGroup.append(button);
+        }
+        nav.append(extraGroup);
+      }
+
+      form.replaceChildren();
+      const fieldset=document.createElement("fieldset");fieldset.className="group";const legend=document.createElement("legend");legend.textContent=labelize(currentSection);fieldset.append(legend);
+
+      if(currentSection==="home"&&!documentData.home.customSections){
+        documentData.home.customSections=[];
+      }
+
+      const section=documentData[currentSection];
+      if(Array.isArray(section))fieldset.append(makeField(currentSection,section,[currentSection]));
+      else for(const[key,value]of Object.entries(section))fieldset.append(makeField(key,value,[currentSection,key]));
       form.append(fieldset);syncRaw();
     }
     async function load(){const response=await fetch("/api/content");if(!response.ok)throw new Error(await response.text());documentData=await response.json();contentVersion=response.headers.get("etag");render();status.textContent="Connected to local content file"}

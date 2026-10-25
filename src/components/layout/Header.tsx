@@ -15,13 +15,16 @@ import { NavLinks } from "@/components/layout/NavLinks";
 import { HeaderSocials } from "@/components/layout/HeaderSocials";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { ViewSwitcher } from "@/components/layout/ViewSwitcher";
+import { getAvailabilityClass } from "@/lib/status";
 
 export function Header() {
+  const availClass = getAvailabilityClass(portfolio.home.availability);
+
   return (
     <header className="station-header sticky top-0 z-50">
       <div className="station-header-status">
-        <span className="station-status-light" aria-hidden="true" />
-        <span>{portfolio.home.availability}</span>
+        <span className={`station-status-light ${availClass}`} aria-hidden="true" />
+        <span className={`station-status-text ${availClass}`}>{portfolio.home.availability}</span>
         <span className="station-status-divider" aria-hidden="true" />
         <span>{portfolio.site.issueLabel}</span>
       </div>
